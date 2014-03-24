@@ -6,8 +6,10 @@ int main(void)
 	FATFS fatfs;
 	FIL fil;
 	TCHAR *path = "0:";
-	TCHAR *tchar = "test_1__.txt";
+	TCHAR *tchar = "test.txt";
+	BYTE input[] = "I am Jian Jiao.";
 	FRESULT res;
+	UINT bw;
 	
 	disable_watchdog();
 	init_modes_and_clock();
@@ -23,24 +25,20 @@ int main(void)
 	init_DSPI_2();
 	//init_DSPI_1();
 	enable_irq();
-	//
+	
 	SD_init();
 	
-	if ((res=f_mount(&fatfs, path, 1)) == FR_OK)
+	if (f_mount(&fatfs, path, 1) == FR_OK)
 	{
 		D0 = 0;
 	}
-	
-	if ((res=f_open(&fil, tchar, FA_CREATE_ALWAYS)) == FR_OK)
-	{
-		D1 = 0;
-	}
+	f_open(&fil, tchar, FA_CREATE_ALWAYS);
+	f_close(&fil);
+	f_open(&fil, tchar, FA_WRITE);
+	res = f_write(&fil, (const void *)input, 16, &bw);
 	serial_port_0_TX((BYTE)res);
+	f_sync(&fil);
 	
-	if (f_sync(&fil) == FR_OK)
-	{
-		D2 = 0;
-	}
 	
 	/* Loop forever */
 	for (;;)

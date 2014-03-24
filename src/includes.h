@@ -1,11 +1,20 @@
 #ifndef __INCLUDES_H__
 #define __INCLUDES_H__
 
-
+#ifndef _TYPEDEF_BYTE_
+#define _TYPEDEF_BYTE_
 typedef unsigned char BYTE;
-typedef unsigned short WORD;
-typedef unsigned int DWORD;
+#endif
 
+#ifndef _TYPEDEF_WORD_
+#define _TYPEDEF_WORD_
+typedef unsigned short WORD;
+#endif
+
+#ifndef _TYPEDEF_DWORD_
+#define _TYPEDEF_DWORD_
+typedef unsigned int DWORD;
+#endif
 
 #include "MPC5604B_M27V.h"
 #include "init.h"

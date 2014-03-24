@@ -1134,7 +1134,7 @@ FRESULT dir_sdi (
 		sect = dp->fs->dirbase;
 	}
 	else {				/* Dynamic table (root-directory in FAT32 or sub-directory) */
-		ic = SS(dp->fs) / SZ_DIR * dp->fs->csize;	/* Entries per cluster */
+		ic = (UINT)(SS(dp->fs) / SZ_DIR * dp->fs->csize);	/* Entries per cluster */
 		while (idx >= ic) {	/* Follow cluster chain */
 			clst = get_fat(dp->fs, clst);				/* Get next cluster */
 			if (clst == 0xFFFFFFFF) return FR_DISK_ERR;	/* Disk error */
@@ -2085,7 +2085,7 @@ int get_ldnumber (		/* Returns logical drive number (-1:invalid drive) */
 		for (tt = *path; (UINT)*tt >= (_USE_LFN ? ' ' : '!') && *tt != ':'; tt++) ;	/* Find ':' in the path */
 		if (*tt == ':') {	/* If a ':' is exist in the path name */
 			tp = *path;
-			i = *tp++ - '0'; 
+			i = (UINT)(*tp++ - '0'); 
 			if (i < 10 && tp == tt) {	/* Is there a numeric drive id? */
 				if (i < _VOLUMES) {	/* If a drive id is found, get the value and strip it */
 					vol = (int)i;
@@ -2594,7 +2594,7 @@ FRESULT f_read (
 			cc = btr / SS(fp->fs);				/* When remaining bytes >= sector size, */
 			if (cc) {							/* Read maximum contiguous sectors directly */
 				if (csect + cc > fp->fs->csize)	/* Clip at cluster boundary */
-					cc = fp->fs->csize - csect;
+					cc = (UINT)(fp->fs->csize - csect);
 				if (disk_read(fp->fs->drv, rbuff, sect, cc))
 					ABORT(fp->fs, FR_DISK_ERR);
 #if !_FS_READONLY && _FS_MINIMIZE <= 2			/* Replace one of the read sectors with cached data if it contains a dirty sector */
@@ -2708,7 +2708,7 @@ FRESULT f_write (
 			cc = btw / SS(fp->fs);			/* When remaining bytes >= sector size, */
 			if (cc) {						/* Write maximum contiguous sectors directly */
 				if (csect + cc > fp->fs->csize)	/* Clip at cluster boundary */
-					cc = fp->fs->csize - csect;
+					cc = (UINT)(fp->fs->csize - csect);
 				if (disk_write(fp->fs->drv, wbuff, sect, cc))
 					ABORT(fp->fs, FR_DISK_ERR);
 #if _FS_MINIMIZE <= 2
@@ -3840,7 +3840,7 @@ FRESULT f_setlabel (
 #else
 			w = (BYTE)label[i++];
 			if (IsDBCS1(w))
-				w = (j < 10 && i < sl && IsDBCS2(label[i])) ? w << 8 | (BYTE)label[i++] : 0;
+				w = (WCHAR)((j < 10 && i < sl && IsDBCS2(label[i])) ? w << 8 | (BYTE)label[i++] : 0);
 #if _USE_LFN
 			w = ff_convert(ff_wtoupper(ff_convert(w, 1)), 0);
 #else
@@ -4520,7 +4520,7 @@ int f_printf (
 			}
 		}
 		while (IsDigit(c)) {		/* Precision */
-			w = w * 10 + c - '0';
+			w = (UINT)(w * 10 + c - '0');
 			c = *fmt++;
 		}
 		if (c == 'l' || c == 'L') {	/* Prefix: Size is long int */
