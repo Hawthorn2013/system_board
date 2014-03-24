@@ -176,8 +176,16 @@ void init_serial_port_1(void)
 {
 	LINFLEX_1.LINCR1.B.INIT=1;	//进入初始化模式
 	LINFLEX_1.LINCR1.R=0x00000011;
+#if 1	//80M
 	LINFLEX_1.LINIBRR.B.DIV_M= 520;	//波特率设置38400:80M-130+3  115200:80M-43+6
     LINFLEX_1.LINFBRR.B.DIV_F =83;	//57600:80M-86+81
+#endif
+
+#if 0	//16M
+	LINFLEX_1.LINIBRR.B.DIV_M= 8;	//波特率设置115200:16M-8+11
+    LINFLEX_1.LINFBRR.B.DIV_F =11;
+#endif
+
     LINFLEX_1.UARTCR.B.UART=1;
 	LINFLEX_1.UARTCR.R=0x00000033;
 	
@@ -444,3 +452,5 @@ void delayms(int ms)
    for(ii=0;ii<ms;ii++)
      for(jj=0;jj<20000;jj++){}//1ms      
 }
+
+

@@ -22,7 +22,7 @@ typedef unsigned int DWORD;
 #include "supersonic.h"
 #include "sdcard.h"
 #include "ff.h"
-
+#include "time.h"
 
 ///****************LED****************///
 #if 1
