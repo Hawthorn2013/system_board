@@ -20,9 +20,9 @@ extern int cnt_pit;
 extern int f_pit;
 typedef struct
 {
-	uint16_t cnt_old;
-	uint16_t cnt_new;
-	uint16_t speed_now;
+	WORD cnt_old;
+	WORD cnt_new;
+	WORD speed_now;
 	int16_t speed_target;
 	int is_forward;
 } Data_encoder;

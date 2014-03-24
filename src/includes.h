@@ -2,6 +2,11 @@
 #define __INCLUDES_H__
 
 
+typedef unsigned char BYTE;
+typedef unsigned short WORD;
+typedef unsigned int DWORD;
+
+
 #include "MPC5604B_M27V.h"
 #include "init.h"
 #include "control.h"

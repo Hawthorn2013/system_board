@@ -12,19 +12,19 @@ extern void enable_irq(void);
 extern int is_big_endian();
 
 extern void init_serial_port_0(void);
-extern void serial_port_0_TX(uint8_t data);
+extern void serial_port_0_TX(BYTE data);
 extern void intc_serial_port_0_RX(void);
 
 extern void init_serial_port_1(void);
-extern void serial_port_1_TX(uint8_t data);
+extern void serial_port_1_TX(BYTE data);
 extern void intc_serial_port_1_RX();
 
 extern void init_serial_port_2(void);
-extern void serial_port_2_TX(uint8_t data);
+extern void serial_port_2_TX(BYTE data);
 extern void intc_serial_port_2_RX();
 
 extern void init_serial_port_3(void);
-extern void serial_port_3_TX(uint8_t data);
+extern void serial_port_3_TX(BYTE data);
 extern void intc_serial_port_3_RX();
 
 extern void init_supersonic_trigger_0(void);

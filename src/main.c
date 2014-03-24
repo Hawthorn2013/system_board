@@ -20,9 +20,7 @@ int main(void)
 	//init_DSPI_1();
 	enable_irq();
 	
-	while(SD_reset()){}
-	SD_SPI_to_4M();
-	
+	SD_init();
 	D3 = 0;
 
 	clear_sd_buffer(sd_buffer);
@@ -35,7 +33,7 @@ int main(void)
 	{
 		for (j=0; j<SD_SECTOR_SIZE; j++)
 		{
-			if (sd_buffer[i][j] != (uint8_t)i+'A')
+			if (sd_buffer[i][j] != (BYTE)i+'A')
 			{
 				D2 = 1;
 			}
@@ -46,7 +44,7 @@ int main(void)
 	{
 		for (j=0; j<SD_SECTOR_SIZE; j++)
 		{
-			sd_buffer[i][j] = (uint8_t)i+'A';
+			sd_buffer[i][j] = (BYTE)i+'A';
 		}
 	}
 	if (!SD_write_multiple_block(512, SD_BUFFER_SECTOR_MAX, sd_buffer))
@@ -69,7 +67,7 @@ int main(void)
 		//SD_read_block(512+i, sd_buffer[i]);
 		for (j=0; j<SD_SECTOR_SIZE; j++)
 		{
-			if (sd_buffer[i][j] != (uint8_t)i+'A')
+			if (sd_buffer[i][j] != (BYTE)i+'A')
 			{
 				D2 = 1;
 			}
@@ -80,7 +78,7 @@ int main(void)
 	{
 		for (j=0; j<SD_SECTOR_SIZE; j++)
 		{
-			sd_buffer[i][j] = (uint8_t)i+'A';
+			sd_buffer[i][j] = (BYTE)i+'A';
 		}
 	}
 	if (!SD_write_multiple_block(512, SD_BUFFER_SECTOR_MAX, sd_buffer))
@@ -94,7 +92,7 @@ int main(void)
 		/*
 		if (f_pit)
 		{
-			uint8_t tmp_rev;
+			BYTE tmp_rev;
 			
 			f_pit = 0;
 			D3 = ~D3;

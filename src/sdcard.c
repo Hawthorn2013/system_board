@@ -1,7 +1,17 @@
 #include "includes.h"
 
 
-uint8_t sd_buffer[SD_BUFFER_SECTOR_MAX][SD_SECTOR_SIZE];
+static void SD_SPI_to_4M(void);
+static void SD_SPI_to_10M(void);
+static void SD_SPI_to_20M(void);
+static void DSPI_2_TX(WORD cmd, WORD data);
+static void DSPI_send_8_clocks(void);
+static BYTE DSPI_read_write_byte(BYTE byte_write);
+static BYTE SD_reset(void);
+static BYTE SD_send_cmd(BYTE cmd, DWORD var);
+
+
+BYTE sd_buffer[SD_BUFFER_SECTOR_MAX][SD_SECTOR_SIZE];
 
 //***********主机****************
 void init_DSPI_2(void) {
@@ -14,7 +24,7 @@ void init_DSPI_2(void) {
 	SIU.PCR[46].R = 0x0A04;        /* MPC56xxB: Config pad as DSPI_0 SCK output */	//C14
 	SIU.PCR[47].R = 0x0A04;        /* MPC56xxB: Config pad as DSPI_0 PCS0 output */	//C15
 	DSPI_2.RSER.B.TCFRE = 0;	//关闭传输完成中断
-	INTC_InstallINTCInterruptHandler(INTC_DSPI_2_TC, 117, 3);
+	//INTC_InstallINTCInterruptHandler(INTC_DSPI_2_TC, 117, 3);
 }
 
 
@@ -31,98 +41,90 @@ void init_DSPI_1(void) {
 	SIU.PCR[69].R = 0x0903;        /* MPC56xxB: Config pad as DSPI_1 PCS0/SS input */	//E5
 	SIU.PSMI[9].R = 2;             /* MPC56xxB: Selec PCR 15 for DSPI_1 SS input */
 	DSPI_1.RSER.B.TCFRE = 0;
-	INTC_InstallINTCInterruptHandler(INTC_DSPI_1_TC, 97, 3);
-}
-
-void ReadDataDSPI_1(void) {
-	while (DSPI_1.SR.B.RFDF != 1){}  /* Wait for Receive FIFO Drain Flag = 1 */
-	//RecDataSlave = DSPI_1.POPR.R;    /* Read data received by slave SPI */
-	DSPI_1.SR.R = 0x80020000;        /* Clear TCF, RDRF flags by writing 1 to them */
-}
-
-void ReadDataDSPI_0(void) {
-	while (DSPI_0.SR.B.RFDF != 1){}  /* Wait for Receive FIFO Drain Flag = 1 */
-	//RecDataMaster = DSPI_0.POPR.R;   /* Read data received by master SPI */
-	DSPI_0.SR.R = 0x90020000;        /* Clear TCF, RDRF, EOQ flags by writing 1 */
+	//INTC_InstallINTCInterruptHandler(INTC_DSPI_1_TC, 97, 3);
 }
 
 
-void INTC_DSPI_2_TC(void)
+static void SD_SPI_to_4M(void)
 {
-	uint16_t tmp_rev;
-	
-	DSPI_2.SR.R = 0x90020000;        /* Clear TCF, RDRF, EOQ flags by writing 1 */
-	tmp_rev = (uint16_t)DSPI_2.POPR.B.RXDATA;
+	DSPI_2.CTAR[1].R = 0x3E0A7721;	//用于发送8bits 调整极性为1，相位为1，调整波特率为4M
 }
 
 
-void INTC_DSPI_1_TC(void)
+//----------------不能用----------------//
+static void SD_SPI_to_20M(void)
 {
-	uint16_t tmp_rev;
-	
-	tmp_rev = (uint16_t)DSPI_1.POPR.B.RXDATA;
-	DSPI_1.SR.R = 0x80020000;        /* Clear TCF, RDRF flags by writing 1 to them */
+	DSPI_2.CTAR[1].R = 0x3E087720;	//用于发送8bits 调整极性为1，相位为1，调整波特率为20M
 }
 
 
-void DSPI_2_TX(uint16_t cmd, uint16_t data)
+static void SD_SPI_to_10M(void)
 {
-	uint32_t tmp_tx = 0x00000000;
+	DSPI_2.CTAR[1].R = 0x3E087721;	//用于发送8bits 调整极性为1，相位为1，调整波特率为20M
+}
+
+
+static void DSPI_2_TX(WORD cmd, WORD data)
+{
+	DWORD tmp_tx = 0x00000000;
 	
-	tmp_tx |= (uint32_t)cmd<<16;
-	tmp_tx |= (uint32_t)data;
+	tmp_tx |= (DWORD)cmd<<16;
+	tmp_tx |= (DWORD)data;
 	DSPI_2.PUSHR.R = tmp_tx;
 	//while(!DSPI_2.SR.B.TCF){}	//不能加，否则导致未知问题，pit中断进不去
 	//DSPI_2.SR.B.TCF = 1;
 }
 
 
-void DSPI_1_TX(uint16_t data)
+static BYTE DSPI_read_write_byte(BYTE byte_write)
 {
-	DSPI_1.PUSHR.B.TXDATA = data;
-}
-
-
-uint8_t DSPI_read_write_byte(uint8_t byte_write)
-{
-	uint32_t tmp_tx = 0x00000000;
-	uint16_t tmp_rx;
+	DWORD tmp_tx = 0x00000000;
+	WORD tmp_rx;
 	
 	tmp_tx |= 0x98010000;
-	tmp_tx |= (uint32_t)byte_write;
+	tmp_tx |= (DWORD)byte_write;
 	DSPI_2.PUSHR.R = tmp_tx;
 	while(!DSPI_2.SR.B.TCF){}
-	tmp_rx = (uint16_t)DSPI_2.POPR.B.RXDATA;
+	tmp_rx = (WORD)DSPI_2.POPR.B.RXDATA;
 	DSPI_2.SR.B.TCF = 1;
 	
-	return (uint8_t)tmp_rx;
+	return (BYTE)tmp_rx;
 }
 
 
 //----------------by-JJ----------------//
 //----------------此函数与发送0xff不同，片选拉高----------------//
-void DSPI_send_8_clocks(void)
+static void DSPI_send_8_clocks(void)
 {
-	uint32_t tmp_tx = 0x980000FF;
-	uint16_t tmp_rx;
+	DWORD tmp_tx = 0x980000FF;
+	WORD tmp_rx;
 	
 	DSPI_2.PUSHR.R = tmp_tx;
 	while(!DSPI_2.SR.B.TCF){}
-	tmp_rx = (uint16_t)DSPI_2.POPR.B.RXDATA;
+	tmp_rx = (WORD)DSPI_2.POPR.B.RXDATA;
 	DSPI_2.SR.B.TCF = 1;
 }
 
 
-uint8_t SD_send_cmd(uint8_t cmd, uint32_t var)
+int SD_init(void)
 {
-	uint8_t rev, retry;
+	while(SD_reset()){}
+	SD_SPI_to_4M();
+	
+	return 0;
+}
+
+
+static BYTE SD_send_cmd(BYTE cmd, DWORD var)
+{
+	BYTE rev, retry;
 	
 	DSPI_send_8_clocks();
 	DSPI_read_write_byte(cmd | 0x40);	//分别写入命令;第1、2位=01
-	DSPI_read_write_byte((uint8_t)(var>>24));	//将字节地址写入到cmd字节序列
-	DSPI_read_write_byte((uint8_t)(var>>16));
-	DSPI_read_write_byte((uint8_t)(var>>8));
-	DSPI_read_write_byte((uint8_t)(var));
+	DSPI_read_write_byte((BYTE)(var>>24));	//将字节地址写入到cmd字节序列
+	DSPI_read_write_byte((BYTE)(var>>16));
+	DSPI_read_write_byte((BYTE)(var>>8));
+	DSPI_read_write_byte((BYTE)(var));
 	DSPI_read_write_byte(0x95);
 	retry = 0;
 	while((rev = DSPI_read_write_byte(0xFF)) == 0xFF)	//等待响应
@@ -137,11 +139,11 @@ uint8_t SD_send_cmd(uint8_t cmd, uint32_t var)
 }
 
 
-uint8_t SD_reset(void)
+static BYTE SD_reset(void)
 {
-	uint8_t i;
-	uint8_t retry;
-	uint8_t rev = 0x00;
+	BYTE i;
+	BYTE retry;
+	BYTE rev = 0x00;
 	
 	for(i=0; i<10; i++)
 	{
@@ -174,10 +176,10 @@ uint8_t SD_reset(void)
 
 
 //----------------by-徐博----------------//
-uint8_t SD_read_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer=数据缓冲区
+BYTE SD_read_block(DWORD sector, BYTE *buffer)	//sector=address,buffer=数据缓冲区
 {
-	uint8_t rev;          
-	uint16_t i;
+	BYTE rev;          
+	WORD i;
 	
 	rev = SD_send_cmd(17, sector<<9);  //读命令,发送CMD17,收到0x00表示成功 	
 	if(rev != 0x00)
@@ -200,11 +202,11 @@ uint8_t SD_read_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer=
 
 
 //----------------by-JJ----------------//
-uint8_t SD_read_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_SECTOR_SIZE])
+BYTE SD_read_multiple_block(DWORD sector, DWORD n, BYTE buffer[][SD_SECTOR_SIZE])
 {
-	uint8_t rev;          
-	uint16_t i;
-	uint32_t j;
+	BYTE rev;          
+	WORD i;
+	DWORD j;
 	
 	rev = SD_send_cmd(18, sector<<9);
 	if(rev != 0x00)
@@ -229,10 +231,10 @@ uint8_t SD_read_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_
 
 
 //----------------by-徐博----------------//
-uint8_t SD_write_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer=数据缓存区
+BYTE SD_write_block(DWORD sector, BYTE *buffer)	//sector=address,buffer=数据缓存区
 {
-	uint8_t rev;
-	uint16_t i;
+	BYTE rev;
+	WORD i;
 	
 	rev = SD_send_cmd(24, sector<<9);	//写命令,sector<<9:将地址左移9位,address=address*512,将块地址（扇区地址）转为字节地址
 	if(rev != 0x00)
@@ -266,11 +268,11 @@ uint8_t SD_write_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer
 
 
 //----------------by-JJ----------------//
-uint8_t SD_write_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_SECTOR_SIZE])
+BYTE SD_write_multiple_block(DWORD sector, DWORD n, BYTE buffer[][SD_SECTOR_SIZE])
 {
-	uint8_t rev;
-	uint16_t i;
-	uint32_t j;
+	BYTE rev;
+	WORD i;
+	DWORD j;
 	
 	rev = SD_send_cmd(25, sector<<9);
 	if(rev != 0x00)
@@ -303,29 +305,10 @@ uint8_t SD_write_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD
 	return 0;
 }
 
-
-void SD_SPI_to_4M(void)
-{
-	DSPI_2.CTAR[1].R = 0x3E0A7721;	//用于发送8bits 调整极性为1，相位为1，调整波特率为4M
-}
-
-
-//----------------不能用----------------//
-void SD_SPI_to_20M(void)
-{
-	DSPI_2.CTAR[1].R = 0x3E087720;	//用于发送8bits 调整极性为1，相位为1，调整波特率为20M
-}
-
-
-void SD_SPI_to_10M(void)
-{
-	DSPI_2.CTAR[1].R = 0x3E087721;	//用于发送8bits 调整极性为1，相位为1，调整波特率为20M
-}
-
 /*************************************************************/
 /*                        清空缓冲区                         */
 /*************************************************************/
-void clear_sd_buffer(uint8_t buffer[][SD_SECTOR_SIZE])
+void clear_sd_buffer(BYTE buffer[][SD_SECTOR_SIZE])
 {
 	int i, j;
 	

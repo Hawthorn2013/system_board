@@ -153,7 +153,7 @@ void init_serial_port_0(void)
 }
 
 
-void serial_port_0_TX(uint8_t data)
+void serial_port_0_TX(BYTE data)
 {
 	LINFLEX_0.BDRL.B.DATA0 = data;       //发送语句
 	while(!LINFLEX_0.UARTSR.B.DTF){}
@@ -163,10 +163,10 @@ void serial_port_0_TX(uint8_t data)
 
 void intc_serial_port_0_RX(void)
 {
-	uint8_t rev_ch;
+	BYTE rev_ch;
 	
 	while(!LINFLEX_0.UARTSR.B.DRF){}
-	rev_ch = (uint8_t)LINFLEX_0.BDRM.B.DATA4;
+	rev_ch = (BYTE)LINFLEX_0.BDRM.B.DATA4;
 	LINFLEX_0.UARTSR.B.DRF=1;      //清空标志位
 }
 
@@ -204,10 +204,10 @@ void serial_port_1_TX(unsigned char data)
 
 void intc_serial_port_1_RX()
 {
-	uint8_t rev_ch;
+	BYTE rev_ch;
 	
 	while(!LINFLEX_1.UARTSR.B.DRF){}
-	rev_ch = (uint8_t)LINFLEX_1.BDRM.B.DATA4;
+	rev_ch = (BYTE)LINFLEX_1.BDRM.B.DATA4;
 	LINFLEX_1.UARTSR.B.DRF = 1;
 }
 
@@ -230,7 +230,7 @@ void init_serial_port_2(void)
 }
 
 
-void serial_port_2_TX(uint8_t data)
+void serial_port_2_TX(BYTE data)
 {
 	LINFLEX_2.BDRL.B.DATA0=data;
 	while(!LINFLEX_2.UARTSR.B.DTF){}
@@ -240,10 +240,10 @@ void serial_port_2_TX(uint8_t data)
 
 void intc_serial_port_2_RX(void)
 {
-	uint8_t rev_ch;
+	BYTE rev_ch;
 	
 	while(!LINFLEX_2.UARTSR.B.DRF){}
-	rev_ch=(uint8_t)LINFLEX_2.BDRM.B.DATA4;
+	rev_ch=(BYTE)LINFLEX_2.BDRM.B.DATA4;
 	LINFLEX_2.UARTSR.B.DRF=1;
 }
 
@@ -266,7 +266,7 @@ void init_serial_port_3(void)
 }
 
 
-void serial_port_3_TX(uint8_t data)
+void serial_port_3_TX(BYTE data)
 {
 	LINFLEX_3.BDRL.B.DATA0 = data;       //发送语句
 	while(!LINFLEX_3.UARTSR.B.DTF){}
@@ -276,10 +276,10 @@ void serial_port_3_TX(uint8_t data)
 
 void intc_serial_port_3_RX(void)
 {
-	uint8_t rev_ch;
+	BYTE rev_ch;
 	
 	while(!LINFLEX_3.UARTSR.B.DRF){}
-	rev_ch = (uint8_t)LINFLEX_3.BDRM.B.DATA4;
+	rev_ch = (BYTE)LINFLEX_3.BDRM.B.DATA4;
 	LINFLEX_3.UARTSR.B.DRF = 1;
 }
 
@@ -366,14 +366,14 @@ void trigger_supersonic_0(void)
 
 void intc_get_supersonic_time_0(void)
 {
-	uint32_t tmp_a, tmp_b;
+	DWORD tmp_a, tmp_b;
 	union {
-		uint32_t R;
+		DWORD R;
 		struct {
-			uint8_t byte_0;
-			uint8_t byte_1;
-			uint8_t byte_2;
-			uint8_t byte_3;
+			BYTE byte_0;
+			BYTE byte_1;
+			BYTE byte_2;
+			BYTE byte_3;
 		} B;
 	} tmp_time;
 	
@@ -401,8 +401,8 @@ void intc_get_supersonic_time_0(void)
 //**********************判断大端小端***************************
 int is_big_endian()
 {
-	uint16_t a = 0x1234;
-	uint8_t b = *(uint8_t *)&a;	//通过将int强制类型转换成char单字节，通过判断起始存储位置。即等于 取b等于a的低地址部分  
+	WORD a = 0x1234;
+	BYTE b = *(BYTE *)&a;	//通过将int强制类型转换成char单字节，通过判断起始存储位置。即等于 取b等于a的低地址部分  
     
     if(b == 0x12)
 	{
@@ -427,7 +427,7 @@ void init_optical_encoder(void)	//PD12模数计数器入口，上升沿
 
 	SIU.PCR[60].R = 0x0100;  // Initialize pad for eMIOS channel Initialize pad for input
 	
-	//(uint16_t)EMIOS_0.CH[24].CCNTR.R 数据寄存器
+	//(WORD)EMIOS_0.CH[24].CCNTR.R 数据寄存器
 	
 	//********方向部分**************
 	SIU.PCR[28].R = 0x0100;	//PB12
