@@ -101,7 +101,7 @@ uint8_t DSPI_read_write_byte(uint8_t byte_write)
 
 void DSPI_send_8_clocks(void)
 {
-	uint32_t tmp_tx = 0x980100FF;
+	uint32_t tmp_tx = 0x980000FF;
 	uint16_t tmp_rx;
 	
 	DSPI_2.PUSHR.R = tmp_tx;
@@ -202,6 +202,36 @@ uint8_t SD_read_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer=
 }
 
 
+uint8_t SD_read_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_SECTOR_SIZE])
+{
+	uint8_t rev;          
+	uint16_t i;
+	uint32_t j;
+	
+	rev = SD_send_cmd(18, sector<<9);  //读命令,发送CMD17,收到0x00表示成功 	
+	if(rev != 0x00)
+	{
+		return rev;
+	}
+	
+	//等数据的开始
+	while(DSPI_read_write_byte(0xFF) != 0xFE){}//连续读直到读到开始字节0xfe
+	for (j=0; j<n; j++)
+	{
+		for(i=0; i<SD_SECTOR_SIZE; i++)	//读512个数据，写入数据缓冲区
+		{
+			buffer[j][i] = DSPI_read_write_byte(0xFF);
+		}
+		DSPI_read_write_byte(0xFF);	//读两个CRC字节
+		DSPI_read_write_byte(0xFF);  
+	}
+	SD_send_cmd(12, 0);	//发送STOP_TRANSMISSION
+	DSPI_send_8_clocks();	//按时序补8个时钟
+	
+	return 0;	//读取操作成功
+}
+
+
 uint8_t SD_write_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer=数据缓存区
 {
 	uint8_t rev;
@@ -236,6 +266,47 @@ uint8_t SD_write_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer
 	}
 	//等待操作完
 	while(!DSPI_read_write_byte(0xFF)){}	//等待SD卡不忙
+	DSPI_send_8_clocks();	//按SD卡操作时序补8个时钟
+	
+	return 0;	//说明写扇区操作成功
+}
+
+
+uint8_t SD_write_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_SECTOR_SIZE])
+{
+	uint8_t rev;
+	uint16_t i;
+	uint32_t j;
+	
+	if(sector<1)
+	{
+		return 0xff;	//为了保护SD卡引导区，跳过该区
+	}
+	rev = SD_send_cmd(25, sector<<9);	//连续写命令
+	if(rev != 0x00)
+	{
+		return rev;	//收到0x00表示成功
+	}
+	DSPI_read_write_byte(0xff);
+	DSPI_read_write_byte(0xff);
+	//DSPI_read_write_byte(0xff);
+	DSPI_read_write_byte(0xfc);	//发开始符
+	for(j=0; j<n; j++)
+	{
+		for(i=0; i<SD_SECTOR_SIZE; i++)	//送512字节数据
+		{
+			DSPI_read_write_byte(buffer[j][i]);
+		}
+		DSPI_read_write_byte(0xFF);	//写入2个字节的CRC校验码，Don't care
+		DSPI_read_write_byte(0xFF);
+		rev = DSPI_read_write_byte(0xFF);	//读取返回值
+		if((rev&0x1f) != 0x05)	//若返回值为XXX00101,说明数据已经被SD卡接受
+		{
+			return rev;	//写入失败
+		}
+		//等待操作完
+		while(!DSPI_read_write_byte(0xFF)){}	//等待SD卡不忙
+	}
 	DSPI_send_8_clocks();	//按SD卡操作时序补8个时钟
 	
 	return 0;	//说明写扇区操作成功
