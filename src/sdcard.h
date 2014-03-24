@@ -20,9 +20,11 @@ extern uint8_t SD_read_block(uint32_t sector, uint8_t *buffer);
 extern uint8_t SD_write_block(uint32_t sector, uint8_t *buffer);
 extern void DSPI_send_8_clocks(void);
 extern void SD_SPI_to_4M(void);
-extern void clear_sd_buffer(uint8_t *buffer);
+extern void clear_sd_buffer(uint8_t buffer[][SD_SECTOR_SIZE]);
 extern uint8_t SD_read_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_SECTOR_SIZE]);
 extern uint8_t SD_write_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_SECTOR_SIZE]);
+extern void SD_SPI_to_20M(void);
+extern void SD_SPI_to_10M(void);
 
 
 #endif

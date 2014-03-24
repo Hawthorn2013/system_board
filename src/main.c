@@ -23,15 +23,9 @@ int main(void)
 	while(SD_reset()){}
 	SD_SPI_to_4M();
 	
-	//clear_sd_buffer(sd_buffer);//Çå¿Õ½ÓÊÕ»º³åÆ÷
+	D3 = 0;
 
-	for (i=0; i<SD_BUFFER_SECTOR_MAX; i++)
-	{
-		for (j=0; j<SD_SECTOR_SIZE; j++)
-		{
-			sd_buffer[i][j] = 0;
-		}
-	}
+	clear_sd_buffer(sd_buffer);
 	if (!SD_read_multiple_block(512, SD_BUFFER_SECTOR_MAX, sd_buffer))
 	{
 		D1 = 0;
@@ -39,7 +33,6 @@ int main(void)
 	D2 = 0;
 	for (i=0; i<SD_BUFFER_SECTOR_MAX; i++)
 	{
-		//SD_read_block(512+i, sd_buffer[i]);
 		for (j=0; j<SD_SECTOR_SIZE; j++)
 		{
 			if (sd_buffer[i][j] != (uint8_t)i+'A')
@@ -65,13 +58,7 @@ int main(void)
 	D1 = 1;
 	D2 = 1;
 	
-	for (i=0; i<SD_BUFFER_SECTOR_MAX; i++)
-	{
-		for (j=0; j<SD_SECTOR_SIZE; j++)
-		{
-			sd_buffer[i][j] = 0;
-		}
-	}
+	clear_sd_buffer(sd_buffer);
 	if (!SD_read_multiple_block(512, SD_BUFFER_SECTOR_MAX, sd_buffer))
 	{
 		D1 = 0;

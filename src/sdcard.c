@@ -99,6 +99,8 @@ uint8_t DSPI_read_write_byte(uint8_t byte_write)
 }
 
 
+//----------------by-JJ----------------//
+//----------------此函数与发送0xff不同，片选拉高----------------//
 void DSPI_send_8_clocks(void)
 {
 	uint32_t tmp_tx = 0x980000FF;
@@ -115,16 +117,13 @@ uint8_t SD_send_cmd(uint8_t cmd, uint32_t var)
 {
 	uint8_t rev, retry;
 	
-	//DSPI_read_write_byte(0xFF);	//产生8个时钟信号
 	DSPI_send_8_clocks();
-	//SD_select();
 	DSPI_read_write_byte(cmd | 0x40);	//分别写入命令;第1、2位=01
 	DSPI_read_write_byte((uint8_t)(var>>24));	//将字节地址写入到cmd字节序列
 	DSPI_read_write_byte((uint8_t)(var>>16));
 	DSPI_read_write_byte((uint8_t)(var>>8));
 	DSPI_read_write_byte((uint8_t)(var));
 	DSPI_read_write_byte(0x95);
-	
 	retry = 0;
 	while((rev = DSPI_read_write_byte(0xFF)) == 0xFF)	//等待响应
 	{
@@ -133,7 +132,6 @@ uint8_t SD_send_cmd(uint8_t cmd, uint32_t var)
 			break;	//超时退出
 		}
 	}
-	//SD_deselect();
 	
 	return rev;
 }
@@ -145,11 +143,9 @@ uint8_t SD_reset(void)
 	uint8_t retry;
 	uint8_t rev = 0x00;
 	
-	//SD_deselect();	//关闭片选
 	for(i=0; i<10; i++)
 	{
-		//DSPI_read_write_byte(0xff);	//至少74个时钟，必须的!!!
-		DSPI_send_8_clocks();
+		DSPI_send_8_clocks();	//至少74个时钟，必须的!!!
 	}
 	//SD卡复位
 	//发送CMD0，正常跳出表示成功进入idle状态
@@ -177,6 +173,7 @@ uint8_t SD_reset(void)
 }
 
 
+//----------------by-徐博----------------//
 uint8_t SD_read_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer=数据缓冲区
 {
 	uint8_t rev;          
@@ -202,34 +199,36 @@ uint8_t SD_read_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer=
 }
 
 
+//----------------by-JJ----------------//
 uint8_t SD_read_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_SECTOR_SIZE])
 {
 	uint8_t rev;          
 	uint16_t i;
 	uint32_t j;
 	
-	rev = SD_send_cmd(18, sector<<9);  //读命令,发送CMD18,收到0x00表示成功 	
+	rev = SD_send_cmd(18, sector<<9);
 	if(rev != 0x00)
 	{
 		return rev;
 	}
 	for (j=0; j<n; j++)
 	{
-		while(DSPI_read_write_byte(0xFF) != 0xFE){}	//连续读直到读到开始字节0xfe
-		for(i=0; i<SD_SECTOR_SIZE; i++)	//读512个数据，写入数据缓冲区
+		while(DSPI_read_write_byte(0xFF) != 0xFE){}
+		for(i=0; i<SD_SECTOR_SIZE; i++)
 		{
 			buffer[j][i] = DSPI_read_write_byte(0xFF);
 		}
-		DSPI_read_write_byte(0xFF);	//读两个CRC字节
+		DSPI_read_write_byte(0xFF);
 		DSPI_read_write_byte(0xFF);  
 	}
 	SD_send_cmd(12, 0);	//发送STOP_TRANSMISSION
-	DSPI_send_8_clocks();	//按时序补8个时钟
+	DSPI_send_8_clocks();
 	
-	return 0;	//读取操作成功
+	return 0;
 }
 
 
+//----------------by-徐博----------------//
 uint8_t SD_write_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer=数据缓存区
 {
 	uint8_t rev;
@@ -266,43 +265,42 @@ uint8_t SD_write_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer
 }
 
 
+//----------------by-JJ----------------//
 uint8_t SD_write_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_SECTOR_SIZE])
 {
 	uint8_t rev;
 	uint16_t i;
 	uint32_t j;
 	
-	rev = SD_send_cmd(25, sector<<9);	//连续写命令
+	rev = SD_send_cmd(25, sector<<9);
 	if(rev != 0x00)
 	{
-		return rev;	//收到0x00表示成功
+		return rev;
 	}
 	DSPI_read_write_byte(0xff);
 	DSPI_read_write_byte(0xff);
-	//DSPI_read_write_byte(0xff);
-	for(j=0; j<n; j++)
+	for(i=0; i<n; i++)
 	{
-		DSPI_read_write_byte(0xfc);	//发开始符
-		for(i=0; i<SD_SECTOR_SIZE; i++)	//送512字节数据
+		DSPI_read_write_byte(0xfc);
+		for(j=0; j<SD_SECTOR_SIZE; j++)
 		{
-			DSPI_read_write_byte(buffer[j][i]);
+			DSPI_read_write_byte(buffer[i][j]);
 		}
-		DSPI_read_write_byte(0xFF);	//写入2个字节的CRC校验码，Don't care
 		DSPI_read_write_byte(0xFF);
-		rev = DSPI_read_write_byte(0xFF);	//读取返回值
-		if((rev&0x1f) != 0x05)	//若返回值为XXX00101,说明数据已经被SD卡接受
+		DSPI_read_write_byte(0xFF);
+		rev = DSPI_read_write_byte(0xFF);
+		if((rev&0x1f) != 0x05)
 		{
-			return rev;	//写入失败
+			return rev;
 		}
-		//等待操作完
-		while(!DSPI_read_write_byte(0xFF)){}	//等待SD卡不忙
+		while(!DSPI_read_write_byte(0xFF)){}
 	}
-	DSPI_read_write_byte(0xfb);	//结束命令
+	DSPI_read_write_byte(0xfb);
 	while(!DSPI_read_write_byte(0xFF)){}
-	//SD_send_cmd(12, 0);	//发送CMD12停止传输
-	DSPI_send_8_clocks();	//按SD卡操作时序补8个时钟
+	//SD_send_cmd(12, 0);	//这句话导致后续的多扇区读出错
+	DSPI_send_8_clocks();
 	
-	return 0;	//说明写扇区操作成功
+	return 0;
 }
 
 
@@ -312,12 +310,30 @@ void SD_SPI_to_4M(void)
 }
 
 
+//----------------不能用----------------//
+void SD_SPI_to_20M(void)
+{
+	DSPI_2.CTAR[1].R = 0x3E087720;	//用于发送8bits 调整极性为1，相位为1，调整波特率为20M
+}
+
+
+void SD_SPI_to_10M(void)
+{
+	DSPI_2.CTAR[1].R = 0x3E087721;	//用于发送8bits 调整极性为1，相位为1，调整波特率为20M
+}
+
 /*************************************************************/
 /*                        清空缓冲区                         */
 /*************************************************************/
-void clear_sd_buffer(uint8_t buffer[])
+void clear_sd_buffer(uint8_t buffer[][SD_SECTOR_SIZE])
 {
-    int i;     
-    for(i=0;i<512;i++)	
-		*(buffer+i)=0;
+	int i, j;
+	
+	for (i=0; i<SD_BUFFER_SECTOR_MAX; i++)
+	{
+		for (j=0; j<SD_SECTOR_SIZE; j++)
+		{
+			sd_buffer[i][j] = 0;
+		}
+	}
 } 
