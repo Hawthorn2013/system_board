@@ -61,7 +61,18 @@ DRESULT disk_read (
 	BYTE result;
 	
 	pdrv = 0;	//躲警告
-	result = SD_read_multiple_block(sector, count, (BYTE (*)[SD_SECTOR_SIZE])buff);
+	if (count == 0)
+	{
+		result = 0x00;
+	}
+	else if (count == 1)
+	{
+		result = SD_read_block(sector, buff);
+	}
+	else
+	{
+		result = SD_read_multiple_block(sector, count, (BYTE (*)[SD_SECTOR_SIZE])buff);
+	}
 	if (result == 0x00)
 	{
 		res = RES_OK;
@@ -126,7 +137,19 @@ DRESULT disk_write (
 	BYTE result;
 	
 	pdrv = 0;	//躲警告
-	result = SD_write_multiple_block(sector, count, (BYTE (*)[SD_SECTOR_SIZE])buff);
+	if (count == 0)
+	{
+		result = 0x00;
+	}
+	else if (count == 1)
+	{
+		result = SD_write_block(sector, buff);
+	}
+	else
+	{
+		result = SD_write_multiple_block(sector, count, (const BYTE (*)[SD_SECTOR_SIZE])buff);
+	}
+	
 	if (result == 0x00)
 	{
 		res = RES_OK;
@@ -227,4 +250,20 @@ DRESULT disk_ioctl (
 	return RES_PARERR;
 	*/
 }
+
+
+//-----------------------------------------------------------------------//
+// 返回系统时间                                                          //
+//-----------------------------------------------------------------------//
+DWORD get_fattime(void)
+{
+	return ((DWORD)(2010 - 1980) << 25)	// Fixed to Jan. 1, 2010 //
+	| ((DWORD)1 << 21)
+	| ((DWORD)1 << 16)
+	| ((DWORD)0 << 11)
+	| ((DWORD)0 << 5)
+	| ((DWORD)0 >> 1);
+}
+
+
 #endif

@@ -11,7 +11,7 @@ static BYTE SD_reset(void);
 static BYTE SD_send_cmd(BYTE cmd, DWORD var);
 
 
-BYTE sd_buffer[SD_BUFFER_SECTOR_MAX][SD_SECTOR_SIZE];
+//BYTE sd_buffer[SD_BUFFER_SECTOR_MAX][SD_SECTOR_SIZE];
 
 //***********主机****************
 void init_DSPI_2(void) {
@@ -231,7 +231,7 @@ BYTE SD_read_multiple_block(DWORD sector, DWORD n, BYTE buffer[][SD_SECTOR_SIZE]
 
 
 //----------------by-徐博----------------//
-BYTE SD_write_block(DWORD sector, BYTE *buffer)	//sector=address,buffer=数据缓存区
+BYTE SD_write_block(DWORD sector, const BYTE *buffer)	//sector=address,buffer=数据缓存区
 {
 	BYTE rev;
 	WORD i;
@@ -268,7 +268,7 @@ BYTE SD_write_block(DWORD sector, BYTE *buffer)	//sector=address,buffer=数据缓存
 
 
 //----------------by-JJ----------------//
-BYTE SD_write_multiple_block(DWORD sector, DWORD n, BYTE buffer[][SD_SECTOR_SIZE])
+BYTE SD_write_multiple_block(DWORD sector, DWORD n, const BYTE buffer[][SD_SECTOR_SIZE])
 {
 	BYTE rev;
 	WORD i;
@@ -316,7 +316,7 @@ void clear_sd_buffer(BYTE buffer[][SD_SECTOR_SIZE])
 	{
 		for (j=0; j<SD_SECTOR_SIZE; j++)
 		{
-			sd_buffer[i][j] = 0;
+			buffer[i][j] = 0;
 		}
 	}
 } 

@@ -37,6 +37,7 @@ DSTATUS disk_status (BYTE pdrv);
 DRESULT disk_read (BYTE pdrv, BYTE* buff, DWORD sector, UINT count);
 DRESULT disk_write (BYTE pdrv, const BYTE* buff, DWORD sector, UINT count);
 DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
+DWORD get_fattime(void);
 
 
 /* Disk Status Bits (DSTATUS) */
@@ -74,12 +75,7 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
 #define ATA_GET_SN			22	/* Get serial number */
 
 /*½¹½£¶¨ÒåµÄ*/
-#define SD_SECTOR_SIZE (512)
-#define SD_BUFFER_SECTOR_MAX (20)
-extern BYTE SD_read_block(DWORD sector, BYTE *buffer);
-extern BYTE SD_write_block(DWORD sector, BYTE *buffer);
-extern BYTE SD_read_multiple_block(DWORD sector, DWORD n, BYTE buffer[][SD_SECTOR_SIZE]);
-extern BYTE SD_write_multiple_block(DWORD sector, DWORD n, BYTE buffer[][SD_SECTOR_SIZE]);
+#include "includes.h"
 
 
 #ifdef __cplusplus

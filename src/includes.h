@@ -12,14 +12,16 @@ typedef unsigned int DWORD;
 #include "control.h"
 #include "supersonic.h"
 #include "sdcard.h"
+#include "ff.h"
 
 
 ///****************LED****************///
-
+#if 1
 #define D0 SIU.GPDO[12].B.PDO
 #define D1 SIU.GPDO[13].B.PDO
 #define D2 SIU.GPDO[14].B.PDO
 #define D3 SIU.GPDO[15].B.PDO
+#endif
 
 
 #endif
