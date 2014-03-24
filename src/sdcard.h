@@ -3,8 +3,8 @@
 
 
 #define SD_SECTOR_SIZE (512)
-
-extern uint8_t sd_buffer[];
+#define SD_BUFFER_SECTOR_MAX (20)
+extern uint8_t sd_buffer[SD_BUFFER_SECTOR_MAX][SD_SECTOR_SIZE];
 
 extern void init_DSPI_2(void);
 extern void init_DSPI_1(void);
@@ -23,5 +23,6 @@ extern void SD_SPI_to_4M(void);
 extern void clear_sd_buffer(uint8_t *buffer);
 extern uint8_t SD_read_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_SECTOR_SIZE]);
 extern uint8_t SD_write_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_SECTOR_SIZE]);
+
 
 #endif

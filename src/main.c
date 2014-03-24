@@ -3,7 +3,7 @@
 
 int main(void)
 {
-	int m;
+	int i, j;
 	
 	disable_watchdog();
 	init_modes_and_clock();
@@ -24,34 +24,81 @@ int main(void)
 	SD_SPI_to_4M();
 	
 	//clear_sd_buffer(sd_buffer);//Çå¿Õ½ÓÊÕ»º³åÆ÷
-	for (m=0; m<512; m++)
+
+	for (i=0; i<SD_BUFFER_SECTOR_MAX; i++)
 	{
-		sd_buffer[m] = 'A';
+		for (j=0; j<SD_SECTOR_SIZE; j++)
+		{
+			sd_buffer[i][j] = 0;
+		}
 	}
-	if(!SD_write_block(512, sd_buffer))
-	{
-		D0 = 0;
-	}
-	else
-	{
-		D0 = 1;
-	}
-	
-	if(!SD_read_block(512, sd_buffer))
+	if (!SD_read_multiple_block(512, SD_BUFFER_SECTOR_MAX, sd_buffer))
 	{
 		D1 = 0;
 	}
-	
-	for (m=0; m<512; m++)
+	D2 = 0;
+	for (i=0; i<SD_BUFFER_SECTOR_MAX; i++)
 	{
-		if (sd_buffer[m] == 'A')
+		//SD_read_block(512+i, sd_buffer[i]);
+		for (j=0; j<SD_SECTOR_SIZE; j++)
 		{
-			D2 = 0;
+			if (sd_buffer[i][j] != (uint8_t)i+'A')
+			{
+				D2 = 1;
+			}
 		}
-		else
+	}
+	
+	for (i=0; i<SD_BUFFER_SECTOR_MAX; i++)
+	{
+		for (j=0; j<SD_SECTOR_SIZE; j++)
 		{
-			D2 = 1;
+			sd_buffer[i][j] = (uint8_t)i+'A';
 		}
+	}
+	if (!SD_write_multiple_block(512, SD_BUFFER_SECTOR_MAX, sd_buffer))
+	{
+		D0 = 0;
+	}
+	
+	D0 = 1;
+	D1 = 1;
+	D2 = 1;
+	
+	for (i=0; i<SD_BUFFER_SECTOR_MAX; i++)
+	{
+		for (j=0; j<SD_SECTOR_SIZE; j++)
+		{
+			sd_buffer[i][j] = 0;
+		}
+	}
+	if (!SD_read_multiple_block(512, SD_BUFFER_SECTOR_MAX, sd_buffer))
+	{
+		D1 = 0;
+	}
+	D2 = 0;
+	for (i=0; i<SD_BUFFER_SECTOR_MAX; i++)
+	{
+		//SD_read_block(512+i, sd_buffer[i]);
+		for (j=0; j<SD_SECTOR_SIZE; j++)
+		{
+			if (sd_buffer[i][j] != (uint8_t)i+'A')
+			{
+				D2 = 1;
+			}
+		}
+	}
+	
+	for (i=0; i<SD_BUFFER_SECTOR_MAX; i++)
+	{
+		for (j=0; j<SD_SECTOR_SIZE; j++)
+		{
+			sd_buffer[i][j] = (uint8_t)i+'A';
+		}
+	}
+	if (!SD_write_multiple_block(512, SD_BUFFER_SECTOR_MAX, sd_buffer))
+	{
+		D0 = 0;
 	}
 	
 	/* Loop forever */
@@ -63,8 +110,8 @@ int main(void)
 			uint8_t tmp_rev;
 			
 			f_pit = 0;
-			D3 = ~D3;\
-			//DSPI_2_TX(0x8801, 0x5678);\
+			D3 = ~D3;
+			//DSPI_2_TX(0x8801, 0x5678);
 		}
 		*/
 		

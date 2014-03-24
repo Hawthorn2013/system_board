@@ -1,7 +1,7 @@
 #include "includes.h"
 
 
-uint8_t sd_buffer[SD_SECTOR_SIZE] = "";
+uint8_t sd_buffer[SD_BUFFER_SECTOR_MAX][SD_SECTOR_SIZE];
 
 //***********主机****************
 void init_DSPI_2(void) {
@@ -208,16 +208,14 @@ uint8_t SD_read_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD_
 	uint16_t i;
 	uint32_t j;
 	
-	rev = SD_send_cmd(18, sector<<9);  //读命令,发送CMD17,收到0x00表示成功 	
+	rev = SD_send_cmd(18, sector<<9);  //读命令,发送CMD18,收到0x00表示成功 	
 	if(rev != 0x00)
 	{
 		return rev;
 	}
-	
-	//等数据的开始
-	while(DSPI_read_write_byte(0xFF) != 0xFE){}//连续读直到读到开始字节0xfe
 	for (j=0; j<n; j++)
 	{
+		while(DSPI_read_write_byte(0xFF) != 0xFE){}	//连续读直到读到开始字节0xfe
 		for(i=0; i<SD_SECTOR_SIZE; i++)	//读512个数据，写入数据缓冲区
 		{
 			buffer[j][i] = DSPI_read_write_byte(0xFF);
@@ -237,10 +235,6 @@ uint8_t SD_write_block(uint32_t sector, uint8_t *buffer)	//sector=address,buffer
 	uint8_t rev;
 	uint16_t i;
 	
-	if(sector<1)
-	{
-		return 0xff;	//为了保护SD卡引导区，跳过该区
-	}
 	rev = SD_send_cmd(24, sector<<9);	//写命令,sector<<9:将地址左移9位,address=address*512,将块地址（扇区地址）转为字节地址
 	if(rev != 0x00)
 	{
@@ -278,10 +272,6 @@ uint8_t SD_write_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD
 	uint16_t i;
 	uint32_t j;
 	
-	if(sector<1)
-	{
-		return 0xff;	//为了保护SD卡引导区，跳过该区
-	}
 	rev = SD_send_cmd(25, sector<<9);	//连续写命令
 	if(rev != 0x00)
 	{
@@ -290,9 +280,9 @@ uint8_t SD_write_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD
 	DSPI_read_write_byte(0xff);
 	DSPI_read_write_byte(0xff);
 	//DSPI_read_write_byte(0xff);
-	DSPI_read_write_byte(0xfc);	//发开始符
 	for(j=0; j<n; j++)
 	{
+		DSPI_read_write_byte(0xfc);	//发开始符
 		for(i=0; i<SD_SECTOR_SIZE; i++)	//送512字节数据
 		{
 			DSPI_read_write_byte(buffer[j][i]);
@@ -307,6 +297,9 @@ uint8_t SD_write_multiple_block(uint32_t sector, uint32_t n, uint8_t buffer[][SD
 		//等待操作完
 		while(!DSPI_read_write_byte(0xFF)){}	//等待SD卡不忙
 	}
+	DSPI_read_write_byte(0xfb);	//结束命令
+	while(!DSPI_read_write_byte(0xFF)){}
+	//SD_send_cmd(12, 0);	//发送CMD12停止传输
 	DSPI_send_8_clocks();	//按SD卡操作时序补8个时钟
 	
 	return 0;	//说明写扇区操作成功
