@@ -22,7 +22,7 @@ void init_modes_and_clock(void)
     while(ME.GS.B.S_CURRENTMODE != 4) {} //Verify RUN0 is the current mode 等待选择RUN0模式
   
   //开peri0、1、2
-	CGM.SC_DC[0].R = 0x80;//LIN
+	CGM.SC_DC[0].R = 0x84;//LIN
 	CGM.SC_DC[1].R = 0x80;//FLEXCAN,DSPI
     CGM.SC_DC[2].R = 0x80;//eMIOS,CTU,ADC
 }
@@ -141,8 +141,13 @@ void init_serial_port_0(void)
 	/*波特率算法baud=Fperiph_clk/(16*LFDIV)
 	DIV_M=LFDIV整数部分
 	DIV_F=LFDIV小数部分*16  */ 	
+#ifndef PERIPH_SET_1_CLK_16M	//80M
 	LINFLEX_0.LINIBRR.B.DIV_M= 43;  	//波特率设置38400:80M-130+3 57600:80M-86+13 115200:80M-43+6  9600:80M-520+83
     LINFLEX_0.LINFBRR.B.DIV_F = 6;		//38400:64M-104+3
+#else
+	LINFLEX_0.LINIBRR.B.DIV_M= 8;	//波特率设置 2400:416+11, 9600:104+3, 10417:96+0, 19200:52+1, 57600:17+6
+    LINFLEX_0.LINFBRR.B.DIV_F =11;	//波特率设置 115200:8+11, 230400:4+5, 460800:2+3, 921600:1+1
+#endif
     LINFLEX_0.UARTCR.B.UART=1;
 	LINFLEX_0.UARTCR.R=0x00000033;//8-bit data、UART mode
 	LINFLEX_0.LINCR1.B.INIT=0; //退出初始化模式
@@ -176,14 +181,12 @@ void init_serial_port_1(void)
 {
 	LINFLEX_1.LINCR1.B.INIT=1;	//进入初始化模式
 	LINFLEX_1.LINCR1.R=0x00000011;
-#if 1	//80M
-	LINFLEX_1.LINIBRR.B.DIV_M= 520;	//波特率设置38400:80M-130+3  115200:80M-43+6
-    LINFLEX_1.LINFBRR.B.DIV_F =83;	//57600:80M-86+81
-#endif
-
-#if 0	//16M
-	LINFLEX_1.LINIBRR.B.DIV_M= 8;	//波特率设置115200:16M-8+11
-    LINFLEX_1.LINFBRR.B.DIV_F =11;
+#ifndef PERIPH_SET_1_CLK_16M
+	LINFLEX_1.LINIBRR.B.DIV_M= 520;
+    LINFLEX_1.LINFBRR.B.DIV_F =83;
+#else
+	LINFLEX_1.LINIBRR.B.DIV_M= 104;	//波特率设置115200:16M-8+11
+    LINFLEX_1.LINFBRR.B.DIV_F = 3;
 #endif
 
     LINFLEX_1.UARTCR.B.UART=1;
@@ -202,8 +205,6 @@ void init_serial_port_1(void)
 
 void serial_port_1_TX(unsigned char data)
 {
- 
-
 	LINFLEX_1.BDRL.B.DATA0=data;	//发送语句
 	while(!LINFLEX_1.UARTSR.B.DTF){}	//等待数据发送完成
 	LINFLEX_1.UARTSR.B.DTF=1;	//清空标志位
@@ -226,8 +227,13 @@ void init_serial_port_2(void)
 	LINFLEX_2.LINCR1.B.INIT=1;
 	LINFLEX_2.LINCR1.R=0x00000011; 
 	LINFLEX_2.LINIER.B.DRIE=1;
+#ifndef PERIPH_SET_1_CLK_16M
 	LINFLEX_2.LINIBRR.B.DIV_M= 520;
     LINFLEX_2.LINFBRR.B.DIV_F = 83;
+#else
+	LINFLEX_2.LINIBRR.B.DIV_M= 104;
+    LINFLEX_2.LINFBRR.B.DIV_F = 3;
+#endif
     LINFLEX_2.UARTCR.B.UART=1;
 	LINFLEX_2.UARTCR.R=0x00000033;
 	LINFLEX_2.LINCR1.B.INIT=0;
@@ -262,8 +268,13 @@ void init_serial_port_3(void)
 	LINFLEX_3.LINCR1.B.INIT=1;
 	LINFLEX_3.LINCR1.R=0x00000011; 
 	LINFLEX_3.LINIER.B.DRIE=1;
+#ifndef PERIPH_SET_1_CLK_16M
 	LINFLEX_3.LINIBRR.B.DIV_M= 520;
     LINFLEX_3.LINFBRR.B.DIV_F = 83;
+#else
+	LINFLEX_3.LINIBRR.B.DIV_M= 104;
+    LINFLEX_3.LINFBRR.B.DIV_F = 3;
+#endif
     LINFLEX_3.UARTCR.B.UART=1;
 	LINFLEX_3.UARTCR.R=0x00000033;
 	LINFLEX_3.LINCR1.B.INIT=0;
@@ -445,12 +456,23 @@ void init_optical_encoder(void)	//PD12模数计数器入口，上升沿
 
 
 //****************延时******************
-void delayms(int ms)
-{   
-   int ii,jj;
-   if (ms<1) ms=1;
-   for(ii=0;ii<ms;ii++)
-     for(jj=0;jj<20000;jj++){}//1ms      
+void delay_us(DWORD us)	//依赖总线80M
+{
+	volatile int i, j;
+	
+	for (i = 0; i < us; i++)
+	{
+		for (j = 0; j < 9; j++) {}
+	}
 }
 
 
+void delay_ms(DWORD ms)
+{
+	int i;
+	
+	for (i = 0; i < ms; i++)
+	{
+		delay_us(1000);
+	}
+}

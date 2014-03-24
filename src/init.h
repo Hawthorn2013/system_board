@@ -2,6 +2,8 @@
 #define __INIT_H__
 
 
+#define PERIPH_SET_1_CLK_16M
+
 extern void init_modes_and_clock(void);
 extern void disable_watchdog(void);
 extern void initEMIOS_0MotorAndSteer(void);
@@ -33,6 +35,8 @@ extern void init_supersonic_receive_0(void);
 extern void intc_get_supersonic_time_0(void);
 
 extern void init_optical_encoder(void);
-extern void delayms(int ms);
+void delay_us(DWORD us);
+void delay_ms(DWORD ms);
+
 
 #endif
