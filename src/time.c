@@ -29,6 +29,12 @@ void init_I2C(void)
 }
 
 
+void disable_I2C(void)
+{
+	I2C.IBCR.B.MDIS = 1;
+}
+
+
 void I2C_send_byte(BYTE data)
 {
 	I2C.IBCR.B.TX = 1;

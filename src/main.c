@@ -45,15 +45,26 @@ int main(void)
 	/* Loop forever */
 	for (;;)
 	{
-#if 1
-		init_I2C();
-		serial_port_0_TX((BYTE)I2C_read_byte_from_time_module_3(0x02, test, 3));
-		serial_port_0_TX(test[0]);
-		serial_port_0_TX(test[1]);
-		serial_port_0_TX(test[2]);
-
+		if (g_serial_port_0_f==1)
+		{
+			g_serial_port_0_f=0;
+			if (g_serial_port_0_data=='T')
+			{
+				init_I2C();
+				serial_port_0_TX((BYTE)I2C_read_byte_from_time_module_3(0x02, test, 7));
+				disable_I2C();
+				serial_port_0_TX(test[0]);
+				serial_port_0_TX(test[1]);
+				serial_port_0_TX(test[2]);
+				serial_port_0_TX(test[3]);
+				serial_port_0_TX(test[4]);
+				serial_port_0_TX(test[5]);
+				serial_port_0_TX(test[6]);
+				D0 = ~ D0;
+			}
+		}
+		D0 = ~ D0;
 		delay_ms(900);
-#endif
 	}
 }
 

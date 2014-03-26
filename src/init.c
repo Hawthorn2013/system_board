@@ -1,6 +1,10 @@
 #include "includes.h"
 
 
+int g_serial_port_0_f = 0;
+BYTE g_serial_port_0_data;
+
+
 void init_modes_and_clock(void) 
 {
     ME.MER.R = 0x0000001D;          //Enable DRUN, RUN0, SAFE, RESET modes
