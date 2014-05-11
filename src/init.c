@@ -176,6 +176,8 @@ void intc_serial_port_0_RX(void)
 	
 	while(!LINFLEX_0.UARTSR.B.DRF){}
 	rev_ch = (BYTE)LINFLEX_0.BDRM.B.DATA4;
+	g_serial_port_0_f = 1;
+	g_serial_port_0_data = rev_ch;
 	LINFLEX_0.UARTSR.B.DRF=1;      //清空标志位
 }
 

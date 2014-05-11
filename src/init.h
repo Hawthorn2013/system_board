@@ -7,7 +7,6 @@
 extern int g_serial_port_0_f;
 extern BYTE g_serial_port_0_data;
 
-
 extern void init_modes_and_clock(void);
 extern void disable_watchdog(void);
 extern void initEMIOS_0MotorAndSteer(void);
