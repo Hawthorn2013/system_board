@@ -154,9 +154,10 @@ void init_serial_port_3(void)
 	LINFLEX_3.UARTCR.R=0x00000033;
 	LINFLEX_3.LINCR1.B.INIT=0;
 	
-	SIU.PCR[74].R = 0x0400;	/* MPC56xxB: Configure port E10 as LIN0TX */
-    //SIU.PCR[75].R = 0x0103;	/* MPC56xxB: Configure port E11 as LIN0RX */	//特殊 涉及到引脚复用
-  	//INTC_InstallINTCInterruptHandler(intc_serial_port_3_RX, 122, 2); 
+	SIU.PCR[74].R = 0x0400;	//LINFLEX_3 TX PE10
+    SIU.PCR[75].R = 0x0103;	//LINFLEX_3 RX PE11 涉及到引脚复用
+  	SIU.PSMI[31].R = 1;
+  	INTC_InstallINTCInterruptHandler(intc_serial_port_3_RX, 122, 2); 
 }
 
 

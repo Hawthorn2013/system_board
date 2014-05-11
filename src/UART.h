@@ -11,15 +11,15 @@ extern void intc_serial_port_0_RX(void);
 
 extern void init_serial_port_1(void);
 extern void serial_port_1_TX(BYTE data);
-extern void intc_serial_port_1_RX();
+extern void intc_serial_port_1_RX(void);
 
 extern void init_serial_port_2(void);
 extern void serial_port_2_TX(BYTE data);
-extern void intc_serial_port_2_RX();
+extern void intc_serial_port_2_RX(void);
 
 extern void init_serial_port_3(void);
 extern void serial_port_3_TX(BYTE data);
-extern void intc_serial_port_3_RX();
+extern void intc_serial_port_3_RX(void);
 
 
 #endif

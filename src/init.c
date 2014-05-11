@@ -98,15 +98,15 @@ void initEMIOS_0MotorAndSteer(void)
 	EMIOS_0.CH[21].CCR.B.BSL = 0x1;	/* Use counter bus D (default) */
 	EMIOS_0.CH[21].CCR.B.MODE = 0x60;/* Mode is OPWM Buffered */
     EMIOS_0.CH[21].CCR.B.EDPOL = 1;	/* Polarity-leading edge sets output/trailing clears*/
-	EMIOS_0.CH[21].CADR.R = 1;///* Leading edge when channel counter bus=250*/
-	EMIOS_0.CH[21].CBDR.R =1;/* Trailing edge when channel counter bus=500*/
+	EMIOS_0.CH[21].CADR.R = 0;///* Leading edge when channel counter bus=250*/
+	EMIOS_0.CH[21].CBDR.R = 0;/* Trailing edge when channel counter bus=500*/
 	SIU.PCR[69].R = 0x0600;    //[11:10]选择AFx 此处AF1 /* MPC56xxS: Assign EMIOS_0 ch 21 to pad */
 	/* EMIOS 0 CH 22后退输出: OPWMB */
 	EMIOS_0.CH[22].CCR.B.BSL = 0x1;	/* Use counter bus D (default) */
 	EMIOS_0.CH[22].CCR.B.MODE = 0x60; /* Mode is OPWM Buffered */
     EMIOS_0.CH[22].CCR.B.EDPOL = 1;	/* Polarity-leading edge sets output/trailing clears*/
-	EMIOS_0.CH[22].CADR.R = 1;///* Leading edge when channel counter bus=250*/
-	EMIOS_0.CH[22].CBDR.R = 1; /* Trailing edge when channel counter bus=500*/
+	EMIOS_0.CH[22].CADR.R = 0;///* Leading edge when channel counter bus=250*/
+	EMIOS_0.CH[22].CBDR.R = 0; /* Trailing edge when channel counter bus=500*/
 	SIU.PCR[70].R = 0x0600;    //[11:10]选择AFx 此处AF1 /* MPC56xxS: Assign EMIOS_0 ch 21 to pad */
 	
   /**********舵机PWM 50HZ A9口输出0-20000**********/
@@ -122,8 +122,16 @@ void initEMIOS_0MotorAndSteer(void)
 	EMIOS_0.CH[9].CCR.B.MODE = 0x60; /* Mode is OPWM Buffered */  
     EMIOS_0.CH[9].CCR.B.EDPOL = 1;	/* Polarity-leading edge sets output/trailing clears*/
 	EMIOS_0.CH[9].CADR.R = 1;///* Leading edge when channel counter bus=250*/
-	EMIOS_0.CH[9].CBDR.R = STEER_HELM_TEST;/* Trailing edge when channel counter bus=500*/
+	EMIOS_0.CH[9].CBDR.R = STEER_HELM_CENTER;/* Trailing edge when channel counter bus=500*/
 	SIU.PCR[9].R = 0x0600;    //[11:10]选择AFx 此处AF1 /* MPC56xxS: Assign EMIOS_0 ch 21 to pad */
+	
+	//信号舵机初始化
+	EMIOS_0.CH[12].CCR.B.BSL = 0x1;
+	EMIOS_0.CH[12].CCR.B.MODE = 0x60;  
+    EMIOS_0.CH[12].CCR.B.EDPOL = 1;
+	EMIOS_0.CH[12].CADR.R = 1;
+	EMIOS_0.CH[12].CBDR.R = SINGLE_HELM_CENTER;
+	SIU.PCR[44].R = 0x0600;
 }
 
 
@@ -136,118 +144,7 @@ void enable_irq(void)
 
 
 
-//**********************超声0***************************
-void init_supersonic_trigger_0(void)
-{
-	EMIOS_0.CH[3].CCR.B.BSL = 0x3;
-	EMIOS_0.CH[3].CCR.B.UCPRE=0;
-	EMIOS_0.CH[3].CCR.B.UCPEN = 1;
-	EMIOS_0.CH[3].CCR.B.FREN = 0;
-	EMIOS_0.CH[3].CCR.B.EDPOL=0;
-	EMIOS_0.CH[3].CCR.B.EDSEL = 0;
-	EMIOS_0.CH[3].CCR.B.FEN=0;
-	
-	EMIOS_0.CH[3].CADR.B;
-	SIU.PCR[3].R =0x0603;	//trigger A3
-	
-	EMIOS_0.CH[3].CADR.B.CADR = 0x0000ff;
-	
-	EMIOS_0.CH[3].CCR.B.MODE = 0x03;
-}
 
-
-void init_supersonic_trigger_1(void)
-{
-	EMIOS_0.CH[0].CCR.B.BSL = 0x3;
-	EMIOS_0.CH[0].CCR.B.UCPRE=0;
-	EMIOS_0.CH[0].CCR.B.UCPEN = 1;
-	EMIOS_0.CH[0].CCR.B.FREN = 0;
-	EMIOS_0.CH[0].CCR.B.EDPOL=0;
-	EMIOS_0.CH[0].CCR.B.EDSEL = 0;
-	EMIOS_0.CH[0].CCR.B.FEN=0;
-	
-	EMIOS_0.CH[0].CADR.B;
-	SIU.PCR[0].R =0x0603;	//trigger A0
-	
-	EMIOS_0.CH[0].CADR.B.CADR = 0x0000ff;
-	
-	EMIOS_0.CH[0].CCR.B.MODE = 0x03;
-}
-
-
-void init_supersonic_trigger_2(void)
-{
-	EMIOS_0.CH[5].CCR.B.BSL = 0x3;
-	EMIOS_0.CH[5].CCR.B.UCPRE=0;
-	EMIOS_0.CH[5].CCR.B.UCPEN = 1;
-	EMIOS_0.CH[5].CCR.B.FREN = 0;
-	EMIOS_0.CH[5].CCR.B.EDPOL=0;
-	EMIOS_0.CH[5].CCR.B.EDSEL = 0;
-	EMIOS_0.CH[5].CCR.B.FEN=0;
-	
-	EMIOS_0.CH[5].CADR.B;
-	SIU.PCR[5].R =0x0603;	//trigger A5
-	
-	EMIOS_0.CH[5].CADR.B.CADR = 0x0000ff;
-	
-	EMIOS_0.CH[5].CCR.B.MODE = 0x03;
-}
-
-
-void init_supersonic_receive_0(void)
-{
-	EMIOS_0.CH[2].CCR.B.MODE = 0x04; // Mode is Input Pulse Width Measurement 
-	EMIOS_0.CH[2].CCR.B.BSL = 0x3;   // Use internal counter
-	EMIOS_0.CH[2].CCR.B.UCPRE=0; //Set channel prescaler to divide by 1
-	EMIOS_0.CH[2].CCR.B.UCPEN = 1;	//Enable prescaler; uses default divide by 1
-	EMIOS_0.CH[2].CCR.B.FREN = 0;	//Freeze channel counting when in debug mode
-	EMIOS_0.CH[2].CCR.B.EDPOL=1; //Edge Select rising edge
-	EMIOS_0.CH[2].CCR.B.FEN=1;  //interupt enbale
-
-	SIU.PCR[2].R = 0x0100;  //E   A2
-	INTC_InstallINTCInterruptHandler(intc_get_supersonic_time_0, 142, 4);
-}
-
-
-void trigger_supersonic_0(void)
-{
-	EMIOS_0.CH[3].CCR.B.MODE = 0x01;
-	EMIOS_0.CH[3].CCR.B.MODE = 0x03;
-}
-
-
-void intc_get_supersonic_time_0(void)
-{
-	DWORD tmp_a, tmp_b;
-	union {
-		DWORD R;
-		struct {
-			BYTE byte_0;
-			BYTE byte_1;
-			BYTE byte_2;
-			BYTE byte_3;
-		} B;
-	} tmp_time;
-	
-	tmp_time.R = 0x00000000;	//躲过未初始化警告
-	tmp_a = EMIOS_0.CH[2].CADR.R;
-	tmp_b = EMIOS_0.CH[2].CBDR.R;
-	
-	if(tmp_a >= tmp_b)
-	{
-		tmp_time.R = tmp_a - tmp_b;
-	}
-	else
-	{
-		tmp_time.R = 0x00ffffff - tmp_b + tmp_a;
-	}
-	
-	EMIOS_0.CH[2].CSR.B.FLAG = 1;	//清除中断标志位
-	
-	//关中断
-	//EMIOS_0.CH[2].CCR.B.FEN = 0;
-	//EMIOS_0.CH[4].CCR.B.FEN = 0;
-}
 
 
 //**********************判断大端小端***************************

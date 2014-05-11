@@ -3,7 +3,7 @@
 
 
 #define PERIPH_SET_1_CLK_16M
-
+#define STEER_HELM_DATA (EMIOS_0.CH[9].CBDR.R)
 
 extern void init_modes_and_clock(void);
 extern void disable_watchdog(void);
@@ -15,10 +15,7 @@ extern void enable_irq(void);
 extern int is_big_endian();
 
 
-extern void init_supersonic_trigger_0(void);
-extern void trigger_supersonic_0(void);
-extern void init_supersonic_receive_0(void);
-extern void intc_get_supersonic_time_0(void);
+
 
 extern void init_optical_encoder(void);
 void delay_us(DWORD us);
