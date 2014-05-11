@@ -3,8 +3,14 @@
 
 int main(void)
 {
-	BYTE test[16] = {0xbc, 0xbc, 0xbc, 0xbc, 0xbc, 0xbc, 0xbc, 0xbc, 0xbc, 0xbc, 0xbc, 0xbc, 0xbc, 0xbc, 0xbc, 0xbc, }, test_1 = 0x6b;
-	BYTE test_2[10] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	FATFS fatfs;
+	FIL fil;
+	TCHAR *path = "0:";
+	TCHAR *tchar = "test.txt";
+	BYTE input[] = "I am Jian Jiao.";
+	UINT bw;
+	
+	
 	disable_watchdog();
 	init_modes_and_clock();
 	//initEMIOS_0MotorAndSteer();
@@ -16,49 +22,27 @@ int main(void)
 	//init_supersonic_receive_0();
 	//init_supersonic_trigger_0();
 	//init_optical_encoder();
-	//init_DSPI_2();
-	//init_DSPI_1();
+	init_DSPI_1();
 	//init_I2C();
 	enable_irq();
 
-	//SD_init();
-	init_I2C();
+	SD_init();
+	initLCD();
 	
 	/* Loop forever */
 	for (;;)
 	{
-		if (g_serial_port_0_f==1)
+		if (f_mount(&fatfs, path, 1) == FR_OK)
 		{
-			g_serial_port_0_f=0;
-			switch (g_serial_port_0_data)
-			{
-				case 'T':
-				serial_port_0_TX((BYTE)I2C_write_byte_to_time_module_2(0x02, test_2, 7));
-				break;
-				case 'R':
-				serial_port_0_TX((BYTE)I2C_read_byte_from_time_module_2(0x00, test, 16));
-				serial_port_0_TX(test[0]);
-				serial_port_0_TX(test[1]);
-				serial_port_0_TX(test[2]);
-				serial_port_0_TX(test[3]);
-				serial_port_0_TX(test[4]);
-				serial_port_0_TX(test[5]);
-				serial_port_0_TX(test[6]);
-				serial_port_0_TX(test[7]);
-				serial_port_0_TX(test[8]);
-				serial_port_0_TX(test[9]);
-				serial_port_0_TX(test[10]);
-				serial_port_0_TX(test[11]);
-				serial_port_0_TX(test[12]);
-				serial_port_0_TX(test[13]);
-				serial_port_0_TX(test[14]);
-				serial_port_0_TX(test[15]);
-
-				break;
-			}
+			D0 = ~D0;
 		}
-		D0 = ~ D0;
-		delay_ms(900);
+		f_open(&fil, tchar, FA_CREATE_ALWAYS);
+		f_close(&fil);
+		f_open(&fil, tchar, FA_WRITE);
+		f_write(&fil, (const void *)input, 16, &bw);
+		f_sync(&fil);
+		f_mount((void *)0, path, 1);
+		LCD_DISPLAY();
 	}
 }
 

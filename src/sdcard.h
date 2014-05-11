@@ -5,9 +5,6 @@
 #define SD_SECTOR_SIZE (512)
 #define SD_BUFFER_SECTOR_MAX (20)
 
-//extern BYTE sd_buffer[SD_BUFFER_SECTOR_MAX][SD_SECTOR_SIZE];
-
-extern void init_DSPI_2(void);
 extern void init_DSPI_1(void);
 extern int SD_init(void);
 extern BYTE SD_read_block(DWORD sector, BYTE *buffer);

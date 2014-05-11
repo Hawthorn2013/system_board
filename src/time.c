@@ -7,8 +7,8 @@ void init_I2C(void)
 	I2C.IBAD.R = 0xa0;	//从机地址
 	I2C.IBCR.B.MDIS = 0;	//使能I2C
 	
-	SIU.PCR[10].R = 0x0b13;	//SDA PA10
-	SIU.PCR[11].R = 0x0b13;	//SCL PA11
+	SIU.PCR[10].R = 0x0b10;	//SDA PA10
+	SIU.PCR[11].R = 0x0b10;	//SCL PA11
 }
 
 

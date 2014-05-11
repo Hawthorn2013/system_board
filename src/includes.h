@@ -16,6 +16,18 @@ typedef unsigned short WORD;
 typedef unsigned int DWORD;
 #endif
 
+#if 0
+#ifndef _TYPEDEF_byte_
+#define _TYPEDEF_byte_
+typedef unsigned char byte;
+#endif
+
+#ifndef _TYPEDEF_word_
+#define _TYPEDEF_word_
+typedef unsigned short word;
+#endif
+#endif
+
 #include "MPC5604B_M27V.h"
 #include "init.h"
 #include "control.h"
@@ -23,6 +35,7 @@ typedef unsigned int DWORD;
 #include "sdcard.h"
 #include "ff.h"
 #include "time.h"
+#include "lcd.h"
 
 ///****************LED****************///
 #if 1

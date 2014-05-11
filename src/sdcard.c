@@ -2,77 +2,35 @@
 
 
 static void SD_SPI_to_4M(void);
-static void SD_SPI_to_10M(void);
-static void SD_SPI_to_20M(void);
-static void DSPI_2_TX(WORD cmd, WORD data);
 static void DSPI_send_8_clocks(void);
 static BYTE DSPI_read_write_byte(BYTE byte_write);
 static BYTE SD_reset(void);
 static BYTE SD_send_cmd(BYTE cmd, DWORD var);
 
 
-//BYTE sd_buffer[SD_BUFFER_SECTOR_MAX][SD_SECTOR_SIZE];
-
-//***********主机****************
-void init_DSPI_2(void) {
-	DSPI_2.MCR.R = 0x80010001;     /* Configure DSPI_0 as master */
-	DSPI_2.CTAR[0].R = 0x780A7727; /* Configure CTAR0  */	//用于发送16bits
-	DSPI_2.CTAR[1].R = 0x3E0A7729;	//用于发送8bits 调整极性为1，相位为1，调整波特率为低速31.35kbit/s
-	DSPI_2.MCR.B.HALT = 0x0;	     /* Exit HALT mode: go from STOPPED to RUNNING state*/
-	SIU.PCR[45].R = 0x0A04;        /* MPC56xxB: Config pad as DSPI_0 SOUT output */	//C13
-	SIU.PCR[44].R = 0x0103;        /* MPC56xxB: Config pad as DSPI_0 SIN input */	//C12
-	SIU.PCR[46].R = 0x0A04;        /* MPC56xxB: Config pad as DSPI_0 SCK output */	//C14
-	SIU.PCR[47].R = 0x0A04;        /* MPC56xxB: Config pad as DSPI_0 PCS0 output */	//C15
-	DSPI_2.RSER.B.TCFRE = 0;	//关闭传输完成中断
-	//INTC_InstallINTCInterruptHandler(INTC_DSPI_2_TC, 117, 3);
-}
-
-
-//*************从机********************
 void init_DSPI_1(void) {
-	DSPI_1.MCR.R = 0x00010001;     /* Configure DSPI_1 as slave */
-	DSPI_1.CTAR[0].R = 0x380A7727; /* Configure CTAR0  */	//用于接收8bits，0x780A7727用于接收16bits
+	DSPI_1.MCR.R = 0x803f0001;     /* Configure DSPI_0 as master */
+	DSPI_1.CTAR[0].R = 0x3E0A7729;	//TF卡 用于发送8bits 调整极性为1，相位为1，调整波特率为低速31.35kbit/s
+	DSPI_1.CTAR[1].R = 0x38087726;  //OLED SPI 极性为0，相位为0，baud rate=625Kbit/s
 	DSPI_1.MCR.B.HALT = 0x0;	     /* Exit HALT mode: go from STOPPED to RUNNING state*/
-	SIU.PCR[68].R = 0x0903;        /* MPC56xxB: Config pad as DSPI_1 SCK input */	//E4
-	SIU.PSMI[7].R = 1;             /* MPC56xxB: Select PCR 68 for DSPI_1 SCK input */
-	SIU.PCR[36].R = 0x0103;        /* MPC56xxB: Config pad as DSPI_1 SIN input */	//C4
-	SIU.PSMI[8].R = 0;             /* MPC56xxB: Select PCR 8 for DSPI_1 SIN input */
-	SIU.PCR[37].R = 0x0604;        /* MPC56xxB: Config pad as DSPI_1 SOUT output*/	//C5
-	SIU.PCR[69].R = 0x0903;        /* MPC56xxB: Config pad as DSPI_1 PCS0/SS input */	//E5
-	SIU.PSMI[9].R = 2;             /* MPC56xxB: Selec PCR 15 for DSPI_1 SS input */
-	DSPI_1.RSER.B.TCFRE = 0;
-	//INTC_InstallINTCInterruptHandler(INTC_DSPI_1_TC, 97, 3);
+	SIU.PCR[34].R = 0x0604;	//PC2 SCK_1
+	//SIU.PSMI[7].R = 0;	//SCK_1 PCR[34]
+	SIU.PCR[35].R = 0x0503;	//PC3 CS0_1
+	//SIU.PSMI[9].R = 0;	//CS0_1 PCR[35]
+	SIU.PCR[36].R = 0x0104;	//PC4 SIN_1
+	//SIU.PSMI[8].R = 0;	//SIN_1 PCR[36]
+	SIU.PCR[62].R = 0x0604;	//PD14 CS1_1
+	SIU.PCR[63].R = 0x0604;	//PD15 CS2_1
+	SIU.PCR[67].R = 0x0A04;	//PE3 SOUT_1
+	SIU.PCR[74].R = 0x0A04;	//PE10 CS3_1
+	SIU.PCR[75].R = 0x0A04;	//PE11 CS4_1
+	DSPI_1.RSER.B.TCFRE = 0;	//关闭传输完成中断
 }
 
 
 static void SD_SPI_to_4M(void)
 {
-	DSPI_2.CTAR[1].R = 0x3E0A7721;	//用于发送8bits 调整极性为1，相位为1，调整波特率为4M
-}
-
-
-//----------------不能用----------------//
-static void SD_SPI_to_20M(void)
-{
-	DSPI_2.CTAR[1].R = 0x3E087720;	//用于发送8bits 调整极性为1，相位为1，调整波特率为20M
-}
-
-
-static void SD_SPI_to_10M(void)
-{
-	DSPI_2.CTAR[1].R = 0x3E087721;	//用于发送8bits 调整极性为1，相位为1，调整波特率为20M
-}
-
-
-static void DSPI_2_TX(WORD cmd, WORD data)
-{
-	DWORD tmp_tx = 0x00000000;
-	
-	tmp_tx |= (DWORD)cmd<<16;
-	tmp_tx |= (DWORD)data;
-	DSPI_2.PUSHR.R = tmp_tx;
-	//while(!DSPI_2.SR.B.TCF){}	//不能加，否则导致未知问题，pit中断进不去
-	//DSPI_2.SR.B.TCF = 1;
+	DSPI_1.CTAR[1].R = 0x3E0A7721;	//用于发送8bits 调整极性为1，相位为1，调整波特率为4M
 }
 
 
@@ -83,10 +41,10 @@ static BYTE DSPI_read_write_byte(BYTE byte_write)
 	
 	tmp_tx |= 0x98010000;
 	tmp_tx |= (DWORD)byte_write;
-	DSPI_2.PUSHR.R = tmp_tx;
-	while(!DSPI_2.SR.B.TCF){}
-	tmp_rx = (WORD)DSPI_2.POPR.B.RXDATA;
-	DSPI_2.SR.B.TCF = 1;
+	DSPI_1.PUSHR.R = tmp_tx;
+	while(!DSPI_1.SR.B.TCF){}
+	tmp_rx = (WORD)DSPI_1.POPR.B.RXDATA;
+	DSPI_1.SR.B.TCF = 1;
 	
 	return (BYTE)tmp_rx;
 }
@@ -99,10 +57,10 @@ static void DSPI_send_8_clocks(void)
 	DWORD tmp_tx = 0x980000FF;
 	WORD tmp_rx;
 	
-	DSPI_2.PUSHR.R = tmp_tx;
-	while(!DSPI_2.SR.B.TCF){}
-	tmp_rx = (WORD)DSPI_2.POPR.B.RXDATA;
-	DSPI_2.SR.B.TCF = 1;
+	DSPI_1.PUSHR.R = tmp_tx;
+	while(!DSPI_1.SR.B.TCF){}
+	tmp_rx = (WORD)DSPI_1.POPR.B.RXDATA;
+	DSPI_1.SR.B.TCF = 1;
 }
 
 
