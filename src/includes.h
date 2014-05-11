@@ -36,6 +36,8 @@ typedef unsigned short word;
 #include "ff.h"
 #include "time.h"
 #include "lcd.h"
+#include "WiFi.h"
+#include "UART.h"
 
 ///****************LED****************///
 #if 1

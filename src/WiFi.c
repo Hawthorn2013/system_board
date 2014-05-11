@@ -1,34 +1,24 @@
 #include "includes.h"
 
 
-int main(void)
+void change_param(const BYTE * data)
 {
-	int count = 0;
-	//int data_length = 0;
-	//int rev_finish_f = 0;
-	BYTE cmd[16];
-		
-	disable_watchdog();
-	init_modes_and_clock();
-	initEMIOS_0MotorAndSteer();
-	//init_pit();
-	init_led();
-	init_serial_port_0();
-	//init_serial_port_1();
-	//init_serial_port_2();
-	//init_supersonic_receive_0();
-	//init_supersonic_trigger_0();
-	//init_optical_encoder();
-	//init_DSPI_1();
-	//init_I2C();
-	enable_irq();
-
-	//SD_init();
-	//initLCD();
-	
-	/* Loop forever */
-	for (;;)
+	int16_t rev_data = 0;
+			
+	if (data[0]==4 && data[1]==0x01 && data[2]==0x01)	//–ﬁ∏ƒint16_t¿‡–Õ
 	{
+		rev_data |= (int16_t)(data[3]);
+		rev_data |= (int16_t)(data[4])<<8;
+		EMIOS_0.CH[9].CBDR.R = (rev_data+50)*10;
+	}
+}
+
+
+
+
+
+
+#if 0
 		if (g_serial_port_0_f)
 		{
 			D0 = ~D0;
@@ -88,8 +78,5 @@ int main(void)
 			}
 			count = 0;
 		}
-	}
-}
-
-
-
+		
+#endif

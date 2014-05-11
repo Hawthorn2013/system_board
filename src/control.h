@@ -3,6 +3,7 @@
 
 ///****************¶æ»úpwm****************///
 #define STEER_HELM_CENTER (500)
+#define STEER_HELM_TEST (1500)
 
 ///****************ËÙ¶Èpwm****************///
 #define SPEED_PWM_MIN (3)
