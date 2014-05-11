@@ -11,6 +11,11 @@ typedef unsigned char BYTE;
 typedef unsigned short WORD;
 #endif
 
+#ifndef _TYPEDEF_SWORD_
+#define _TYPEDEF_SWORD_
+typedef signed short SWORD;
+#endif
+
 #ifndef _TYPEDEF_DWORD_
 #define _TYPEDEF_DWORD_
 typedef unsigned int DWORD;
@@ -38,6 +43,7 @@ typedef unsigned short word;
 #include "lcd.h"
 #include "WiFi.h"
 #include "UART.h"
+#include "L3G4200D.h"
 
 ///****************LED****************///
 #if 1
