@@ -39,6 +39,17 @@ void serial_port_0_TX(BYTE data)
 }
 
 
+void serial_port_0_TX_array(const BYTE data[], WORD n)
+{
+	int i = 0;
+	
+	for (i=0; i<n; i++)
+	{
+		serial_port_0_TX(data[i]);
+	}
+}
+
+
 void intc_serial_port_0_RX(void)
 {
 	BYTE rev_ch;

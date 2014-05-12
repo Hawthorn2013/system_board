@@ -35,7 +35,7 @@ BYTE L3G4200D_read_write_byte(BYTE data)
 {
 	uint32_t tmp_tx = 0x00000000;
 	BYTE tmp_rx;
-	tmp_tx |= 0xA8010000;
+	tmp_tx |= 0xA0010000;
 	tmp_tx |= (uint32_t)data;
 	DSPI_1.PUSHR.R = tmp_tx;
 	while(!DSPI_1.SR.B.TCF){}
@@ -44,70 +44,6 @@ BYTE L3G4200D_read_write_byte(BYTE data)
 	
 	return tmp_rx;
 }
-
-/*
-int L3G4200D_read_register(BYTE add, BYTE *data);
-int L3G4200D_write_register(BYTE add, BYTE data);
-
-
-void init_DSPI_L3G4200D(void)
-{
-	SIU.PCR[64].R = 0x0203;	//CS
-	SIU.GPDO[64].R = 1;
-	
-	SIU.PCR[59].R = 0x0223;	//DRDY
-	SIU.GPDO[59].R = 1;
-}
-
-
-void init_L3G4200D(void)
-{
-	L3G4200D_write_register(CTRL_REG1, 0x0f);
-	L3G4200D_write_register(CTRL_REG2, 0x00);
-	L3G4200D_write_register(CTRL_REG3, 0x08);
-	L3G4200D_write_register(CTRL_REG4, 0x30);  //+-2000dps
-	L3G4200D_write_register(CTRL_REG5, 0x00);
-}
-
-
-BYTE L3G4200D_read_write_byte(BYTE data)
-{
-	uint32_t tmp_tx = 0x00000000;
-	uint16_t tmp_rx;
-	//SIU.GPDO[64].R = 0;	//бЁжа
-	//delay_us(10);
-	tmp_tx |= 0xa8010000;
-	tmp_tx |= (uint32_t)data;
-	DSPI_1.PUSHR.R = tmp_tx;
-	while(!DSPI_1.SR.B.TCF){}
-	tmp_rx = (uint16_t)DSPI_1.POPR.B.RXDATA;
-	DSPI_1.SR.B.TCF = 1;
-	//SIU.GPDO[64].R = 1;
-	//delay_us(10);
-	
-	return (uint8_t)tmp_rx;
-}
-
-
-int L3G4200D_read_register(BYTE add, BYTE *data)
-{
-	L3G4200D_read_write_byte(add | 0x80);
-	*data = L3G4200D_read_write_byte(0xff);
-	
-	return 1;
-}
-
-
-int L3G4200D_write_register(BYTE add, BYTE data)
-{
-	L3G4200D_read_write_byte(add & 0x7f);
-	L3G4200D_read_write_byte(data);
-	
-	return 1;
-}
-*/
-
-
 
 /*******************************************************************************
 * Function Name		: ReadReg
@@ -121,8 +57,22 @@ u8_t ReadReg(u8_t Reg, u8_t* Data) {
 	
 	//To be completed with either I2c or SPI reading function
 	//i.e.: *Data = SPI_Mems_Read_Reg( Reg );
-	L3G4200D_read_write_byte(Reg | 0x80);
-	*Data = L3G4200D_read_write_byte(0xff);
+	uint32_t tmp_tx = 0x00000000;
+	BYTE tmp_rx;
+	
+	tmp_tx = 0xA0080000 | Reg | 0x80;
+	DSPI_1.PUSHR.R = tmp_tx;
+	while(!DSPI_1.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
+	DSPI_1.SR.B.TCF = 1;
+	
+	tmp_tx = 0x20080000 | 0xff;
+	DSPI_1.PUSHR.R = tmp_tx;
+	while(!DSPI_1.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
+	DSPI_1.SR.B.TCF = 1;
+	
+	*Data = tmp_rx;
 	
 	return 1;
 }
@@ -139,8 +89,20 @@ u8_t WriteReg(u8_t Reg, u8_t Data) {
     
 	//To be completed with either I2c or SPI writing function
 	//i.e.: //SPI_Mems_Write_Reg(Reg, Data);
-	L3G4200D_read_write_byte(Reg & 0x7f);
-	L3G4200D_read_write_byte(Data);
+	uint32_t tmp_tx = 0x00000000;
+	BYTE tmp_rx;
+	
+	tmp_tx = 0xA0080000 | (Reg & 0x7f);
+	DSPI_1.PUSHR.R = tmp_tx;
+	while(!DSPI_1.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
+	DSPI_1.SR.B.TCF = 1;
+	
+	tmp_tx = 0x20080000 | Data;
+	DSPI_1.PUSHR.R = tmp_tx;
+	while(!DSPI_1.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
+	DSPI_1.SR.B.TCF = 1;
 	
 	return 1;
 }
@@ -882,4 +844,25 @@ status_t SetSPIInterface(SPIMode_t spi) {
   
   
   return MEMS_SUCCESS;
+}
+
+
+BYTE TestWhoAmI(void)
+{
+	uint32_t tmp_tx = 0x00000000;
+	BYTE tmp_rx;
+	
+	tmp_tx = 0xA0080000 | WHO_AM_I | 0x80;
+	DSPI_1.PUSHR.R = tmp_tx;
+	while(!DSPI_1.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
+	DSPI_1.SR.B.TCF = 1;
+	
+	tmp_tx = 0x20080000 | 0xff;
+	DSPI_1.PUSHR.R = tmp_tx;
+	while(!DSPI_1.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
+	DSPI_1.SR.B.TCF = 1;
+	
+	return tmp_rx;
 }

@@ -3,6 +3,8 @@
 
 int main(void)
 {
+	int i = 0;
+	
 	disable_watchdog();
 	init_modes_and_clock();
 	initEMIOS_0MotorAndSteer();
@@ -22,35 +24,45 @@ int main(void)
 	//init_supersonic_trigger_3();
 	//init_optical_encoder();
 	init_DSPI_1();
-	//init_DSPI_L3G4200D();
-	//initLCD();
 	//init_I2C();
 	enable_irq();
 	
-	//init_L3G4200D();
 	//SD_init();
-	//initLCD();
-	//LCD_DISPLAY();
-	//delay_us(10);
-	//LCD_Fill(0xFF);
-	SetMode(NORMAL);
+	initLCD();
+	LCD_DISPLAY();
+	LCD_Fill(0x00);
+	for (i=0; i<5; i++)
+	{
+		BYTE rev;
+		
+		ReadReg(WHO_AM_I, &rev);
+		if (0xD3 == rev)
+		{
+			D0 = 0;
+			break;
+		}
+		SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
+		SetMode(NORMAL);
+	}
 	/* Loop forever */
 	for (;;)
 	{
-		//serial_port_0_TX(L3G4200D_read_write_byte(WHO_AM_I | 0x80));
-		serial_port_0_TX(L3G4200D_read_write_byte(0xff));
-		//BYTE rev = 0x00;
-		//WORD out_y = 0x0000;
+		u8_t status;
 		
-		//L3G4200D_read_register(OUT_X_L, &rev);
-		//out_y |= (WORD)rev;
-		//serial_port_0_TX(rev);
-		//L3G4200D_read_register(OUT_X_H, &rev);
-		//out_y |= ((WORD)rev)<<8;
-		//serial_port_0_TX(rev);
-		//LCD_PrintoutInt(86, 6, out_y);
-		//delay_ms(100);
-		//D0 = ~D0;
+		GetSatusReg(&status);
+		if (status & 80)
+		{
+			AngRateRaw_t rev;
+			GetAngRateRaw(&rev);
+			serial_port_0_TX_array((BYTE *)(&rev), sizeof(AngRateRaw_t));
+			delay_ms(3000);
+			LCD_PrintoutInt(0, 0, (int)(rev.x));
+			LCD_PrintoutInt(0, 2, (int)(rev.y));
+			LCD_PrintoutInt(0, 4, (int)(rev.z));
+		}
+		//serial_port_0_TX(TestWhoAmI());
+		
+		delay_ms(100);
 	}
 }
 

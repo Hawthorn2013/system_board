@@ -623,11 +623,21 @@ void LCD_PrintoutInt(BYTE x, BYTE y, int a)
      int i=0,j=0,t=0;
      BYTE m[100];
      BYTE p=0;
-     for(i=0;a!=0;i++)
+     //********焦剑修改********
+     //********不能显示0*******
+     if (0 == a)
      {
-          m[i]=(BYTE)(a%10+'0');	//avoid warming
-          a=a/10;
+     	m[i++]=(BYTE)'0';
      }
+     else
+     {
+     	for(i=0;a!=0;i++)
+     	{
+     	     m[i]=(BYTE)(a%10+'0');	//avoid warming
+     	     a=a/10;
+     	}
+     }
+     //********焦剑修改结束****
      m[i]='\0';
      j=i;
      if(j%2==0)
