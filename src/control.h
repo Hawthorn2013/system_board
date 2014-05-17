@@ -20,15 +20,28 @@
 
 extern int cnt_pit;
 extern int f_pit;
-typedef struct
+
+
+#ifdef __CONTROL_C_
+struct
 {
 	WORD cnt_old;
 	WORD cnt_new;
 	WORD speed_now;
 	int16_t speed_target;
 	int is_forward;
-} Data_encoder;
-extern Data_encoder data_encoder;
+} data_encoder = { 0x0000, 0x0000, 0x0000, 0, 0, };
+#else
+extern struct
+{
+	WORD cnt_old;
+	WORD cnt_new;
+	WORD speed_now;
+	int16_t speed_target;
+	int is_forward;
+} data_encoder;
+#endif
+
 
 
 extern void PitISR(void);

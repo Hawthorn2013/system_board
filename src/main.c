@@ -8,7 +8,7 @@ int main(void)
 	disable_watchdog();
 	init_modes_and_clock();
 	initEMIOS_0MotorAndSteer();
-	//init_pit();
+	init_pit();
 	init_led();
 	init_serial_port_0();
 	//init_serial_port_1();
@@ -22,7 +22,7 @@ int main(void)
 	//init_supersonic_trigger_1();
 	//init_supersonic_trigger_2();
 	//init_supersonic_trigger_3();
-	//init_optical_encoder();
+	init_optical_encoder();
 	init_DSPI_1();
 	//init_I2C();
 	enable_irq();
@@ -31,38 +31,24 @@ int main(void)
 	initLCD();
 	LCD_DISPLAY();
 	LCD_Fill(0x00);
-	for (i=0; i<5; i++)
-	{
-		BYTE rev;
-		
-		ReadReg(WHO_AM_I, &rev);
-		if (0xD3 == rev)
-		{
-			D0 = 0;
-			break;
-		}
-		SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
-		SetMode(NORMAL);
-	}
 	/* Loop forever */
 	for (;;)
 	{
-		u8_t status;
-		
-		GetSatusReg(&status);
-		if (status & 80)
+		for (i=0; i<3; i++)
 		{
-			AngRateRaw_t rev;
-			GetAngRateRaw(&rev);
-			serial_port_0_TX_array((BYTE *)(&rev), sizeof(AngRateRaw_t));
-			delay_ms(3000);
-			LCD_PrintoutInt(0, 0, (int)(rev.x));
-			LCD_PrintoutInt(0, 2, (int)(rev.y));
-			LCD_PrintoutInt(0, 4, (int)(rev.z));
+			LCD_PrintoutInt(0, 0, data_encoder.speed_now);
+			LCD_PrintoutInt(0, 2, data_encoder.is_forward);
+			set_speed_pwm(i*20);
+			delay_ms(2000);
 		}
-		//serial_port_0_TX(TestWhoAmI());
 		
-		delay_ms(100);
+		for (i=0; i<3; i++)
+		{
+			LCD_PrintoutInt(0, 0, data_encoder.speed_now);
+			LCD_PrintoutInt(0, 2, data_encoder.is_forward);
+			set_speed_pwm(-i*20);
+			delay_ms(2000);
+		}
 	}
 }
 

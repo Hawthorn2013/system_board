@@ -1,16 +1,9 @@
+#define __CONTROL_C_
 #include "includes.h"
 
 
 int cnt_pit = 0;
 int f_pit = 0;
-Data_encoder data_encoder = 
-{
-	0,
-	0,
-	0,
-	0,
-};
-
 
 void PitISR(void)
 {
@@ -19,6 +12,20 @@ void PitISR(void)
 		cnt_pit=0;
 		f_pit=1;
 	}
+	
+	//start:encoder
+	data_encoder.is_forward = SIU.GPDI[28].B.PDI;
+	data_encoder.cnt_old = data_encoder.cnt_new;
+	data_encoder.cnt_new = (WORD)EMIOS_0.CH[24].CCNTR.R;
+	if (data_encoder.cnt_new >= data_encoder.cnt_old)
+	{
+		data_encoder.speed_now = data_encoder.cnt_new - data_encoder.cnt_old;
+	}
+	else
+	{
+		data_encoder.speed_now = 0xffff - (data_encoder.cnt_old - data_encoder.cnt_new);
+	}
+	//end:encoder
 	
 	PIT.CH[1].TFLG.B.TIF = 1;	// MPC56xxB/P/S: Clear PIT 1 flag by writing 1 
 }
