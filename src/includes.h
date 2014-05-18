@@ -6,6 +6,11 @@
 typedef unsigned char BYTE;
 #endif
 
+#ifndef _TYPEDEF_SBYTE_
+#define _TYPEDEF_SBYTE_
+typedef signed char SBYTE;
+#endif
+
 #ifndef _TYPEDEF_WORD_
 #define _TYPEDEF_WORD_
 typedef unsigned short WORD;

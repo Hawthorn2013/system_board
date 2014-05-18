@@ -31,24 +31,14 @@ int main(void)
 	initLCD();
 	LCD_DISPLAY();
 	LCD_Fill(0x00);
+	
+	set_speed_target(40);
 	/* Loop forever */
 	for (;;)
 	{
-		for (i=0; i<3; i++)
-		{
-			LCD_PrintoutInt(0, 0, data_encoder.speed_now);
-			LCD_PrintoutInt(0, 2, data_encoder.is_forward);
-			set_speed_pwm(i*20);
-			delay_ms(2000);
-		}
-		
-		for (i=0; i<3; i++)
-		{
-			LCD_PrintoutInt(0, 0, data_encoder.speed_now);
-			LCD_PrintoutInt(0, 2, data_encoder.is_forward);
-			set_speed_pwm(-i*20);
-			delay_ms(2000);
-		}
+		LCD_PrintoutInt(0, 0, data_encoder.speed_now);
+		LCD_PrintoutInt(0, 2, data_encoder.is_forward);
+		contorl_speed_encoder_bb();
 	}
 }
 

@@ -5,6 +5,10 @@
 int cnt_pit = 0;
 int f_pit = 0;
 
+
+/*-----------------------------------------------------------------------*/
+/* PIT中断处理函数                                                       */
+/*-----------------------------------------------------------------------*/
 void PitISR(void)
 {
 	if(++cnt_pit>=200)
@@ -31,6 +35,9 @@ void PitISR(void)
 }
 
 
+/*-----------------------------------------------------------------------*/
+/* 设置速度PWM                                                           */
+/*-----------------------------------------------------------------------*/
 void set_speed_pwm(int16_t speed_pwm)	//speed_pwm正为向前，负为向后
 {
 	if (speed_pwm>0)	//forward
@@ -62,7 +69,9 @@ void set_speed_pwm(int16_t speed_pwm)	//speed_pwm正为向前，负为向后
 }
 
 
-///****************速度控制bangbang控制****************///
+/*-----------------------------------------------------------------------*/
+/* BangBang速度控制                                                      */
+/*-----------------------------------------------------------------------*/
 void contorl_speed_encoder_bb(void)
 {
 	int32_t tmp_speed_now;
@@ -77,12 +86,40 @@ void contorl_speed_encoder_bb(void)
 		tmp_speed_now = 0 - data_encoder.speed_now;
 	}
 	
-	if (tmp_speed_now > data_encoder.speed_target)
+	if (tmp_speed_now > data_speed_settings.speed_target)
 	{
 		set_speed_pwm(0 - SPEED_PWM_MAX);
 	}
-	else if (tmp_speed_now < data_encoder.speed_target)
+	else if (tmp_speed_now < data_speed_settings.speed_target)
 	{
 		set_speed_pwm(SPEED_PWM_MAX);
+	}
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* PID速度控制                                                           */
+/* 未实现                                                                */
+/*-----------------------------------------------------------------------*/
+void contorl_speed_encoder_pid(void)
+{
+	
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 设置目标速度                                                          */
+/*-----------------------------------------------------------------------*/
+void set_speed_target(SWORD speed_target)
+{
+	if (0 <= speed_target)
+	{
+		data_speed_settings.speed_target = speed_target;
+		data_encoder.is_forward = 1;
+	}
+	else
+	{
+		data_speed_settings.speed_target = (SWORD)(0 - speed_target);
+		data_encoder.is_forward = 0;
 	}
 }
