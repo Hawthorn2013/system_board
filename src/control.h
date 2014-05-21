@@ -2,16 +2,18 @@
 #define __CONTROL_H__
 
 
-/* 舵机PWM */
-#define STEER_HELM_CENTER (500)
+/* 方向舵机PWM */
+#define STEER_HELM_CENTER (800)
 #define STEER_HELM_TEST (1500)
+#define STEER_HELM_LEFT (3000)
+#define STEER_HELM_RIGHT (100)
 
 /* 信号舵机PWM */
 #define SINGLE_HELM_CENTER (50)
 
 /* 速度PWM */
-#define SPEED_PWM_MIN (3)
-#define SPEED_PWM_MAX (60)
+#define SPEED_PWM_MIN (1)
+#define SPEED_PWM_MAX (3199)
 #define SPEED_PWM_TEST (20)
 
 /* 速度光编 */
@@ -47,16 +49,16 @@ extern struct
 #ifdef __CONTROL_C_
 struct
 {
-	WORD p;
-	WORD i;
-	WORD d;
-} data_speed_pid = { 0x0000, 0x0000, 0x0000, };
+	float p;
+	float i;
+	float d;
+} data_speed_pid = { 15, 1, 5 };
 #else
 extern struct
 {
-	WORD p;
-	WORD i;
-	WORD d;
+	float p;
+	float i;
+	float d;
 } data_speed_pid;
 #endif
 
@@ -75,9 +77,16 @@ extern struct
 } data_speed_settings;
 #endif
 
+/* 方向舵机位置数据 */
+#ifdef __CONTROL_C_
+WORD helm_data_record = STEER_HELM_CENTER;
+#endif
+
 extern void PitISR(void);
 extern void set_speed_pwm(int16_t speed_pwm);
 extern void contorl_speed_encoder_bb(void);
 extern void set_speed_target(SWORD speed_target);
+extern void set_steer_helm(WORD helmData);
+
 
 #endif

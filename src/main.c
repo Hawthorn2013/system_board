@@ -11,7 +11,7 @@ int main(void)
 	init_pit();
 	init_led();
 	init_serial_port_0();
-	//init_serial_port_1();
+	init_serial_port_1();
 	//init_serial_port_2();
 	//init_serial_port_3();
 	//init_supersonic_receive_0();
@@ -32,13 +32,13 @@ int main(void)
 	LCD_DISPLAY();
 	LCD_Fill(0x00);
 	
-	set_speed_target(40);
+	set_speed_target(20);
+	
 	/* Loop forever */
 	for (;;)
 	{
-		LCD_PrintoutInt(0, 0, data_encoder.speed_now);
-		LCD_PrintoutInt(0, 2, data_encoder.is_forward);
-		contorl_speed_encoder_bb();
+		delay_ms(2);	/* 不加延时会停 */
+		contorl_speed_encoder_pid();
 	}
 }
 

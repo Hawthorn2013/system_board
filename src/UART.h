@@ -4,6 +4,8 @@
 
 extern int g_serial_port_0_f;
 extern BYTE g_serial_port_0_data;
+extern int g_serial_port_1_f;
+extern BYTE g_serial_port_1_data;
 
 extern void init_serial_port_0(void);
 extern void serial_port_0_TX(BYTE data);

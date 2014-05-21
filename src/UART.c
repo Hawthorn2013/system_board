@@ -4,6 +4,8 @@
 int g_serial_port_0_f = 0;
 BYTE g_serial_port_0_data;
 
+int g_serial_port_1_f = 0;
+BYTE g_serial_port_1_data;
 
 /*************************´®¿Ú0***********************/
 void init_serial_port_0(void)
@@ -103,7 +105,9 @@ void intc_serial_port_1_RX()
 	
 	while(!LINFLEX_1.UARTSR.B.DRF){}
 	rev_ch = (BYTE)LINFLEX_1.BDRM.B.DATA4;
-	LINFLEX_1.UARTSR.B.DRF = 1;
+	g_serial_port_1_f = 1;
+	g_serial_port_1_data = rev_ch;
+	LINFLEX_1.UARTSR.B.DRF=1;
 }
 
 

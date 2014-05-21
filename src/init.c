@@ -80,18 +80,18 @@ void init_encoder(void)	//PD12模数计数器入口，上升沿
 
 void initEMIOS_0MotorAndSteer(void)
 {
-  //eMIOS0初始化80MHz分为4MHz
-	EMIOS_0.MCR.B.GPRE= 19;   //GPRE+1=分频系数；/* Divide 80 MHz sysclk by 19+1 = 20 for 1MHz eMIOS clk*/
+  //eMIOS0初始化80MHz分为16MHz
+	EMIOS_0.MCR.B.GPRE= 4;	//19   //GPRE+1=分频系数；/* Divide 80 MHz sysclk by 4+1 = 5 for 16MHz eMIOS clk*/
 	EMIOS_0.MCR.B.GPREN = 1;	/* Enable eMIOS clock */
 	EMIOS_0.MCR.B.GTBE = 1;   /* Enable global time base */
 	EMIOS_0.MCR.B.FRZ = 1;    /* Enable stopping channels when in debug mode */
 	
-  /**********电机PWM 20kHZ E5口正转、E6口倒转0-50*************/ 
+  /**********电机PWM 5kHZ E5口正转、E6口倒转0-50*************/ 
     //eMIOS0D通道16设置/* EMIOS 0 CH 16: Modulus Up Counter */
     EMIOS_0.CH[16].CCR.B.UCPRE=0;	    /* Set channel prescaler to divide by 1 */
 	EMIOS_0.CH[16].CCR.B.UCPEN = 1;   /* Enable prescaler; uses default divide by 1 */
 	EMIOS_0.CH[16].CCR.B.FREN = 1; 	/* Freeze channel counting when in debug mode */
-	EMIOS_0.CH[16].CADR.R =200;/********设置周期50us 20KHZ******** */
+	EMIOS_0.CH[16].CADR.R = 3200;	//3200/********设置周期200us 5KHZ******** */
 	EMIOS_0.CH[16].CCR.B.MODE = 0x50; /* Modulus Counter Buffered (MCB) */
 	EMIOS_0.CH[16].CCR.B.BSL = 0x3;	/* Use internal counter */
     /* EMIOS 0 CH 21前进输出: OPWMB */
