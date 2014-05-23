@@ -1,3 +1,4 @@
+#define __MAIN_C_
 #include "includes.h"
 
 
@@ -37,8 +38,28 @@ int main(void)
 	/* Loop forever */
 	for (;;)
 	{
-		delay_ms(2);	/* 不加延时会停 */
-		contorl_speed_encoder_pid();
+		//delay_ms(2);	/* 不加延时会停 */
+		if (g_f_pit)
+		{
+			g_f_pit = 0;
+			
+			contorl_speed_encoder_pid();
+		}
+#if 0
+		if (g_serial_port_0_f)
+		{
+			g_serial_port_0_f = 0;
+			
+			rev_remote_frame(g_serial_port_0_data);
+		}
+#endif
+		if (REMOTE_FRAME_STATE_OK == g_remote_frame_state)
+		{
+			g_remote_frame_state = REMOTE_FRAME_STATE_NOK;
+			
+			D0 = ~D0;
+			execute_remote_cmd(remote_frame_data+5);
+		}
 	}
 }
 

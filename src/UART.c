@@ -1,3 +1,4 @@
+#define __UART_C_
 #include "includes.h"
 
 
@@ -61,6 +62,9 @@ void intc_serial_port_0_RX(void)
 	g_serial_port_0_f = 1;
 	g_serial_port_0_data = rev_ch;
 	LINFLEX_0.UARTSR.B.DRF=1;      //清空标志位
+	
+	D3 = ~D3;
+	rev_remote_frame(rev_ch);
 }
 
 

@@ -1,3 +1,4 @@
+#define __WIFI_C_
 #include "includes.h"
 
 
@@ -10,13 +11,27 @@ void execute_remote_cmd(const BYTE *data)
 {
 	WORD cmd = 0;
 	
-	D2 = ~D2;
-	cmd = (WORD)(data[0]) | ((WORD)(data[1])<<8);
+	cmd = ((WORD)(data[0])<<8) | ((WORD)(data[1]));
 	switch (cmd)
 	{
-		case WIFI_CMD_SET_HELM :
-		D3 = ~D3;
-		STEER_HELM_DATA = (WORD)(data[2]) | ((WORD)(data[3])<<8);
+		/* 舵机调参 */
+		case WIFI_CMD_SET_HELM_TARGET :
+		set_steer_helm(*((SWORD *)(&(data[2]))));
+		break;
+		
+		/* 电机调参 */
+		case WIFI_CMD_SET_MOTOR_TARGET :
+		D1 = ~D1;
+		set_speed_target(*((SWORD *)(&(data[2]))));
+		break;
+		case WIFI_CMD_SET_MOTOR_KP :
+		set_speed_KP(*((SWORD *)(&(data[2]))));
+		break;
+		case WIFI_CMD_SET_MOTOR_KI :
+		set_speed_KP(*((SWORD *)(&(data[2]))));
+		break;
+		case WIFI_CMD_SET_MOTOR_KD :
+		set_speed_KP(*((SWORD *)(&(data[2]))));
 		break;
 	}
 }
@@ -51,8 +66,8 @@ int rev_remote_frame(BYTE rev)
 		WORD address = 0x0000;
 		
 		remote_frame_data[g_remote_frame_cnt++] = rev;
-		address |= (WORD)(remote_frame_data[2]);
-		address |= (WORD)(remote_frame_data[3])<<8;
+		address |= (WORD)(remote_frame_data[2])<<8;
+		address |= (WORD)(remote_frame_data[3]);
 		if (address != ((WORD)0x0001<<WIFI_ADDRESS))
 		{
 			g_remote_frame_cnt = 0;	//不是发给本机的
@@ -82,7 +97,6 @@ int rev_remote_frame(BYTE rev)
 		}
 		else
 		{
-			D0 = ~D0;
 			g_remote_frame_cnt = 0;
 			g_remote_frame_state = REMOTE_FRAME_STATE_OK;	//CheckSum Success
 		}

@@ -2,8 +2,7 @@
 #include "includes.h"
 
 
-int cnt_pit = 0;
-int f_pit = 0;
+int g_f_pit = 0;
 
 
 /*-----------------------------------------------------------------------*/
@@ -11,11 +10,7 @@ int f_pit = 0;
 /*-----------------------------------------------------------------------*/
 void PitISR(void)
 {
-	if(++cnt_pit>=200)
-	{
-		cnt_pit=0;
-		f_pit=1;
-	}
+	g_f_pit = 1;
 	
 	//start:encoder
 	data_encoder.is_forward = SIU.GPDI[28].B.PDI;
@@ -153,16 +148,34 @@ void contorl_speed_encoder_pid(void)
 /*-----------------------------------------------------------------------*/
 void set_speed_target(SWORD speed_target)
 {
-	if (0 <= speed_target)
-	{
-		data_speed_settings.speed_target = speed_target;
-		data_encoder.is_forward = 1;
-	}
-	else
-	{
-		data_speed_settings.speed_target = (SWORD)(0 - speed_target);
-		data_encoder.is_forward = 0;
-	}
+	data_speed_settings.speed_target = speed_target;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 设置速度PID控制P值                                                    */
+/*-----------------------------------------------------------------------*/
+void set_speed_KP(WORD kp)
+{
+	data_speed_pid.p = kp;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 设置速度PID控制I值                                                    */
+/*-----------------------------------------------------------------------*/
+void set_speed_KI(WORD ki)
+{
+	data_speed_pid.i = ki;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 设置速度PID控制D值                                                    */
+/*-----------------------------------------------------------------------*/
+void set_speed_KD(WORD kd)
+{
+	data_speed_pid.d = kd;
 }
 
 

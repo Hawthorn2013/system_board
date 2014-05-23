@@ -1,3 +1,4 @@
+#define __LCD_C_
 #include "includes.h"
 
 

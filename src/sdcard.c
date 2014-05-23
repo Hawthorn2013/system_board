@@ -1,3 +1,4 @@
+#define __SDCARD_C_
 #include "includes.h"
 
 

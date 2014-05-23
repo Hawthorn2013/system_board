@@ -1,3 +1,4 @@
+#define __L3G4200D_C_
 /******************** (C) COPYRIGHT 2011 STMicroelectronics ********************
 * File Name          : L3G4200D.c
 * Author             : MSH Application Team

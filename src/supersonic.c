@@ -1,3 +1,4 @@
+#define __SUPERSONIC_C_
 #include "includes.h"
 
 

@@ -23,8 +23,7 @@
 #define SPEED_ENCODER_TEST (11)
 
 
-extern int cnt_pit;
-extern int f_pit;
+extern int g_f_pit;
 
 /* ¹â±àÊý¾Ý */
 #ifdef __CONTROL_C_
@@ -86,7 +85,9 @@ extern void PitISR(void);
 extern void set_speed_pwm(int16_t speed_pwm);
 extern void contorl_speed_encoder_bb(void);
 extern void set_speed_target(SWORD speed_target);
+extern void set_speed_KP(WORD kp);
+extern void set_speed_KI(WORD ki);
+extern void set_speed_KD(WORD kd);
 extern void set_steer_helm(WORD helmData);
-
 
 #endif
