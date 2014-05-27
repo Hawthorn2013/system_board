@@ -3,10 +3,12 @@
 
 
 /* 方向舵机PWM */
-#define STEER_HELM_CENTER (800)
+#define STEER_HELM_CENTER (3301)
 #define STEER_HELM_TEST (1500)
-#define STEER_HELM_LEFT (3000)
-#define STEER_HELM_RIGHT (100)
+#define STEER_HELM_LEFT (2247)
+#define STEER_HELM_RIGHT (4292)
+#define STEER_HELM_MIX (1038)
+#define STEER_HELM_MAX (6146)
 
 /* 信号舵机PWM */
 #define SINGLE_HELM_CENTER (50)

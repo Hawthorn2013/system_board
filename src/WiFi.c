@@ -21,7 +21,6 @@ void execute_remote_cmd(const BYTE *data)
 		
 		/* 电机调参 */
 		case WIFI_CMD_SET_MOTOR_TARGET :
-		D1 = ~D1;
 		set_speed_target(*((SWORD *)(&(data[2]))));
 		break;
 		case WIFI_CMD_SET_MOTOR_KP :
