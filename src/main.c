@@ -24,7 +24,7 @@ int main(void)
 	//init_supersonic_trigger_3();
 	//init_optical_encoder();
 	init_DSPI_1();
-	init_DSPI_2();
+	//init_DSPI_2();
 	//init_I2C();
 	enable_irq();
 	
