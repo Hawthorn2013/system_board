@@ -615,27 +615,44 @@ void LCD_Printbyte(BYTE x, BYTE y, BYTE ch[])
 } 
 //==============================================================
 //函数名： void LCD_PrintInt(BYTE x, BYTE y, int a)
-//功能描述：写入整型变量
+//功能描述：写入整型变量 占据六个字符的位置 范围SWORD
 //参数：显示的位置（x,y），y为页范围0～7，要显示的字符串
 //返回：无
 //==============================================================
-void LCD_PrintoutInt(BYTE x, BYTE y, int a)
+void LCD_PrintoutInt(BYTE x, BYTE y, SWORD data)
 {
+	int a = data;
      int i=0,j=0,t=0;
      BYTE m[100];
      BYTE p=0;
      //********焦剑修改********
      //********不能显示0*******
-     if (0 == a)
+     if (0 == a)	/* 零 */
      {
      	m[i++]=(BYTE)'0';
      }
      else
      {
+     	int isNegative = 0;
+     	
+     	if (0 > a)	/* 负数 */
+     	{
+     		a = -a;
+     		isNegative = 1;
+     	}
      	for(i=0;a!=0;i++)
      	{
      	     m[i]=(BYTE)(a%10+'0');	//avoid warming
      	     a=a/10;
+     	}
+     	if (isNegative)
+     	{
+     		
+     		m[i++]=(BYTE)'-';
+     	}
+     	for (; i<6; i++)
+     	{
+     		m[i] = ' ';
      	}
      }
      //********焦剑修改结束****

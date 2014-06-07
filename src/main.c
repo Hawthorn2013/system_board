@@ -1,4 +1,3 @@
-#define __MAIN_C_
 #include "includes.h"
 
 
@@ -9,7 +8,7 @@ int main(void)
 	disable_watchdog();
 	init_modes_and_clock();
 	initEMIOS_0MotorAndSteer();
-	init_pit();
+	//init_pit();
 	init_led();
 	init_serial_port_0();
 	init_serial_port_1();
@@ -23,8 +22,9 @@ int main(void)
 	//init_supersonic_trigger_1();
 	//init_supersonic_trigger_2();
 	//init_supersonic_trigger_3();
-	init_optical_encoder();
+	//init_optical_encoder();
 	init_DSPI_1();
+	init_DSPI_2();
 	//init_I2C();
 	enable_irq();
 	
@@ -32,36 +32,39 @@ int main(void)
 	initLCD();
 	LCD_DISPLAY();
 	LCD_Fill(0x00);
-	
-	set_speed_target(20);
-	
+	for (i=0; i<5; i++)
+	{
+		BYTE rev;
+		
+		ReadReg(WHO_AM_I, &rev);
+		if (0xD3 == rev)
+		{
+			D0 = 0;
+			break;
+		}
+		SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
+		SetMode(NORMAL);
+	}
 	/* Loop forever */
 	for (;;)
 	{
-		//delay_ms(2);	/* 不加延时会停 */
-		if (g_f_pit)
+		u8_t status;
+		
+		GetSatusReg(&status);
+		if (status & 80)
 		{
-			g_f_pit = 0;
-			
-			contorl_speed_encoder_pid();
+			AngRateRaw_t rev;
+			GetAngRateRaw(&rev);
+			serial_port_1_TX_array((BYTE *)(&rev), sizeof(AngRateRaw_t));
+			//delay_ms(300);
+			LCD_PrintoutInt(0, 0, (rev.x));
+			LCD_PrintoutInt(0, 2, (rev.y));
+			LCD_PrintoutInt(0, 4, (rev.z));
 		}
-#if 0
-		if (g_serial_port_0_f)
-		{
-			g_serial_port_0_f = 0;
-			
-			rev_remote_frame(g_serial_port_0_data);
-		}
-#endif
-		if (REMOTE_FRAME_STATE_OK == g_remote_frame_state)
-		{
-			g_remote_frame_state = REMOTE_FRAME_STATE_NOK;
-			
-			D0 = ~D0;
-			execute_remote_cmd(remote_frame_data+5);
-		}
+		//serial_port_0_TX(TestWhoAmI());
+		
+		delay_ms(500);
 	}
 }
-
 
 

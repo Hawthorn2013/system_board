@@ -76,7 +76,7 @@ void init_serial_port_1(void)
 	LINFLEX_1.LINIBRR.B.DIV_M= 520;
     LINFLEX_1.LINFBRR.B.DIV_F =83;
 #else
-	LINFLEX_1.LINIBRR.B.DIV_M= 104;	//波特率设置115200:16M-8+11
+	LINFLEX_1.LINIBRR.B.DIV_M= 104;
     LINFLEX_1.LINFBRR.B.DIV_F = 3;
 #endif
 
@@ -99,6 +99,17 @@ void serial_port_1_TX(unsigned char data)
 	LINFLEX_1.BDRL.B.DATA0=data;	//发送语句
 	while(!LINFLEX_1.UARTSR.B.DTF){}	//等待数据发送完成
 	LINFLEX_1.UARTSR.B.DTF=1;	//清空标志位
+}
+
+
+void serial_port_1_TX_array(const BYTE data[], WORD n)
+{
+	int i = 0;
+	
+	for (i=0; i<n; i++)
+	{
+		serial_port_1_TX(data[i]);
+	}
 }
 
 
@@ -145,6 +156,17 @@ void serial_port_2_TX(BYTE data)
 }
 
 
+void serial_port_2_TX_array(const BYTE data[], WORD n)
+{
+	int i = 0;
+	
+	for (i=0; i<n; i++)
+	{
+		serial_port_2_TX(data[i]);
+	}
+}
+
+
 void intc_serial_port_2_RX(void)
 {
 	BYTE rev_ch;
@@ -184,6 +206,17 @@ void serial_port_3_TX(BYTE data)
 	LINFLEX_3.BDRL.B.DATA0 = data;       //发送语句
 	while(!LINFLEX_3.UARTSR.B.DTF){}
 	LINFLEX_3.UARTSR.B.DTF = 1;
+}
+
+
+void serial_port_3_TX_array(const BYTE data[], WORD n)
+{
+	int i = 0;
+	
+	for (i=0; i<n; i++)
+	{
+		serial_port_3_TX(data[i]);
+	}
 }
 
 

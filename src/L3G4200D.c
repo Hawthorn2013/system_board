@@ -32,19 +32,19 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
-BYTE L3G4200D_read_write_byte(BYTE data)
+void init_DSPI_2(void)
 {
-	uint32_t tmp_tx = 0x00000000;
-	BYTE tmp_rx;
-	tmp_tx |= 0xA0010000;
-	tmp_tx |= (uint32_t)data;
-	DSPI_1.PUSHR.R = tmp_tx;
-	while(!DSPI_1.SR.B.TCF){}
-	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
-	DSPI_1.SR.B.TCF = 1;
-	
-	return tmp_rx;
+	DSPI_2.MCR.R = 0x803f0001;     /* Configure DSPI_0 as master */
+	DSPI_2.CTAR[2].R = 0x3E0A7729;	/* L3G4200D SPI 极性为1，相位为1，baud rate=31.35kbit/s */
+	DSPI_2.MCR.B.HALT = 0x0;	/* Exit HALT mode: go from STOPPED to RUNNING state */
+	SIU.PCR[46].R = 0x0A04;	/* PC14 SCK_2 */
+	SIU.PCR[47].R = 0x0903;	/* PC15 CS0_2 */
+	SIU.PCR[76].R = 0x0104;	/* PE12 SIN_2 */
+	SIU.PSMI[11].R = 1;	/* SCK_2 PCR[76] */
+	SIU.PCR[45].R = 0x0A04;	/* PC13 SOUT_2 */
+	DSPI_2.RSER.B.TCFRE = 0;	/* 关闭传输完成中断 */
 }
+
 
 /*******************************************************************************
 * Function Name		: ReadReg
@@ -61,17 +61,17 @@ u8_t ReadReg(u8_t Reg, u8_t* Data) {
 	uint32_t tmp_tx = 0x00000000;
 	BYTE tmp_rx;
 	
-	tmp_tx = 0xA0080000 | Reg | 0x80;
-	DSPI_1.PUSHR.R = tmp_tx;
-	while(!DSPI_1.SR.B.TCF){}
-	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
-	DSPI_1.SR.B.TCF = 1;
+	tmp_tx = 0xA0010000 | Reg | 0x80;
+	DSPI_2.PUSHR.R = tmp_tx;
+	while(!DSPI_2.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_2.POPR.B.RXDATA;
+	DSPI_2.SR.B.TCF = 1;
 	
-	tmp_tx = 0x20080000 | 0xff;
-	DSPI_1.PUSHR.R = tmp_tx;
-	while(!DSPI_1.SR.B.TCF){}
-	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
-	DSPI_1.SR.B.TCF = 1;
+	tmp_tx = 0x20010000 | 0xff;
+	DSPI_2.PUSHR.R = tmp_tx;
+	while(!DSPI_2.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_2.POPR.B.RXDATA;
+	DSPI_2.SR.B.TCF = 1;
 	
 	*Data = tmp_rx;
 	
@@ -93,17 +93,17 @@ u8_t WriteReg(u8_t Reg, u8_t Data) {
 	uint32_t tmp_tx = 0x00000000;
 	BYTE tmp_rx;
 	
-	tmp_tx = 0xA0080000 | (Reg & 0x7f);
-	DSPI_1.PUSHR.R = tmp_tx;
-	while(!DSPI_1.SR.B.TCF){}
-	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
-	DSPI_1.SR.B.TCF = 1;
+	tmp_tx = 0xA0010000 | (Reg & 0x7f);
+	DSPI_2.PUSHR.R = tmp_tx;
+	while(!DSPI_2.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_2.POPR.B.RXDATA;
+	DSPI_2.SR.B.TCF = 1;
 	
-	tmp_tx = 0x20080000 | Data;
-	DSPI_1.PUSHR.R = tmp_tx;
-	while(!DSPI_1.SR.B.TCF){}
-	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
-	DSPI_1.SR.B.TCF = 1;
+	tmp_tx = 0x20010000 | Data;
+	DSPI_2.PUSHR.R = tmp_tx;
+	while(!DSPI_2.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_2.POPR.B.RXDATA;
+	DSPI_2.SR.B.TCF = 1;
 	
 	return 1;
 }
@@ -853,17 +853,17 @@ BYTE TestWhoAmI(void)
 	uint32_t tmp_tx = 0x00000000;
 	BYTE tmp_rx;
 	
-	tmp_tx = 0xA0080000 | WHO_AM_I | 0x80;
-	DSPI_1.PUSHR.R = tmp_tx;
-	while(!DSPI_1.SR.B.TCF){}
-	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
-	DSPI_1.SR.B.TCF = 1;
+	tmp_tx = 0xA0010000 | WHO_AM_I | 0x80;
+	DSPI_2.PUSHR.R = tmp_tx;
+	while(!DSPI_2.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_2.POPR.B.RXDATA;
+	DSPI_2.SR.B.TCF = 1;
 	
-	tmp_tx = 0x20080000 | 0xff;
-	DSPI_1.PUSHR.R = tmp_tx;
-	while(!DSPI_1.SR.B.TCF){}
-	tmp_rx = (BYTE)DSPI_1.POPR.B.RXDATA;
-	DSPI_1.SR.B.TCF = 1;
+	tmp_tx = 0x20010000 | 0xff;
+	DSPI_2.PUSHR.R = tmp_tx;
+	while(!DSPI_2.SR.B.TCF){}
+	tmp_rx = (BYTE)DSPI_2.POPR.B.RXDATA;
+	DSPI_2.SR.B.TCF = 1;
 	
 	return tmp_rx;
 }

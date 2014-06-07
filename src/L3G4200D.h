@@ -365,8 +365,8 @@ u8_t ReadReg(u8_t Reg, u8_t* Data);
 u8_t WriteReg(u8_t Reg, u8_t Data);
 
 //½¹½£
-BYTE L3G4200D_read_write_byte(BYTE data);
-BYTE TestWhoAmI(void);
+extern void init_DSPI_2(void);
+extern BYTE TestWhoAmI(void);
 
 #endif /* __L3G4200D_H */
 

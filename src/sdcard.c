@@ -9,7 +9,8 @@ static BYTE SD_reset(void);
 static BYTE SD_send_cmd(BYTE cmd, DWORD var);
 
 
-void init_DSPI_1(void) {
+void init_DSPI_1(void)
+{
 	DSPI_1.MCR.R = 0x803f0001;     /* Configure DSPI_0 as master */
 	DSPI_1.CTAR[0].R = 0x3E0A7729;	//TF卡 用于发送8bits 调整极性为1，相位为1，调整波特率为低速31.35kbit/s
 	DSPI_1.CTAR[1].R = 0x38087726;  //OLED SPI 极性为0，相位为0，baud rate=625Kbit/s
