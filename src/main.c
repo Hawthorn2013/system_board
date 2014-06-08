@@ -4,11 +4,12 @@
 int main(void)
 {
 	int i = 0;
+	BYTE test[30];
 	
 	disable_watchdog();
 	init_modes_and_clock();
 	initEMIOS_0MotorAndSteer();
-	//init_pit();
+	init_pit();
 	init_led();
 	init_serial_port_0();
 	init_serial_port_1();
@@ -48,6 +49,7 @@ int main(void)
 	/* Loop forever */
 	for (;;)
 	{
+#if 1
 		u8_t status;
 		
 		GetSatusReg(&status);
@@ -55,15 +57,33 @@ int main(void)
 		{
 			AngRateRaw_t rev;
 			GetAngRateRaw(&rev);
-			serial_port_1_TX_array((BYTE *)(&rev), sizeof(AngRateRaw_t));
+			//serial_port_1_TX_array((BYTE *)(&rev), sizeof(AngRateRaw_t));
 			//delay_ms(300);
 			LCD_PrintoutInt(0, 0, (rev.x));
 			LCD_PrintoutInt(0, 2, (rev.y));
 			LCD_PrintoutInt(0, 4, (rev.z));
+
+			if (1 || g_remote_control_flags.send_gyro_data)
+			{
+				send_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
+			}
+
+			//serial_port_0_TX_array((BYTE *)&rev, sizeof(rev));
+			
 		}
 		//serial_port_0_TX(TestWhoAmI());
+#endif
+
+#if 0
+		D2 = ~D2;
+		for (i = 0; i < 50; i++)
+		{
+			serial_port_0_TX(0x00);
+		}
+		serial_port_0_TX_array(test, sizeof(test));
+#endif
 		
-		delay_ms(500);
+		delay_ms(100);
 	}
 }
 

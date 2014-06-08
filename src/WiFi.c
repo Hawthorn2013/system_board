@@ -5,8 +5,12 @@
 int g_remote_frame_state = REMOTE_FRAME_STATE_NOK;
 int g_remote_frame_cnt = 0;
 BYTE remote_frame_data[REMOTE_FRAME_LENGTH_MAX];
+BYTE remote_frame_data_send[REMOTE_FRAME_LENGTH_MAX];
 
 
+/*-----------------------------------------------------------------------*/
+/* 执行远程命令                                                          */
+/*-----------------------------------------------------------------------*/
 void execute_remote_cmd(const BYTE *data)
 {
 	WORD cmd = 0;
@@ -17,6 +21,12 @@ void execute_remote_cmd(const BYTE *data)
 		/* 舵机调参 */
 		case WIFI_CMD_SET_HELM_TARGET :
 		set_steer_helm(*((SWORD *)(&(data[2]))));
+		break;
+		case WIFI_CMD_SET_HELM_KP :
+		break;
+		case WIFI_CMD_SET_HELM_KI :
+		break;
+		case WIFI_CMD_SET_HELM_KD :
 		break;
 		
 		/* 电机调参 */
@@ -32,10 +42,21 @@ void execute_remote_cmd(const BYTE *data)
 		case WIFI_CMD_SET_MOTOR_KD :
 		set_speed_KP(*((SWORD *)(&(data[2]))));
 		break;
+		
+		/* 陀螺仪 */
+		case WIFI_CMD_GET_GYRO_DATA :
+		g_remote_control_flags.send_gyro_data = 1;
+		break;
+		case WIFI_CMD_UNGET_GYRO_DATA :
+		g_remote_control_flags.send_gyro_data = 0;
+		break;
 	}
 }
 
 
+/*-----------------------------------------------------------------------*/
+/* 接受远程数据帧                                                      */
+/*-----------------------------------------------------------------------*/
 int rev_remote_frame(BYTE rev)
 {
 	if (g_remote_frame_cnt == 0)	//接收帧头
@@ -105,6 +126,36 @@ int rev_remote_frame(BYTE rev)
 }
 
 
+/*-----------------------------------------------------------------------*/
+/* 发送远程命令                                                          */
+/* 参数 : cmd WiFi命令字                                                 */
+/*        data发出的数据体，接在cmd后                                    */
+/*        data长度                                                       */
+/*-----------------------------------------------------------------------*/
+void send_remote_frame(WORD cmd, BYTE data[], BYTE length)
+{
+	WORD i = 0, j = 0;
+	
+	remote_frame_data_send[i++] = 0xAA;
+	remote_frame_data_send[i++] = 0xBB;
+	remote_frame_data_send[i++] = (BYTE)((0x0001<<ANDROID_ADDRESS)>>8);
+	remote_frame_data_send[i++] = (BYTE)(0x0001<<ANDROID_ADDRESS);
+	remote_frame_data_send[i++] = length+2;
+	remote_frame_data_send[i++] = (BYTE)(cmd>>8);
+	remote_frame_data_send[i++] = (BYTE)cmd;
+	for (j = 0;j < length; j++)
+	{
+		remote_frame_data_send[i++] = data[j];
+	}
+	remote_frame_data_send[i++] = check_sum(remote_frame_data_send+2, i-3);
+	D1 = ~D1;
+	serial_port_0_TX_array(remote_frame_data_send, i);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 异或校验                                                              */
+/*-----------------------------------------------------------------------*/
 BYTE check_sum(const BYTE *data, WORD length)
 {
 	int i;
