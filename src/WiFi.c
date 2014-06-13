@@ -148,7 +148,6 @@ void send_remote_frame(WORD cmd, BYTE data[], BYTE length)
 		remote_frame_data_send[i++] = data[j];
 	}
 	remote_frame_data_send[i++] = check_sum(remote_frame_data_send+2, i-3);
-	D1 = ~D1;
 	serial_port_0_TX_array(remote_frame_data_send, i);
 }
 

@@ -12,7 +12,7 @@ void PitISR(void)
 {
 	g_f_pit = 1;
 	
-	//start:encoder
+	/* start:encoder */
 	data_encoder.is_forward = SIU.GPDI[28].B.PDI;
 	data_encoder.cnt_old = data_encoder.cnt_new;
 	data_encoder.cnt_new = (WORD)EMIOS_0.CH[24].CCNTR.R;
@@ -24,7 +24,10 @@ void PitISR(void)
 	{
 		data_encoder.speed_now = 0xffff - (data_encoder.cnt_old - data_encoder.cnt_new);
 	}
-	//end:encoder
+	/* end:encoder */
+	
+	/* 开始执行速度控制算法 */
+	contorl_speed_encoder_pid();
 	
 	PIT.CH[1].TFLG.B.TIF = 1;	// MPC56xxB/P/S: Clear PIT 1 flag by writing 1 
 }

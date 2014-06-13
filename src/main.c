@@ -4,7 +4,15 @@
 int main(void)
 {
 	int i = 0;
-	BYTE test[30];
+	
+	/* TF¿¨ */
+	FATFS fatfs;
+	FIL fil;
+	TCHAR *path = "0:";
+	TCHAR *tchar = "test.txt";
+	BYTE input[] = "I am Jian Jiao.";
+	UINT bw;
+	
 	
 	disable_watchdog();
 	init_modes_and_clock();
@@ -23,66 +31,81 @@ int main(void)
 	//init_supersonic_trigger_1();
 	//init_supersonic_trigger_2();
 	//init_supersonic_trigger_3();
-	//init_optical_encoder();
+	init_optical_encoder();
 	init_DSPI_1();
 	//init_DSPI_2();
 	//init_I2C();
 	enable_irq();
 	
-	//SD_init();
+	SD_init();
 	initLCD();
 	LCD_DISPLAY();
 	LCD_Fill(0x00);
+	
+	/* ³õÊ¼»¯ÍÓÂÝÒÇ */
 	for (i=0; i<5; i++)
 	{
-		BYTE rev;
+		BYTE rev = 0x00;
 		
+		//ReadReg(WHO_AM_I, &rev);
 		ReadReg(WHO_AM_I, &rev);
-		if (0xD3 == rev)
+		if (I_AM_L3G4200D == rev)
 		{
 			D0 = 0;
-			break;
 		}
 		SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
 		SetMode(NORMAL);
 	}
+	
+	set_speed_target(20);
+	
+	
+	/* ²âÊÔTF¿¨ */
+	if (f_mount(&fatfs, path, 1) == FR_OK)
+	{
+		D1 = 0;
+	}
+	f_open(&fil, tchar, FA_CREATE_ALWAYS);
+	f_close(&fil);
+	f_open(&fil, tchar, FA_WRITE);
+	f_write(&fil, (const void *)input, 16, &bw);
+	f_sync(&fil);
+	f_mount((void *)0, path, 1);
+		
 	/* Loop forever */
 	for (;;)
 	{
 #if 1
 		u8_t status;
 		
-		GetSatusReg(&status);
-		if (status & 80)
+		/* µ÷ÊÔÍÓÂÝÒÇ */
+		if (MEMS_SUCCESS == GetSatusReg(&status))
 		{
-			AngRateRaw_t rev;
-			GetAngRateRaw(&rev);
-			//serial_port_1_TX_array((BYTE *)(&rev), sizeof(AngRateRaw_t));
-			//delay_ms(300);
-			LCD_PrintoutInt(0, 0, (rev.x));
-			LCD_PrintoutInt(0, 2, (rev.y));
-			LCD_PrintoutInt(0, 4, (rev.z));
-
-			if (1 || g_remote_control_flags.send_gyro_data)
+			if (status & 80)
 			{
-				send_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
+				AngRateRaw_t rev;
+				GetAngRateRaw(&rev);
+				LCD_PrintoutInt(0, 0, (rev.x));
+				LCD_PrintoutInt(0, 2, (rev.y));
+				LCD_PrintoutInt(0, 4, (rev.z));
+				if (g_remote_control_flags.send_gyro_data)
+				{
+					send_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
+				}
 			}
-
-			//serial_port_0_TX_array((BYTE *)&rev, sizeof(rev));
-			
+			//serial_port_0_TX(TestWhoAmI());
 		}
-		//serial_port_0_TX(TestWhoAmI());
 #endif
-
-#if 0
-		D2 = ~D2;
-		for (i = 0; i < 50; i++)
+		/* Ö´ÐÐÔ¶³ÌÃüÁî */
+		if (REMOTE_FRAME_STATE_OK == g_remote_frame_state)
 		{
-			serial_port_0_TX(0x00);
+			g_remote_frame_state = REMOTE_FRAME_STATE_NOK;
+			
+			D3 = ~D3;
+			execute_remote_cmd(remote_frame_data+5);
 		}
-		serial_port_0_TX_array(test, sizeof(test));
-#endif
 		
+	
 		delay_ms(100);
 	}
 }
