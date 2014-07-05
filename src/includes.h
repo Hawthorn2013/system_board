@@ -49,6 +49,7 @@ typedef unsigned short word;
 #include "WiFi.h"
 #include "UART.h"
 #include "L3G4200D.h"
+#include "RFIDCard.h"
 
 ///****************LED****************///
 #if 1
