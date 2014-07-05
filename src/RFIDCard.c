@@ -2,10 +2,10 @@
 #include "includes.h"
 
 
-//void serial_port_2_TX(BYTE data)
-//void serial_port_2_TX_array(const BYTE data[], WORD n)
 const BYTE rfid_cmd_get_id[] = { 0xAA, 0xBB, 0x02, 0x20, 0x22 };
 const BYTE rfid_cmd_get_data[] = { 0xAA, 0xBB, 0x0A, 0x21, 0x00, 0x04, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x2F };
+const BYTE rfid_cmd_energetic_mode_enable[] = { 0xAA, 0xBB, 0x03, 0x41, 0x00, 0x42 };
+const BYTE rfid_cmd_energetic_mode_disable[] = { 0xAA, 0xBB, 0x03, 0x41, 0x15, 0x57 };
 int g_rfid_frame_state = REMOTE_FRAME_STATE_NOK;
 int g_rfid_frame_cnt = 0;
 BYTE rfid_frame_data[REMOTE_FRAME_LENGTH_MAX];
@@ -83,10 +83,13 @@ int rev_RFID_frame(BYTE rev)
 void explane_RFID_ret_data(const BYTE *data)
 {
 	WORD cmd = 0;
+	DWORD cardID = 0x00000000;
 	
 	cmd = data[0];
 	switch (cmd)
 	{
-		
+		case RFID_CMD_READ_CARD :
+		cardID = *(DWORD *)(data+1);
+		break;
 	}
 }

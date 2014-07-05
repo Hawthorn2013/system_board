@@ -1,6 +1,11 @@
 #ifndef __RFIDCARD_H__
 #define __RFIDCARD_H__
 
+#define RFID_CMD_READ_CARD (0x20)
+#define RFID_CMD_READ_DATA_BLOCK (0x21)
+#define RFID_CMD_ENERGETIC_MODE (0x41)
+
+#define RFID_CARD_ID
 
 #define RFID_FRAME_LENGTH_MAX (256)
 #define RFID_FRAME_STATE_OK (1)
