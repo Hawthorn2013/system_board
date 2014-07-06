@@ -16,7 +16,7 @@
 #define WIFI_CMD_SET_STEER_HELM_LEFT (0x000C)	/* 设置方向舵机左极限 */
 #define WIFI_CMD_SET_STEER_HELM_RIGHT (0x000D)	/* 设置方向舵机右极限 */
 #define WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF (0x000E)	/* 方向舵机数据写入TF卡 */
-
+#define WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF (0x000F)	/* 发送方向舵机数据至上位机 */
 
 
 
@@ -35,7 +35,7 @@ extern int g_remote_frame_state;
 struct
 {
 	int send_gyro_data;	/* 发送陀螺仪数据 */
-} g_remote_control_flags = { 0, };
+} g_remote_control_flags = { 0 };
 #else
 extern struct
 {

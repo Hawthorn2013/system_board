@@ -40,6 +40,9 @@ void execute_remote_cmd(const BYTE *data)
 		case WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF :
 		write_steer_helm_data_to_TF();
 		break;
+		case WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF :
+		generate_remote_frame(WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF, (BYTE *)&data_steer_helm, sizeof(data_steer_helm));
+		break;
 		
 		
 		/* 电机调参 */
