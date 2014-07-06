@@ -292,4 +292,40 @@ void clear_sd_buffer(BYTE buffer[][SD_SECTOR_SIZE])
 			buffer[i][j] = 0;
 		}
 	}
-} 
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 读取方向舵机数据从TF卡                                                */
+/*-----------------------------------------------------------------------*/
+int read_steer_helm_data_from_TF()
+{
+	FIL fil;
+	TCHAR *tchar = "SteHel";
+	UINT br;
+	
+	f_open(&fil, tchar, FA_READ);
+	f_read(&fil, (void *)&data_steer_helm, sizeof(data_steer_helm), &br);
+	f_close(&fil);
+	
+	return 0;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 写入方向舵机数据到TF卡                                                */
+/*-----------------------------------------------------------------------*/
+int write_steer_helm_data_to_TF()
+{
+	FIL fil;
+	TCHAR *tchar = "SteHel";
+	UINT wr;
+	
+	f_open(&fil, tchar, FA_CREATE_ALWAYS);
+	f_close(&fil);
+	f_open(&fil, tchar, FA_WRITE);
+	f_write(&fil, (void *)&data_steer_helm, sizeof(data_steer_helm), &wr);
+	f_close(&fil);
+	
+	return 0;
+}

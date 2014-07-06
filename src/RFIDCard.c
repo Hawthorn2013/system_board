@@ -8,8 +8,8 @@ const BYTE rfid_cmd_energetic_mode_enable[] = { 0xAA, 0xBB, 0x03, 0x41, 0x00, 0x
 const BYTE rfid_cmd_energetic_mode_disable[] = { 0xAA, 0xBB, 0x03, 0x41, 0x15, 0x57 };
 int g_rfid_frame_state = REMOTE_FRAME_STATE_NOK;
 int g_rfid_frame_cnt = 0;
-BYTE rfid_frame_data[REMOTE_FRAME_LENGTH_MAX];
-BYTE rfid_frame_data_send[REMOTE_FRAME_LENGTH_MAX];
+BYTE rfid_frame_data[RFID_FRAME_LENGTH_MAX];
+BYTE rfid_frame_data_send[RFID_FRAME_LENGTH_MAX];
 
 
 /*-----------------------------------------------------------------------*/

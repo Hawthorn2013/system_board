@@ -27,6 +27,23 @@
 
 extern int g_f_pit;
 
+/* 方向舵机数据 */
+#ifdef __CONTROL_C_
+struct
+{
+	WORD center;
+	WORD left_limit;
+	WORD right_limit;
+} data_steer_helm = { STEER_HELM_CENTER, STEER_HELM_LEFT, STEER_HELM_RIGHT };
+#else
+extern struct
+{
+	WORD center;
+	WORD left_limit;
+	WORD right_limit;
+} data_steer_helm;
+#endif
+
 /* 光编数据 */
 #ifdef __CONTROL_C_
 struct

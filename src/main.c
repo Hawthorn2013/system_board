@@ -7,12 +7,12 @@ int main(void)
 	
 	/* TF卡 */
 	FATFS fatfs;
-	FIL fil;
+	//FIL fil;
 	TCHAR *path = "0:";
-	TCHAR *tchar = "test.txt";
-	BYTE input[] = "I am Jian Jiao.";
-	UINT bw;
-	
+	//TCHAR *tchar = "SteHel";
+	//BYTE input[] = "I am Jian Jiao.";
+	//UINT bw;
+	//UINT br;
 	
 	disable_watchdog();
 	init_modes_and_clock();
@@ -59,7 +59,7 @@ int main(void)
 	
 	set_speed_target(20);
 	
-	
+#if 0
 	/* 测试TF卡 */
 	if (f_mount(&fatfs, path, 1) == FR_OK)
 	{
@@ -71,7 +71,14 @@ int main(void)
 	f_write(&fil, (const void *)input, 16, &bw);
 	f_sync(&fil);
 	f_mount((void *)0, path, 1);
-		
+#endif
+
+	/* 读取舵机参数 */
+	f_mount(&fatfs, path, 1);
+	read_steer_helm_data_from_TF();
+	set_steer_helm(data_steer_helm.center);
+
+	
 	/* Loop forever */
 	for (;;)
 	{
@@ -90,7 +97,7 @@ int main(void)
 				LCD_PrintoutInt(0, 4, (rev.z));
 				if (g_remote_control_flags.send_gyro_data)
 				{
-					send_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
+					generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
 				}
 			}
 			//serial_port_0_TX(TestWhoAmI());

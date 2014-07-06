@@ -12,8 +12,15 @@
 #define WIFI_CMD_SET_MOTOR_KD (0x0008)	/* 远程修改电机D值 */
 #define WIFI_CMD_GET_GYRO_DATA (0x0009)	/* 获取陀螺仪数据 */
 #define WIFI_CMD_UNGET_GYRO_DATA (0x000A)	/* 停止获取陀螺仪数据 */
+#define WIFI_CMD_SET_STEER_HELM_CENTER (0x000B)	/* 设置方向舵机中值 */
+#define WIFI_CMD_SET_STEER_HELM_LEFT (0x000C)	/* 设置方向舵机左极限 */
+#define WIFI_CMD_SET_STEER_HELM_RIGHT (0x000D)	/* 设置方向舵机右极限 */
+#define WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF (0x000E)	/* 方向舵机数据写入TF卡 */
 
-#define REMOTE_FRAME_LENGTH_MAX (32)
+
+
+
+#define REMOTE_FRAME_LENGTH (32)
 #define WIFI_ADDRESS_NUM (1)
 #define REMOTE_FRAME_STATE_OK (1)
 #define REMOTE_FRAME_STATE_NOK (0)

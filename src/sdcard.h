@@ -12,6 +12,7 @@ extern BYTE SD_write_block(DWORD sector, const BYTE *buffer);
 extern BYTE SD_read_multiple_block(DWORD sector, DWORD n, BYTE buffer[][SD_SECTOR_SIZE]);
 extern BYTE SD_write_multiple_block(DWORD sector, DWORD n, const BYTE buffer[][SD_SECTOR_SIZE]);
 extern void clear_sd_buffer(BYTE buffer[][SD_SECTOR_SIZE]);
-
+extern int read_steer_helm_data_from_TF(void);
+extern int write_steer_helm_data_to_TF(void);
 
 #endif
