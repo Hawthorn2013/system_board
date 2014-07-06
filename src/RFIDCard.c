@@ -4,8 +4,8 @@
 
 const BYTE rfid_cmd_get_id[] = { 0xAA, 0xBB, 0x02, 0x20, 0x22 };
 const BYTE rfid_cmd_get_data[] = { 0xAA, 0xBB, 0x0A, 0x21, 0x00, 0x04, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x2F };
-const BYTE rfid_cmd_energetic_mode_enable[] = { 0xAA, 0xBB, 0x03, 0x41, 0x00, 0x42 };
-const BYTE rfid_cmd_energetic_mode_disable[] = { 0xAA, 0xBB, 0x03, 0x41, 0x15, 0x57 };
+const BYTE rfid_cmd_energetic_mode_enable[] = { 0xAA, 0xBB, 0x03, 0x41, 0x15, 0x57 };
+const BYTE rfid_cmd_energetic_mode_disable[] = { 0xAA, 0xBB, 0x03, 0x41, 0x00, 0x42 };
 int g_rfid_frame_state = REMOTE_FRAME_STATE_NOK;
 int g_rfid_frame_cnt = 0;
 BYTE rfid_frame_data[RFID_FRAME_LENGTH_MAX];
@@ -17,7 +17,7 @@ BYTE rfid_frame_data_send[RFID_FRAME_LENGTH_MAX];
 /*-----------------------------------------------------------------------*/
 void send_RFID_cmd(const BYTE cmd[])
 {
-	serial_port_2_TX_array(cmd, cmd[2]);
+	serial_port_2_TX_array(cmd, (WORD)(cmd[2]+3));
 }
 
 
@@ -56,13 +56,13 @@ int rev_RFID_frame(BYTE rev)
 	{
 		rfid_frame_data[g_rfid_frame_cnt++] = rev;
 	}
-	else if (g_rfid_frame_cnt==rfid_frame_data[4]+2)	//Receive check BYTE
+	else if (g_rfid_frame_cnt==rfid_frame_data[2]+2)	//Receive check BYTE
 	{
 		BYTE sum;
 		
 		rfid_frame_data[g_rfid_frame_cnt++] = rev;
 		sum = check_sum((const BYTE *)(rfid_frame_data+2), (WORD)(rfid_frame_data[2]));
-		if (sum != rfid_frame_data[rfid_frame_data[4]+2])
+		if (sum != rfid_frame_data[rfid_frame_data[2]+2])
 		{
 			g_rfid_frame_cnt = 0;	//CheckSum Fail
 		}
@@ -70,6 +70,7 @@ int rev_RFID_frame(BYTE rev)
 		{
 			g_rfid_frame_cnt = 0;
 			g_rfid_frame_state = RFID_FRAME_STATE_OK;	//CheckSum Success
+			explane_RFID_ret_data((const BYTE *)(rfid_frame_data+3));
 		}
 	}
 	
@@ -88,8 +89,19 @@ void explane_RFID_ret_data(const BYTE *data)
 	cmd = data[0];
 	switch (cmd)
 	{
-		case RFID_CMD_READ_CARD :
+		case RFID_CMD_ENERGETIC_MODE :
 		cardID = *(DWORD *)(data+1);
+		explane_RFID_ret_cardID(cardID);
 		break;
 	}
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* Explane RFID card ID                                                  */
+/*-----------------------------------------------------------------------*/
+void explane_RFID_ret_cardID(DWORD id)
+{
+	D0 = ~D0;
+	serial_port_1_TX_array((BYTE *)&id, sizeof(id));
 }

@@ -145,8 +145,8 @@ void init_serial_port_2(void)
 	LINFLEX_2.LINIBRR.B.DIV_M= 520;
     LINFLEX_2.LINFBRR.B.DIV_F = 83;
 #else
-	LINFLEX_2.LINIBRR.B.DIV_M= 104;
-    LINFLEX_2.LINFBRR.B.DIV_F = 3;
+	LINFLEX_2.LINIBRR.B.DIV_M= 52;
+    LINFLEX_2.LINFBRR.B.DIV_F = 1;
 #endif
     LINFLEX_2.UARTCR.B.UART=1;
 	LINFLEX_2.UARTCR.R=0x00000033;
@@ -170,6 +170,7 @@ void serial_port_2_TX_array(const BYTE data[], WORD n)
 {
 	int i = 0;
 	
+	D1 = ~D1;
 	for (i=0; i<n; i++)
 	{
 		serial_port_2_TX(data[i]);
@@ -185,7 +186,7 @@ void intc_serial_port_2_RX(void)
 	rev_ch=(BYTE)LINFLEX_2.BDRM.B.DATA4;
 	LINFLEX_2.UARTSR.B.DRF=1;
 	
-	rev_rfid_frame(rev_ch);
+	rev_RFID_frame(rev_ch);
 }
 
 

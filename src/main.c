@@ -21,7 +21,7 @@ int main(void)
 	init_led();
 	init_serial_port_0();
 	init_serial_port_1();
-	//init_serial_port_2();
+	init_serial_port_2();
 	//init_serial_port_3();
 	//init_supersonic_receive_0();
 	//init_supersonic_receive_1();
@@ -51,7 +51,7 @@ int main(void)
 		ReadReg(WHO_AM_I, &rev);
 		if (I_AM_L3G4200D == rev)
 		{
-			D0 = 0;
+			
 		}
 		SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
 		SetMode(NORMAL);
@@ -59,25 +59,13 @@ int main(void)
 	
 	set_speed_target(20);
 	
-#if 0
-	/* 测试TF卡 */
-	if (f_mount(&fatfs, path, 1) == FR_OK)
-	{
-		D1 = 0;
-	}
-	f_open(&fil, tchar, FA_CREATE_ALWAYS);
-	f_close(&fil);
-	f_open(&fil, tchar, FA_WRITE);
-	f_write(&fil, (const void *)input, 16, &bw);
-	f_sync(&fil);
-	f_mount((void *)0, path, 1);
-#endif
 
 	/* 读取舵机参数 */
 	f_mount(&fatfs, path, 1);
 	read_steer_helm_data_from_TF();
 	set_steer_helm(data_steer_helm.center);
-
+	
+	send_RFID_cmd(rfid_cmd_energetic_mode_enable);
 	
 	/* Loop forever */
 	for (;;)
@@ -108,7 +96,6 @@ int main(void)
 		{
 			g_remote_frame_state = REMOTE_FRAME_STATE_NOK;
 			
-			D3 = ~D3;
 			execute_remote_cmd(remote_frame_data+5);
 		}
 		
