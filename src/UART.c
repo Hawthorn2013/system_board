@@ -170,7 +170,6 @@ void serial_port_2_TX_array(const BYTE data[], WORD n)
 {
 	int i = 0;
 	
-	D1 = ~D1;
 	for (i=0; i<n; i++)
 	{
 		serial_port_2_TX(data[i]);
