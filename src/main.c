@@ -7,12 +7,7 @@ int main(void)
 	
 	/* TF卡 */
 	FATFS fatfs;
-	//FIL fil;
 	TCHAR *path = "0:";
-	//TCHAR *tchar = "SteHel";
-	//BYTE input[] = "I am Jian Jiao.";
-	//UINT bw;
-	//UINT br;
 	
 	disable_watchdog();
 	init_modes_and_clock();
@@ -42,12 +37,25 @@ int main(void)
 	LCD_DISPLAY();
 	LCD_Fill(0x00);
 	
+#if 0
+	/* 漂移 */
+	//delay_ms(1000);
+	//drift_right1();
+	delay_ms(1000);
+	drift_right1();
+	delay_ms(5000);
+	drift_right5();
+	delay_ms(5000);
+	drift_right6();
+	delay_ms(5000);
+#endif	
+	
+	
 	/* 初始化陀螺仪 */
 	for (i=0; i<5; i++)
 	{
 		BYTE rev = 0x00;
 		
-		//ReadReg(WHO_AM_I, &rev);
 		ReadReg(WHO_AM_I, &rev);
 		if (I_AM_L3G4200D == rev)
 		{
@@ -65,7 +73,7 @@ int main(void)
 	read_steer_helm_data_from_TF();
 	set_steer_helm(data_steer_helm.center);
 	
-	send_RFID_cmd(rfid_cmd_energetic_mode_enable);
+	send_RFID_cmd(rfid_cmd_energetic_mode_enable);	/* 开启RFID读卡器主动模式 */
 	
 	/* Loop forever */
 	for (;;)
@@ -91,6 +99,7 @@ int main(void)
 			//serial_port_0_TX(TestWhoAmI());
 		}
 #endif
+
 		/* 执行远程命令 */
 		if (REMOTE_FRAME_STATE_OK == g_remote_frame_state)
 		{
@@ -99,7 +108,6 @@ int main(void)
 			execute_remote_cmd(remote_frame_data+5);
 		}
 		
-	
 		delay_ms(100);
 	}
 }

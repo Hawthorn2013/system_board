@@ -50,6 +50,8 @@ typedef unsigned short word;
 #include "UART.h"
 #include "L3G4200D.h"
 #include "RFIDCard.h"
+#include "mag.h"
+#include "drifting.h"
 
 ///****************LED****************///
 #if 1
