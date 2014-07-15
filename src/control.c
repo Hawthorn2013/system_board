@@ -3,6 +3,7 @@
 
 
 int g_f_pit = 0;
+DWORD g_time_basis_PIT = 0x00000000;	/* 时间基准 */
 
 
 /*-----------------------------------------------------------------------*/
@@ -11,6 +12,8 @@ int g_f_pit = 0;
 void PitISR(void)
 {
 	g_f_pit = 1;
+	
+	g_time_basis_PIT++;	/* 计时 */
 	
 	/* start:encoder */
 	data_encoder.is_forward = SIU.GPDI[28].B.PDI;
@@ -28,6 +31,8 @@ void PitISR(void)
 	
 	/* 开始执行速度控制算法 */
 	contorl_speed_encoder_pid();
+	
+	punctured_ballon(rfid_site);
 	
 	PIT.CH[1].TFLG.B.TIF = 1;	// MPC56xxB/P/S: Clear PIT 1 flag by writing 1 
 }
@@ -201,4 +206,24 @@ void set_steer_helm(WORD helmData)
 	
 	EMIOS_0.CH[9].CBDR.R = helmData;
 	helm_data_record = helmData;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 获取两个周期计数的差值，常用故写成函数                                */
+/*-----------------------------------------------------------------------*/
+DWORD diff_time_basis_PIT(DWORD new_time, DWORD old_time)
+{
+	DWORD diff;
+	
+	if (new_time >= old_time)
+	{
+		diff = new_time - old_time;
+	}
+	else
+	{
+		diff = new_time + (0xFFFFFFFF- old_time);
+	}
+	
+	return diff;
 }

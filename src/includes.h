@@ -52,6 +52,7 @@ typedef unsigned short word;
 #include "RFIDCard.h"
 #include "mag.h"
 #include "drifting.h"
+#include "action.h"
 
 ///****************LED****************///
 #if 1

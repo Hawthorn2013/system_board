@@ -50,7 +50,7 @@ int main(void)
 	delay_ms(5000);
 #endif	
 	
-	
+#if 0	
 	/* 初始化陀螺仪 */
 	for (i=0; i<5; i++)
 	{
@@ -64,21 +64,23 @@ int main(void)
 		SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
 		SetMode(NORMAL);
 	}
+#endif
 	
-	set_speed_target(20);
-	
-
+#if 1
 	/* 读取舵机参数 */
 	f_mount(&fatfs, path, 1);
 	read_steer_helm_data_from_TF();
 	set_steer_helm(data_steer_helm.center);
 	
 	send_RFID_cmd(rfid_cmd_energetic_mode_enable);	/* 开启RFID读卡器主动模式 */
+#endif
+
+	set_speed_target(20);
 	
 	/* Loop forever */
 	for (;;)
 	{
-#if 1
+#if 0
 		u8_t status;
 		
 		/* 调试陀螺仪 */
@@ -100,6 +102,7 @@ int main(void)
 		}
 #endif
 
+#if 1
 		/* 执行远程命令 */
 		if (REMOTE_FRAME_STATE_OK == g_remote_frame_state)
 		{
@@ -107,6 +110,7 @@ int main(void)
 			
 			execute_remote_cmd(remote_frame_data+5);
 		}
+#endif
 		
 		delay_ms(100);
 	}
