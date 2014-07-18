@@ -18,7 +18,7 @@ extern DWORD g_time_basis_PIT;
 
 /* 速度PWM */
 #define SPEED_PWM_MIN (1)
-#define SPEED_PWM_MAX (3199)
+#define SPEED_PWM_MAX (1500)
 #define SPEED_PWM_TEST (20)
 
 /* 速度光编 */

@@ -17,6 +17,7 @@ int main(void)
 	init_serial_port_0();
 	init_serial_port_1();
 	init_serial_port_2();
+	init_ADC();
 	//init_serial_port_3();
 	//init_supersonic_receive_0();
 	//init_supersonic_receive_1();
@@ -75,7 +76,7 @@ int main(void)
 	send_RFID_cmd(rfid_cmd_energetic_mode_enable);	/* 开启RFID读卡器主动模式 */
 #endif
 
-	set_speed_target(20);
+	set_speed_target(15);
 	
 	/* Loop forever */
 	for (;;)

@@ -31,8 +31,15 @@ void PitISR(void)
 	
 	/* 开始执行速度控制算法 */
 	contorl_speed_encoder_pid();
-	
+
+#if 0
+	/* 扎气球 */
 	punctured_ballon(rfid_site);
+#endif
+
+	/* 电磁循迹 */
+	mag_read();
+	control_steer_helm();
 	
 	PIT.CH[1].TFLG.B.TIF = 1;	// MPC56xxB/P/S: Clear PIT 1 flag by writing 1 
 }

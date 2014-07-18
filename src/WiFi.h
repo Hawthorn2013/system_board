@@ -21,10 +21,10 @@
 
 
 #define REMOTE_FRAME_LENGTH (32)
-#define WIFI_ADDRESS_NUM (1)
+//#define WIFI_ADDRESS_NUM (4)
 #define REMOTE_FRAME_STATE_OK (1)
 #define REMOTE_FRAME_STATE_NOK (0)
-#define WIFI_ADDRESS (0x0001)
+#define WIFI_ADDRESS (0x0004)
 #define ANDROID_ADDRESS (3)
 
 extern BYTE remote_frame_data[];
