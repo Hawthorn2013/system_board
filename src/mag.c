@@ -37,7 +37,23 @@ void mag_read(void)
 	mag_right=(WORD)ADC.CDR[33].B.CDATA;//PB9
 	mag_left_old=mag_left;
 	mag_left=(WORD)ADC.CDR[32].B.CDATA;//PB8
-		
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 判断是否在磁线上                                                      */
+/*-----------------------------------------------------------------------*/
+int is_on_mag_line(void)
+{
+	mag_read();
+	if (mag_left != 0 && mag_right != 0)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 

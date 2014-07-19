@@ -30,6 +30,7 @@ extern DWORD g_time_basis_PIT;
 
 extern int g_f_pit;
 extern DWORD g_time_basis_PIT;
+extern int g_f_enable_mag_steer_control;
 
 /* 方向舵机数据 */
 #ifdef __CONTROL_C_
@@ -113,7 +114,6 @@ extern void set_speed_KI(WORD ki);
 extern void set_speed_KD(WORD kd);
 extern void set_steer_helm(WORD helmData);
 extern void contorl_speed_encoder_pid(void);
-extern void generate_remote_frame(WORD cmd, BYTE data[], BYTE length);
 extern DWORD diff_time_basis_PIT(DWORD new_time, DWORD old_time);
 extern void set_steer_helm(WORD helmData);
 

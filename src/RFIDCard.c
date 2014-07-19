@@ -10,7 +10,7 @@ int g_rfid_frame_state = REMOTE_FRAME_STATE_NOK;
 int g_rfid_frame_cnt = 0;
 BYTE rfid_frame_data[RFID_FRAME_LENGTH_MAX];
 BYTE rfid_frame_data_send[RFID_FRAME_LENGTH_MAX];
-DWORD rfid_site = 0x00000000;
+//DWORD rfid_site = 0x00000000;
 
 
 /*-----------------------------------------------------------------------*/
@@ -103,6 +103,8 @@ void explane_RFID_ret_data(const BYTE *data)
 /*-----------------------------------------------------------------------*/
 void explane_RFID_ret_cardID(DWORD id)
 {
-	rfid_site = id;
-	serial_port_1_TX_array((BYTE *)&id, sizeof(id));
+	RFID_site_data.site = id;
+	RFID_site_data.is_new_site = 1;
+	RFID_site_data.time = g_time_basis_PIT;
+	//serial_port_1_TX_array((BYTE *)&id, sizeof(id));
 }

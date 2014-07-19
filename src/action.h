@@ -12,6 +12,11 @@
 #define ACTION_PUNCTURED_BALLON_STEP_6 (0x06)	/* 回到线上 */
 #define ACTION_PUNCTURED_BALLON_STEP_OK (0x07)	/* 完成 */
 
+#define ACTION_PUNCTURED_BALLON_STEP_CAR3_TURN1 (0x08)	/* 车3第1次转弯 */
+#define ACTION_PUNCTURED_BALLON_STEP_CAR4_TURN1 (0x09)	/* 车4第1次转弯 */
+#define ACTION_PUNCTURED_BALLON_STEP_CAR3_TURN2 (0x0a)	/* 车3第2次转弯 */
+#define ACTION_PUNCTURED_BALLON_STEP_CAR4_TURN2 (0x0b)	/* 车4第2次转弯 */
+
 
 /* 刺气球数据 */
 #ifdef __ACTION_C_
@@ -24,6 +29,7 @@ struct
 extern struct
 {
 	DWORD time;
+	int step;
 } data_punctured_ballon;
 #endif
 

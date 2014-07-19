@@ -36,20 +36,7 @@ int main(void)
 	SD_init();
 	initLCD();
 	LCD_DISPLAY();
-	LCD_Fill(0x00);
-	
-#if 0
-	/* 漂移 */
-	//delay_ms(1000);
-	//drift_right1();
-	delay_ms(1000);
-	drift_right1();
-	delay_ms(5000);
-	drift_right5();
-	delay_ms(5000);
-	drift_right6();
-	delay_ms(5000);
-#endif	
+	LCD_Fill(0x00);	
 	
 #if 0	
 	/* 初始化陀螺仪 */
@@ -68,14 +55,21 @@ int main(void)
 #endif
 	
 #if 1
-	/* 读取舵机参数 */
+	/* 挂载TF卡文件系统 */
 	f_mount(&fatfs, path, 1);
+	
+	/* 读取舵机参数 */
 	read_steer_helm_data_from_TF();
 	set_steer_helm(data_steer_helm.center);
 	
-	send_RFID_cmd(rfid_cmd_energetic_mode_enable);	/* 开启RFID读卡器主动模式 */
+	/* 读取设备号 */
+	read_device_no_from_TF();
+	
+	/* 开启RFID读卡器主动模式 */
+	send_RFID_cmd(rfid_cmd_energetic_mode_enable);
 #endif
-
+	
+	/* 设置初始速度 */
 	set_speed_target(15);
 	
 	/* Loop forever */
@@ -112,9 +106,15 @@ int main(void)
 			execute_remote_cmd(remote_frame_data+5);
 		}
 #endif
-		
-		delay_ms(100);
+
+#if 0
+		/* 测试扎气球 */
+		if (RFID_site_data.is_new_site)
+		{
+			RFID_site_data.is_new_site = 0;
+			
+			punctured_ballon(RFID_site_data.site);
+		}
+#endif
 	}
 }
-
-

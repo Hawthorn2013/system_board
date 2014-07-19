@@ -4,6 +4,7 @@
 
 int g_f_pit = 0;
 DWORD g_time_basis_PIT = 0x00000000;	/* 时间基准 */
+int g_f_enable_mag_steer_control = 1;	/* 启用电磁循迹标志位 */
 
 
 /*-----------------------------------------------------------------------*/
@@ -38,8 +39,19 @@ void PitISR(void)
 #endif
 
 	/* 电磁循迹 */
-	mag_read();
-	control_steer_helm();
+	if (g_f_enable_mag_steer_control)
+	{
+		mag_read();
+		control_steer_helm();
+	}
+	
+	/* 发送位置 */
+	{
+		BYTE data[7];
+		
+		generate_remote_net_frame_to_send_site(WIFI_NET_CMD_CAR_REPORT_CURRENT_SITE, RFID_site_data.site, data);
+		generate_remote_frame(WIFI_CMD_NET, data, sizeof(data));
+	}
 	
 	PIT.CH[1].TFLG.B.TIF = 1;	// MPC56xxB/P/S: Clear PIT 1 flag by writing 1 
 }

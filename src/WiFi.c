@@ -6,6 +6,7 @@ int g_remote_frame_state = REMOTE_FRAME_STATE_NOK;
 int g_remote_frame_cnt = 0;
 BYTE remote_frame_data[REMOTE_FRAME_LENGTH];
 BYTE remote_frame_data_send[REMOTE_FRAME_LENGTH];
+BYTE g_device_NO = WIFI_ADDRESS;	/* 设备号 即WiFi地址 */
 
 
 /*-----------------------------------------------------------------------*/
@@ -74,7 +75,7 @@ void execute_remote_cmd(const BYTE *data)
 
 
 /*-----------------------------------------------------------------------*/
-/* 接受远程数据帧                                                      */
+/* 接受远程数据帧                                                        */
 /*-----------------------------------------------------------------------*/
 int rev_remote_frame(BYTE rev)
 {
@@ -107,7 +108,7 @@ int rev_remote_frame(BYTE rev)
 		remote_frame_data[g_remote_frame_cnt++] = rev;
 		address |= (WORD)(remote_frame_data[2])<<8;
 		address |= (WORD)(remote_frame_data[3]);
-		if (address != ((WORD)0x0001<<WIFI_ADDRESS))
+		if (address != ((WORD)0x0001<<g_device_NO))
 		{
 			g_remote_frame_cnt = 0;	//不是发给本机的
 		}
@@ -151,7 +152,7 @@ int rev_remote_frame(BYTE rev)
 /*        data发出的数据体，接在cmd后                                    */
 /*        data长度                                                       */
 /*-----------------------------------------------------------------------*/
-void generate_remote_frame(WORD cmd, BYTE data[], BYTE length)
+void generate_remote_frame(WORD cmd, const BYTE data[], BYTE length)
 {
 	WORD i = 0, j = 0;
 	
@@ -172,6 +173,24 @@ void generate_remote_frame(WORD cmd, BYTE data[], BYTE length)
 		remote_frame_data_send[i] = 0x00;
 	}
 	serial_port_0_TX_array(remote_frame_data_send, REMOTE_FRAME_LENGTH);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 生成发送位置的远程网络命令                                            */
+/* 参数 : cmd WiFi Net命令字                                             */
+/*        site 卡号                                                      */
+/*        data 存放生成的命令                                            */
+/*-----------------------------------------------------------------------*/
+void generate_remote_net_frame_to_send_site(WORD cmd, DWORD site, BYTE data[])
+{
+	WORD i = 0, j = 0;
+	
+	data[i++] = g_device_NO;
+	data[i++] = (BYTE)(cmd>>8);
+	data[i++] = (BYTE)cmd;
+	*(DWORD *)&(data[i]) = site;
+	i += sizeof(site);
 }
 
 

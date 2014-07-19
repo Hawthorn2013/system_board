@@ -301,7 +301,7 @@ void clear_sd_buffer(BYTE buffer[][SD_SECTOR_SIZE])
 int read_steer_helm_data_from_TF()
 {
 	FIL fil;
-	TCHAR *tchar = "SteHel";
+	TCHAR *tchar = "STEHEL";
 	UINT br;
 	
 	f_open(&fil, tchar, FA_READ);
@@ -318,7 +318,7 @@ int read_steer_helm_data_from_TF()
 int write_steer_helm_data_to_TF()
 {
 	FIL fil;
-	TCHAR *tchar = "SteHel";
+	TCHAR *tchar = "STEHEL";
 	UINT wr;
 	
 	f_open(&fil, tchar, FA_CREATE_ALWAYS);
@@ -326,6 +326,28 @@ int write_steer_helm_data_to_TF()
 	f_open(&fil, tchar, FA_WRITE);
 	f_write(&fil, (void *)&data_steer_helm, sizeof(data_steer_helm), &wr);
 	f_close(&fil);
+	
+	return 0;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 读取设备号从TF卡                                                */
+/*-----------------------------------------------------------------------*/
+int read_device_no_from_TF()
+{
+	FIL fil;
+	TCHAR *tchar = "DEVICE";
+	UINT br;
+	
+	f_open(&fil, tchar, FA_READ);
+	f_read(&fil, (void *)&g_device_NO, sizeof(g_device_NO), &br);
+	f_close(&fil);
+	
+	if (g_device_NO == 3)
+	{
+		D0 = 0;
+	}
 	
 	return 0;
 }

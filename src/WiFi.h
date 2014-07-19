@@ -17,18 +17,21 @@
 #define WIFI_CMD_SET_STEER_HELM_RIGHT (0x000D)	/* 设置方向舵机右极限 */
 #define WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF (0x000E)	/* 方向舵机数据写入TF卡 */
 #define WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF (0x000F)	/* 发送方向舵机数据至上位机 */
+#define WIFI_CMD_NET (0x0010)	/* 封装网络数据 */
 
+#define WIFI_NET_CMD_CAR_REPORT_CURRENT_SITE (0x0001)	/* 车报告当前读到的位置 */
+#define WIFI_NET_CMD_CAR_REPORT_CACHE_SITE (0x0002)	/* 车报告缓存的位置 即最近一次读到的位置 */
 
 
 #define REMOTE_FRAME_LENGTH (32)
-//#define WIFI_ADDRESS_NUM (4)
 #define REMOTE_FRAME_STATE_OK (1)
 #define REMOTE_FRAME_STATE_NOK (0)
-#define WIFI_ADDRESS (0x0004)
+#define WIFI_ADDRESS (4)
 #define ANDROID_ADDRESS (3)
 
 extern BYTE remote_frame_data[];
 extern int g_remote_frame_state;
+extern BYTE g_device_NO;
 
 /* 远程控制标志位 */
 #ifdef __WIFI_C_
@@ -46,6 +49,8 @@ extern struct
 extern BYTE check_sum(const BYTE *data, WORD length);
 extern void execute_remote_cmd(const BYTE *data);
 extern int rev_remote_frame(BYTE rev);
+extern void generate_remote_frame(WORD cmd, const BYTE data[], BYTE length);
+extern void generate_remote_net_frame_to_send_site(WORD cmd, DWORD site, BYTE data[]);
 
 
 #endif
