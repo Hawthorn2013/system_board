@@ -6,9 +6,9 @@
 #define RFID_CMD_ENERGETIC_MODE (0x41)
 
 #define RFID_CARD_ID
-#define RFID_CARD_ID_PUNCTURED_BALLON_START (0x1250DD76)
+#define RFID_CARD_ID_PUNCTURED_BALLON_START (0x0A1E4748)
 #define RFID_CARD_ID_PUNCTURED_BALLON_TURN_1 (0x4AF14448)
-#define RFID_CARD_ID_PUNCTURED_BALLON_STOP (0xCA7C00BD)
+#define RFID_CARD_ID_PUNCTURED_BALLON_STOP (0x1250DD76)
 #define RFID_CARD_ID_PUNCTURED_BALLON_CAR4_TURN1 (0xCA7C00BD)
 #define RFID_CARD_ID_PUNCTURED_BALLON_CAR3_TURN1 (0xDA8220BD)
 #define RFID_CARD_ID_PUNCTURED_BALLON_CAR4_TURN2 (0xDE913FC9)
@@ -22,7 +22,9 @@
 extern const BYTE rfid_cmd_get_id[];
 extern const BYTE rfid_cmd_get_data[];
 extern const BYTE rfid_cmd_energetic_mode_enable[];
+extern const BYTE rfid_cmd_energetic_mode_enable_new[];
 extern const BYTE rfid_cmd_energetic_mode_disable[];
+extern const BYTE rfid_cmd_energetic_mode_disable_new[];
 //extern DWORD rfid_site;
 
 /* Î»ÖÃÊý¾Ý */

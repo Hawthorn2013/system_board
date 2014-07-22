@@ -31,6 +31,10 @@ int main(void)
 	init_DSPI_1();
 	//init_DSPI_2();
 	//init_I2C();
+	
+	/* 关闭电磁循迹 */
+	g_f_enable_mag_steer_control = 0;
+	
 	enable_irq();
 	
 	SD_init();
@@ -67,10 +71,14 @@ int main(void)
 	
 	/* 开启RFID读卡器主动模式 */
 	send_RFID_cmd(rfid_cmd_energetic_mode_enable);
+	delay_ms(100);
+	send_RFID_cmd(rfid_cmd_energetic_mode_enable_new);
+	
 #endif
+
 	
 	/* 设置初始速度 */
-	set_speed_target(15);
+	set_speed_target(0);
 	
 	/* Loop forever */
 	for (;;)
@@ -114,6 +122,23 @@ int main(void)
 			RFID_site_data.is_new_site = 0;
 			
 			punctured_ballon(RFID_site_data.site);
+		}
+#endif
+
+#if 1
+		if (1 == RFID_site_data.is_new_site)
+		{
+			RFID_site_data.is_new_site = 0;
+			
+			if (0xDAA23548 == RFID_site_data.site)
+			{
+				set_speed_target(260);
+				delay_ms(1500);
+				set_speed_target(0);
+				g_f_enable_mag_steer_control = 1;
+				delay_ms(500);
+				set_speed_target(20);
+			}
 		}
 #endif
 	}

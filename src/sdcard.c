@@ -344,10 +344,5 @@ int read_device_no_from_TF()
 	f_read(&fil, (void *)&g_device_NO, sizeof(g_device_NO), &br);
 	f_close(&fil);
 	
-	if (g_device_NO == 3)
-	{
-		D0 = 0;
-	}
-	
 	return 0;
 }

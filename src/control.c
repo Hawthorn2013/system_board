@@ -45,6 +45,7 @@ void PitISR(void)
 		control_steer_helm();
 	}
 	
+#if 0
 	/* ∑¢ÀÕŒª÷√ */
 	{
 		BYTE data[7];
@@ -52,7 +53,8 @@ void PitISR(void)
 		generate_remote_net_frame_to_send_site(WIFI_NET_CMD_CAR_REPORT_CURRENT_SITE, RFID_site_data.site, data);
 		generate_remote_frame(WIFI_CMD_NET, data, sizeof(data));
 	}
-	
+#endif
+
 	PIT.CH[1].TFLG.B.TIF = 1;	// MPC56xxB/P/S: Clear PIT 1 flag by writing 1 
 }
 
