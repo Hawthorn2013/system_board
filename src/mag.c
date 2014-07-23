@@ -1,3 +1,4 @@
+#define __MAG_C_
 #include "includes.h"
 
 
@@ -99,7 +100,7 @@ void mag_TX(void)
 /* 舵机参数控制                                                          */
 /*-----------------------------------------------------------------------*/
 /*
-#define STEER_HELM_CENTER (3301)
+#define data_steer_helm.center (3301)
 #define STEER_HELM_TEST (1500)
 #define STEER_HELM_LEFT (2247)
 #define STEER_HELM_RIGHT (4292)
@@ -110,26 +111,26 @@ void control_steer_helm(void)
 {
 	
 	if(mag_left-mag_left_old>5)
-	set_steer_helm(STEER_HELM_CENTER-((mag_left-mag_right)*(STEER_HELM_CENTER-STEER_HELM_LEFT)/300));
+	set_steer_helm(data_steer_helm.center-((mag_left-mag_right)*(data_steer_helm.center-data_steer_helm.left_limit)/300));
 	
 	else if(mag_right-mag_right_old>15)
-	set_steer_helm(STEER_HELM_CENTER+((mag_right-mag_left)*(STEER_HELM_CENTER-STEER_HELM_LEFT)/300));
+	set_steer_helm(data_steer_helm.center+((mag_right-mag_left)*(data_steer_helm.center-data_steer_helm.left_limit)/300));
 	
 	else if(mag_left-mag_right>20||mag_right-mag_left>20)
 	{
 		if(mag_left-mag_right>80)
-		set_steer_helm(STEER_HELM_CENTER-((mag_left-mag_right)*(STEER_HELM_CENTER-STEER_HELM_LEFT)/500));
+		set_steer_helm(data_steer_helm.center-((mag_left-mag_right)*(data_steer_helm.center-data_steer_helm.left_limit)/500));
 		else if(mag_left-mag_right>20)
-		set_steer_helm(STEER_HELM_CENTER-((mag_left-mag_right)*(STEER_HELM_CENTER-STEER_HELM_LEFT)/800));
+		set_steer_helm(data_steer_helm.center-((mag_left-mag_right)*(data_steer_helm.center-data_steer_helm.left_limit)/800));
 		else if(mag_right-mag_left>80)
-		set_steer_helm(STEER_HELM_CENTER+((mag_right-mag_left)*(STEER_HELM_CENTER-STEER_HELM_LEFT)/500));
+		set_steer_helm(data_steer_helm.center+((mag_right-mag_left)*(data_steer_helm.center-data_steer_helm.left_limit)/500));
 		else if(mag_right-mag_left>20)
-		set_steer_helm(STEER_HELM_CENTER+((mag_right-mag_left)*(STEER_HELM_CENTER-STEER_HELM_LEFT)/800));
+		set_steer_helm(data_steer_helm.center+((mag_right-mag_left)*(data_steer_helm.center-data_steer_helm.left_limit)/800));
 		
 	}
 	
 	else
-	set_steer_helm(STEER_HELM_CENTER);
+	set_steer_helm(data_steer_helm.center);
 	/*
 	if(mag_left>mag_right)
 	set_steer_helm(STEER_HELM_LEFT);

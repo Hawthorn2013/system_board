@@ -32,8 +32,8 @@ int main(void)
 	//init_DSPI_2();
 	//init_I2C();
 	
-	/* 关闭电磁循迹 */
-	g_f_enable_mag_steer_control = 0;
+	/* 打开电磁循迹 */
+	g_f_enable_mag_steer_control = 1;
 	
 	enable_irq();
 	
@@ -78,7 +78,7 @@ int main(void)
 
 	
 	/* 设置初始速度 */
-	set_speed_target(0);
+	set_speed_target(20);
 	
 	/* Loop forever */
 	for (;;)
@@ -126,6 +126,74 @@ int main(void)
 #endif
 
 #if 1
+		/* 测试扎气球2 */
+		if (RFID_site_data.is_new_site)
+		{
+			RFID_site_data.is_new_site = 0;
+			
+			if (RFID_CARD_ID_PUNCTURED_BALLON_START == RFID_site_data.site)
+			{
+				set_speed_target(20);
+			}
+			else if (3 == g_device_NO)
+			{
+				if (RFID_CARD_ID_PUNCTURED_BALLON_CAR3_TURN1 == RFID_site_data.site)
+				{
+					g_f_enable_mag_steer_control = 0;
+					set_steer_helm(STEER_HELM_RIGHT);
+					set_speed_target(20);
+					delay_ms(700);
+					set_steer_helm(STEER_HELM_LEFT);
+					delay_ms(900);
+					set_steer_helm(STEER_HELM_CENTER);
+					set_speed_target(10);
+					g_f_enable_mag_steer_control = 1;
+				}
+				else if (RFID_CARD_ID_PUNCTURED_BALLON_CAR3_TURN2 == RFID_site_data.site)
+				{
+					g_f_enable_mag_steer_control = 0;
+					set_steer_helm(STEER_HELM_RIGHT);
+					set_speed_target(20);
+					delay_ms(700);
+					set_steer_helm(STEER_HELM_LEFT);
+					delay_ms(900);
+					set_steer_helm(STEER_HELM_CENTER);
+					set_speed_target(10);
+					g_f_enable_mag_steer_control = 1;
+				}
+			}
+			else if (1 == g_device_NO)
+			{
+				if (RFID_CARD_ID_PUNCTURED_BALLON_CAR4_TURN1 == RFID_site_data.site)
+				{
+					g_f_enable_mag_steer_control = 0;
+					set_steer_helm(STEER_HELM_RIGHT);
+					set_speed_target(20);
+					delay_ms(700);
+					set_steer_helm(STEER_HELM_LEFT);
+					delay_ms(900);
+					set_steer_helm(STEER_HELM_CENTER);
+					set_speed_target(10);
+					g_f_enable_mag_steer_control = 1;
+				}
+				else if (RFID_CARD_ID_PUNCTURED_BALLON_CAR4_TURN2 == RFID_site_data.site)
+				{
+					g_f_enable_mag_steer_control = 0;
+					set_steer_helm(STEER_HELM_RIGHT);
+					set_speed_target(20);
+					delay_ms(700);
+					set_steer_helm(STEER_HELM_LEFT);
+					delay_ms(900);
+					set_steer_helm(STEER_HELM_CENTER);
+					set_speed_target(10);
+					g_f_enable_mag_steer_control = 1;
+				}
+			}
+			
+		}
+#endif
+
+#if 0
 		if (1 == RFID_site_data.is_new_site)
 		{
 			RFID_site_data.is_new_site = 0;
