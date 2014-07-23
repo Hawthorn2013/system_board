@@ -125,7 +125,7 @@ int main(void)
 		}
 #endif
 
-#if 1
+#if 0
 		/* ≤‚ ‘‘˙∆¯«Ú2 */
 		if (RFID_site_data.is_new_site)
 		{
@@ -135,29 +135,33 @@ int main(void)
 			{
 				set_speed_target(20);
 			}
+			else if (RFID_CARD_ID_PUNCTURED_BALLON_STOP  == RFID_site_data.site)
+			{
+				set_speed_target(0);
+			}
 			else if (3 == g_device_NO)
 			{
 				if (RFID_CARD_ID_PUNCTURED_BALLON_CAR3_TURN1 == RFID_site_data.site)
 				{
 					g_f_enable_mag_steer_control = 0;
-					set_steer_helm(STEER_HELM_RIGHT);
+					set_steer_helm(data_steer_helm.right_limit);
 					set_speed_target(20);
-					delay_ms(700);
-					set_steer_helm(STEER_HELM_LEFT);
-					delay_ms(900);
-					set_steer_helm(STEER_HELM_CENTER);
+					delay_ms(500);
+					set_steer_helm(data_steer_helm.left_limit);
+					delay_ms(800);
+					set_steer_helm(data_steer_helm.center);
 					set_speed_target(10);
 					g_f_enable_mag_steer_control = 1;
 				}
 				else if (RFID_CARD_ID_PUNCTURED_BALLON_CAR3_TURN2 == RFID_site_data.site)
 				{
 					g_f_enable_mag_steer_control = 0;
-					set_steer_helm(STEER_HELM_RIGHT);
+					set_steer_helm(data_steer_helm.right_limit);
 					set_speed_target(20);
-					delay_ms(700);
-					set_steer_helm(STEER_HELM_LEFT);
-					delay_ms(900);
-					set_steer_helm(STEER_HELM_CENTER);
+					delay_ms(500);
+					set_steer_helm(data_steer_helm.left_limit);
+					delay_ms(800);
+					set_steer_helm(data_steer_helm.center);
 					set_speed_target(10);
 					g_f_enable_mag_steer_control = 1;
 				}
@@ -167,46 +171,29 @@ int main(void)
 				if (RFID_CARD_ID_PUNCTURED_BALLON_CAR4_TURN1 == RFID_site_data.site)
 				{
 					g_f_enable_mag_steer_control = 0;
-					set_steer_helm(STEER_HELM_RIGHT);
+					set_steer_helm(data_steer_helm.right_limit);
 					set_speed_target(20);
-					delay_ms(700);
-					set_steer_helm(STEER_HELM_LEFT);
-					delay_ms(900);
-					set_steer_helm(STEER_HELM_CENTER);
+					delay_ms(600);
+					set_steer_helm(data_steer_helm.left_limit);
+					delay_ms(950);
+					set_steer_helm(data_steer_helm.center);
 					set_speed_target(10);
 					g_f_enable_mag_steer_control = 1;
 				}
 				else if (RFID_CARD_ID_PUNCTURED_BALLON_CAR4_TURN2 == RFID_site_data.site)
 				{
 					g_f_enable_mag_steer_control = 0;
-					set_steer_helm(STEER_HELM_RIGHT);
+					set_steer_helm(data_steer_helm.right_limit);
 					set_speed_target(20);
 					delay_ms(700);
-					set_steer_helm(STEER_HELM_LEFT);
+					set_steer_helm(data_steer_helm.left_limit);
 					delay_ms(900);
-					set_steer_helm(STEER_HELM_CENTER);
+					set_steer_helm(data_steer_helm.center);
 					set_speed_target(10);
 					g_f_enable_mag_steer_control = 1;
 				}
 			}
 			
-		}
-#endif
-
-#if 0
-		if (1 == RFID_site_data.is_new_site)
-		{
-			RFID_site_data.is_new_site = 0;
-			
-			if (0xDAA23548 == RFID_site_data.site)
-			{
-				set_speed_target(260);
-				delay_ms(1500);
-				set_speed_target(0);
-				g_f_enable_mag_steer_control = 1;
-				delay_ms(500);
-				set_speed_target(20);
-			}
 		}
 #endif
 	}

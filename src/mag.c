@@ -105,37 +105,34 @@ void mag_TX(void)
 #define STEER_HELM_LEFT (2247)
 #define STEER_HELM_RIGHT (4292)
 */
-
-
 void control_steer_helm(void)
-{
+{	
+	int error = 0,error_count = 0;
+	int kp=3,kd=0,ki=0;
+	int pos=0;
+	int steer_rate = 0;
+	static int last_error=0;
+	static int steer_pwm =0;	/* 由全局变量改为局部静态变量 */
 	
-	if(mag_left-mag_left_old>5)
-	set_steer_helm(data_steer_helm.center-((mag_left-mag_right)*(data_steer_helm.center-data_steer_helm.left_limit)/300));
-	
-	else if(mag_right-mag_right_old>15)
-	set_steer_helm(data_steer_helm.center+((mag_right-mag_left)*(data_steer_helm.center-data_steer_helm.left_limit)/300));
-	
-	else if(mag_left-mag_right>20||mag_right-mag_left>20)
+	pos = mag_left - mag_right;
+	//LCD_PrintoutInt(0, 0,(pos));
+	error = -pos;
+	if(abs(error)>20)
 	{
-		if(mag_left-mag_right>80)
-		set_steer_helm(data_steer_helm.center-((mag_left-mag_right)*(data_steer_helm.center-data_steer_helm.left_limit)/500));
-		else if(mag_left-mag_right>20)
-		set_steer_helm(data_steer_helm.center-((mag_left-mag_right)*(data_steer_helm.center-data_steer_helm.left_limit)/800));
-		else if(mag_right-mag_left>80)
-		set_steer_helm(data_steer_helm.center+((mag_right-mag_left)*(data_steer_helm.center-data_steer_helm.left_limit)/500));
-		else if(mag_right-mag_left>20)
-		set_steer_helm(data_steer_helm.center+((mag_right-mag_left)*(data_steer_helm.center-data_steer_helm.left_limit)/800));
-		
+	error_count = (error-last_error);
+	steer_rate = (kp*(error)+kd*error_count);
+	//LCD_PrintoutInt(0, 0,(steer_rate));
+	//LCD_PrintoutInt(0, 2,(mag_right));
+	//LCD_PrintoutInt(0, 4,(mag_left));
+	last_error = error;
+	if(mag_left<=30)steer_rate=1400;
+	if(mag_right<=30)steer_rate=-1400;
+	steer_pwm = steer_rate;
+	//LCD_PrintoutInt(0,2,(steer_pwm));
+	set_steer_helm((WORD)(3293+steer_pwm));	/* 躲警告 */
 	}
-	
 	else
-	set_steer_helm(data_steer_helm.center);
-	/*
-	if(mag_left>mag_right)
-	set_steer_helm(STEER_HELM_LEFT);
-	if(mag_left<mag_right)
-	set_steer_helm(STEER_HELM_RIGHT);
-	*/
-
+	{
+		set_steer_helm(3293);
+	}
 }
