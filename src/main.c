@@ -4,7 +4,7 @@
 int main(void)
 {
 	int i = 0;
-	
+	int flag=1;
 	/* TF卡 */
 	FATFS fatfs;
 	TCHAR *path = "0:";
@@ -78,11 +78,29 @@ int main(void)
 
 	
 	/* 设置初始速度 */
-	set_speed_target(20);
+	set_speed_target(0);
 	
 	/* Loop forever */
 	for (;;)
 	{
+	
+	if(RFID_site_data.site==RFID_CARD_ID_1&&flag==1)
+	{
+		g_f_enable_mag_steer_control=0;
+		set_steer_helm(data_steer_helm.center);
+	}
+	if(RFID_site_data.site==RFID_CARD_ID_1&&flag==0)
+	{
+		g_f_enable_mag_steer_control=1;
+		set_speed_target(15);
+			
+	}
+	if(RFID_site_data.site==RFID_CARD_ID_2&&flag==1)
+	{
+	    flag=0;
+	    set_speed_target(-10);
+	}
+	
 #if 0
 		u8_t status;
 		
