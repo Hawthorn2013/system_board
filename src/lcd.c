@@ -54,18 +54,18 @@ void initLCD(void)//RST=0复位
 void LCD_DISPLAY(void)
 {
 	LCD_Fill(0xFF);//亮屏
-		delay_ms(1000);
+		delay_ms(100);
 
 	LCD_Fill(0x00);//黑屏
-	delay_ms(1000);
+	delay_ms(100);
 
-	LCD_Printbyte(24,0, (BYTE*)"速度:3.1m/s");  //汉字字符串显示
-	LCD_Printbyte(7,2, (BYTE*)"智能车smart电流");   //汉字字符串显示
-	LCD_P8x16Str(40,4, (BYTE*)"JOSTIN");          //英文字符串显示
+	//LCD_Printbyte(24,0, (BYTE*)"速度:3.1m/s");  //汉字字符串显示
+	//LCD_Printbyte(7,2, (BYTE*)"智能车smart电流");   //汉字字符串显示
+	//LCD_P8x16Str(40,4, (BYTE*)"JOSTIN");          //英文字符串显示
 
-	LCD_PrintoutFloat(36,6,2.250);
-	LCD_PrintoutInt(86,6,1);
-	delay_ms(1000);
+	//LCD_PrintoutFloat(36,6,2.250);
+	//LCD_PrintoutInt(86,6,1);
+	//delay_ms(1000);
 
 }
 /*********************LCD显示base***************************/

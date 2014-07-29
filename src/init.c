@@ -213,3 +213,156 @@ void delay_ms(DWORD ms)
 		delay_us(1000);
 	}
 }
+
+
+/*-----------------------------------------------------------------------*/
+/* 初始化并自检                                                          */
+/*-----------------------------------------------------------------------*/
+void init_all_and_POST(void)
+{
+	int i = 0;
+	/* TF卡 */
+	FATFS fatfs;
+	TCHAR *path = "0:";
+	
+	disable_watchdog();
+	init_modes_and_clock();
+	initEMIOS_0MotorAndSteer();
+	init_pit();
+	init_led();
+	init_serial_port_0();
+	init_serial_port_1();
+	init_serial_port_2();
+	init_ADC();
+	//init_serial_port_3();
+	//init_supersonic_receive_0();
+	//init_supersonic_receive_1();
+	//init_supersonic_receive_2();
+	//init_supersonic_receive_3();
+	//init_supersonic_trigger_0();
+	//init_supersonic_trigger_1();
+	//init_supersonic_trigger_2();
+	//init_supersonic_trigger_3();
+	init_optical_encoder();
+	//init_DSPI_2();
+	//init_I2C();
+	
+	/* 打开电磁循迹 */
+	g_f_enable_mag_steer_control = 1;
+	
+	//enable_irq();
+	
+	/* 初始化SPI总线 */
+	init_DSPI_1();
+	
+	/* 初始化显示屏 */
+	initLCD();
+	LCD_DISPLAY();
+	
+	/* 初始化TF卡 */
+	LCD_P8x16Str(0,0, (BYTE*)"TF..");
+	if (!SD_init())
+	{
+		/* 挂载TF卡文件系统 */
+		if (FR_OK == f_mount(&fatfs, path, 1))
+		{
+			/* 文件读写测试 */
+			FIL fil;
+			TCHAR *tchar = "TEST";
+			UINT br;
+			UINT wr;
+			DWORD test_write_to_TFCard = 0x0A1B2C3D;
+			DWORD test_read_from_TFCard = 0x00000000;
+	
+			f_open(&fil, tchar, FA_CREATE_ALWAYS);
+			f_close(&fil);
+			f_open(&fil, tchar, FA_WRITE);
+			f_write(&fil, (void *)test_write_to_TFCard, sizeof(test_write_to_TFCard), &wr);
+			f_close(&fil);
+			f_read(&fil, (void *)test_read_from_TFCard, sizeof(test_read_from_TFCard), &br);
+			f_close(&fil);
+			if (test_write_to_TFCard == test_read_from_TFCard)
+			{
+				g_devices_init_status.TFCard_is_OK = 1;
+			}
+		}
+	}
+	if (g_devices_init_status.TFCard_is_OK)
+	{
+		LCD_P8x16Str(0,0, (BYTE*)"TF..OK");
+	}
+	else
+	{
+		LCD_P8x16Str(0,0, (BYTE*)"TF..NOK");
+	}
+		
+	/* 初始化陀螺仪 */
+	LCD_P8x16Str(0,2, (BYTE*)"L3G..");
+	for (i=0; i<5; i++)
+	{
+		BYTE rev = 0x00;
+		
+		ReadReg(WHO_AM_I, &rev);
+		if (I_AM_L3G4200D == rev)
+		{
+			g_devices_init_status.L3G4200D_is_OK = 1;
+			SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
+			SetMode(NORMAL);
+			break;
+		}
+		
+	}
+	if (g_devices_init_status.L3G4200D_is_OK)
+	{
+		LCD_P8x16Str(0,2, (BYTE*)"L3G..OK");
+	}
+	else
+	{
+		LCD_P8x16Str(0,2, (BYTE*)"L3G..NOK");
+	}
+		
+	
+	
+#if 1
+	/* 读取设备号 */
+	read_device_no_from_TF();
+	LCD_P8x16Str(0, 4, (BYTE*)"DeviceNo=");
+	LCD_PrintoutInt(72, 4, g_device_NO);
+	
+	/* 开启RFID读卡器主动模式 */
+	send_RFID_cmd(rfid_cmd_energetic_mode_enable);
+	delay_ms(100);
+	send_RFID_cmd(rfid_cmd_energetic_mode_enable_new);
+	
+	/* 换屏 */
+	LCD_Fill(0x00);
+	delay_ms(100);
+	
+	/* 读取舵机参数 */
+	read_steer_helm_data_from_TF();
+	LCD_P8x16Str(0, 0, (BYTE*)"StH.L=");
+	LCD_PrintoutInt(48, 0, data_steer_helm.left_limit);
+	set_steer_helm(data_steer_helm.left_limit);
+	delay_ms(500);
+	LCD_P8x16Str(0, 2, (BYTE*)"StH.R=");
+	LCD_PrintoutInt(48, 2, data_steer_helm.right_limit);
+	set_steer_helm(data_steer_helm.right_limit);
+	delay_ms(500);
+	LCD_P8x16Str(0, 4, (BYTE*)"StH.C=");
+	LCD_PrintoutInt(48, 4, data_steer_helm.center);
+	set_steer_helm(data_steer_helm.center);
+	delay_ms(500);
+#endif
+
+	/* 换屏 */
+	LCD_Fill(0x00);
+	delay_ms(100);
+	
+	enable_irq();
+	
+	/* 速度闭环测试 */
+	LCD_P8x16Str(0, 0, (BYTE*)"S.T=5");
+	set_speed_target(5);
+	delay_ms(2000);
+	set_speed_target(0);
+}

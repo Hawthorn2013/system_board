@@ -5,7 +5,7 @@
 int g_f_pit = 0;
 DWORD g_time_basis_PIT = 0x00000000;	/* 时间基准 */
 int g_f_enable_mag_steer_control = 1;	/* 启用电磁循迹标志位 */
-
+int g_f_enable_speed_control = 1;	/* 启用速度控制标志位 */
 
 /*-----------------------------------------------------------------------*/
 /* PIT中断处理函数                                                       */
@@ -31,7 +31,10 @@ void PitISR(void)
 	/* end:encoder */
 	
 	/* 开始执行速度控制算法 */
-	contorl_speed_encoder_pid();
+	if (g_f_enable_speed_control)
+	{
+		contorl_speed_encoder_pid();
+	}
 
 #if 0
 	/* 扎气球 */
