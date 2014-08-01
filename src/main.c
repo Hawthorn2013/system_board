@@ -8,6 +8,7 @@ int main(void)
 	
 	init_all_and_POST();
 	
+	
 	/* Loop forever */
 	for (;;)
 	{

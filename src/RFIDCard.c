@@ -89,13 +89,10 @@ void explane_RFID_ret_data(const BYTE *data, WORD length)
 	WORD cmd = 0;
 	DWORD cardID = 0x00000000;
 	
-	D0 = 0;
 	if (4 == length)
 	{
-		D1 = 0;
 		if (0x00014115 == *((DWORD *)data))
 		{
-			D2 = 0;
 			g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK = 1;
 		}
 	}

@@ -23,7 +23,8 @@ typedef signed short SWORD;
 
 #ifndef _TYPEDEF_DWORD_
 #define _TYPEDEF_DWORD_
-typedef unsigned int DWORD;
+//typedef unsigned int DWORD;
+typedef unsigned long int DWORD;
 #endif
 
 #if 0

@@ -42,7 +42,14 @@ void execute_remote_cmd(const BYTE *data)
 		set_steer_helm(*((SWORD *)(&(data[2]))));
 		break;
 		case WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF :
-		write_steer_helm_data_to_TF();
+		if (!write_steer_helm_data_to_TF())
+		{
+			//D3 = 0;
+		}
+		else
+		{
+			//D3 = 1;
+		}
 		break;
 		case WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF :
 		generate_remote_frame(WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF, (BYTE *)&data_steer_helm, sizeof(data_steer_helm));
