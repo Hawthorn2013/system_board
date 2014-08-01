@@ -14,7 +14,8 @@ struct
 	int RFIDCard_is_OK;
 	int OLED_is_OK;
 	int WiFi_commonication_is_OK;
-} g_devices_init_status = { 0, 0, 0, 0, 0, };
+	int RFIDCard_energetic_mode_enable_is_OK;
+} g_devices_init_status = { 0, 0, 0, 0, 0, 0, };
 #else
 extern struct
 {
@@ -23,6 +24,7 @@ extern struct
 	int RFIDCard_is_OK;
 	int OLED_is_OK;
 	int WiFi_commonication_is_OK;
+	int RFIDCard_energetic_mode_enable_is_OK;
 } g_devices_init_status;
 #endif
 

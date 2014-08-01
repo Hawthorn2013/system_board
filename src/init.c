@@ -247,17 +247,21 @@ void init_all_and_POST(void)
 	//init_DSPI_2();
 	//init_I2C();
 	
-	/* 打开电磁循迹 */
-	g_f_enable_mag_steer_control = 1;
-	
 	//enable_irq();
 	
 	/* 初始化SPI总线 */
 	init_DSPI_1();
 	
+	/* 开启外部总中断 */
+	enable_irq();
+	
 	/* 初始化显示屏 */
 	initLCD();
-	LCD_DISPLAY();
+	//LCD_DISPLAY();
+	LCD_Fill(0xFF);	/* 亮屏 */
+	delay_ms(500);
+	LCD_Fill(0x00);	/* 黑屏 */
+	delay_ms(500);
 	
 	/* 初始化TF卡 */
 	LCD_P8x16Str(0,0, (BYTE*)"TF..");
@@ -273,13 +277,14 @@ void init_all_and_POST(void)
 			UINT wr;
 			DWORD test_write_to_TFCard = 0x0A1B2C3D;
 			DWORD test_read_from_TFCard = 0x00000000;
-	
+			
 			f_open(&fil, tchar, FA_CREATE_ALWAYS);
 			f_close(&fil);
 			f_open(&fil, tchar, FA_WRITE);
-			f_write(&fil, (void *)test_write_to_TFCard, sizeof(test_write_to_TFCard), &wr);
+			f_write(&fil, (const void *)&test_write_to_TFCard, sizeof(test_write_to_TFCard), &wr);
 			f_close(&fil);
-			f_read(&fil, (void *)test_read_from_TFCard, sizeof(test_read_from_TFCard), &br);
+			f_open(&fil, tchar, FA_READ);
+			f_read(&fil, (void *)&test_read_from_TFCard, sizeof(test_read_from_TFCard), &br);
 			f_close(&fil);
 			if (test_write_to_TFCard == test_read_from_TFCard)
 			{
@@ -333,10 +338,20 @@ void init_all_and_POST(void)
 	send_RFID_cmd(rfid_cmd_energetic_mode_enable);
 	delay_ms(100);
 	send_RFID_cmd(rfid_cmd_energetic_mode_enable_new);
+	delay_ms(100);
+	if (1 == g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK)
+	{
+		LCD_P8x16Str(0, 6, (BYTE*)"RFID..OK");
+	}
+	else
+	{
+		LCD_P8x16Str(0, 6, (BYTE*)"RFID..NOK");
+	}
+	
 	
 	/* 换屏 */
+	delay_ms(1500);
 	LCD_Fill(0x00);
-	delay_ms(100);
 	
 	/* 读取舵机参数 */
 	read_steer_helm_data_from_TF();
@@ -351,18 +366,50 @@ void init_all_and_POST(void)
 	LCD_P8x16Str(0, 4, (BYTE*)"StH.C=");
 	LCD_PrintoutInt(48, 4, data_steer_helm.center);
 	set_steer_helm(data_steer_helm.center);
-	delay_ms(500);
 #endif
 
 	/* 换屏 */
+	delay_ms(1500);
 	LCD_Fill(0x00);
-	delay_ms(100);
 	
-	enable_irq();
 	
 	/* 速度闭环测试 */
-	LCD_P8x16Str(0, 0, (BYTE*)"S.T=5");
-	set_speed_target(5);
+	g_f_enable_speed_control = 1;	/* 启用速度控制 */
+	LCD_P8x16Str(0, 0, (BYTE*)"S.T=10");
+	set_speed_target(10);
 	delay_ms(2000);
+	LCD_P8x16Str(0, 2, (BYTE*)"S.T=-10");
+	set_speed_target(-10);
+	delay_ms(2000);
+	LCD_P8x16Str(0, 4, (BYTE*)"S.T=0");
 	set_speed_target(0);
+	delay_ms(2000);
+	
+	/* 换屏 */
+	delay_ms(1500);
+	LCD_Fill(0x00);
+	
+	/* 测试电感 */
+	LCD_P8x16Str(0, 0, (BYTE*)"I.L=");
+	LCD_P8x16Str(0, 2, (BYTE*)"I.R=");
+	for (i = 0; i < 5; i++)
+	{
+		mag_read();
+		LCD_PrintoutInt(32, 0, mag_left);
+		LCD_PrintoutInt(32, 2, mag_right);
+		delay_ms(500);
+	}
+	
+	/* 换屏 */
+	delay_ms(1500);
+	LCD_Fill(0x00);
 }
+
+
+
+
+
+
+
+
+

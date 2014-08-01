@@ -48,7 +48,7 @@ extern struct
 #endif
 
 extern int rev_RFID_frame(BYTE rev);
-extern void explane_RFID_ret_data(const BYTE *data);
+extern void explane_RFID_ret_data(const BYTE *data, WORD length);
 extern void explane_RFID_ret_cardID(DWORD id);
 
 

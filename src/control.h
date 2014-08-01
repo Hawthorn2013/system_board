@@ -31,6 +31,7 @@ extern DWORD g_time_basis_PIT;
 extern int g_f_pit;
 extern DWORD g_time_basis_PIT;
 extern int g_f_enable_mag_steer_control;
+extern int g_f_enable_speed_control;
 
 /* 方向舵机数据 */
 #ifdef __CONTROL_C_

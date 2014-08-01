@@ -73,7 +73,7 @@ int rev_RFID_frame(BYTE rev)
 		{
 			g_rfid_frame_cnt = 0;
 			g_rfid_frame_state = RFID_FRAME_STATE_OK;	//CheckSum Success
-			explane_RFID_ret_data((const BYTE *)(rfid_frame_data+3));
+			explane_RFID_ret_data((const BYTE *)(rfid_frame_data+3), (WORD)(rfid_frame_data[2]-1));
 		}
 	}
 	
@@ -84,17 +84,37 @@ int rev_RFID_frame(BYTE rev)
 /*-----------------------------------------------------------------------*/
 /* Explane RFID return data aera                                         */
 /*-----------------------------------------------------------------------*/
-void explane_RFID_ret_data(const BYTE *data)
+void explane_RFID_ret_data(const BYTE *data, WORD length)
 {
 	WORD cmd = 0;
 	DWORD cardID = 0x00000000;
 	
+	D0 = 0;
+	if (4 == length)
+	{
+		D1 = 0;
+		if (0x00014115 == *((DWORD *)data))
+		{
+			D2 = 0;
+			g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK = 1;
+		}
+	}
 	cmd = data[0];
 	switch (cmd)
 	{
 		case RFID_CMD_ENERGETIC_MODE :
-		cardID = *(DWORD *)(data+1);
-		explane_RFID_ret_cardID(cardID);
+		if (2 == length)
+		{
+			if (0x15 == data[1])
+			{
+				g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK = 1;
+			}
+		}
+		else if (5 == length)
+		{
+			cardID = *(DWORD *)(data+1);
+			explane_RFID_ret_cardID(cardID);
+		}
 		break;
 	}
 }

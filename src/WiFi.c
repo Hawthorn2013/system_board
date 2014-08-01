@@ -30,7 +30,6 @@ void execute_remote_cmd(const BYTE *data)
 		case WIFI_CMD_SET_HELM_KD :
 		break;
 		case WIFI_CMD_SET_STEER_HELM_CENTER :
-		D1 = ~D1;
 		data_steer_helm.center = *((SWORD *)(&(data[2])));
 		set_steer_helm(*((SWORD *)(&(data[2]))));
 		break;
@@ -43,7 +42,6 @@ void execute_remote_cmd(const BYTE *data)
 		set_steer_helm(*((SWORD *)(&(data[2]))));
 		break;
 		case WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF :
-		D0 = ~D0;
 		write_steer_helm_data_to_TF();
 		break;
 		case WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF :
