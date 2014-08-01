@@ -335,16 +335,14 @@ void init_all_and_POST(void)
 	LCD_PrintoutInt(72, 4, g_device_NO);
 	
 	/* 开启RFID读卡器主动模式 */
-	send_RFID_cmd(rfid_cmd_energetic_mode_enable);
-	delay_ms(100);
-	send_RFID_cmd(rfid_cmd_energetic_mode_enable_new);
-	delay_ms(100);
-	if (1 == g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK)
+	if (!init_RFID_modul_type())
 	{
+		g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK = 1;
 		LCD_P8x16Str(0, 6, (BYTE*)"RFID..OK");
 	}
 	else
 	{
+		g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK = 0;
 		LCD_P8x16Str(0, 6, (BYTE*)"RFID..NOK");
 	}
 	

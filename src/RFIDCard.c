@@ -12,13 +12,14 @@ int g_rfid_frame_state = REMOTE_FRAME_STATE_NOK;
 int g_rfid_frame_cnt = 0;
 BYTE rfid_frame_data[RFID_FRAME_LENGTH_MAX];
 BYTE rfid_frame_data_send[RFID_FRAME_LENGTH_MAX];
+static int RFID_modul_type = RFID_MODUL_TYPE_UNKNOW;
 //DWORD rfid_site = 0x00000000;
 
 
 /*-----------------------------------------------------------------------*/
 /* Send RFID cmd                                                         */
 /*-----------------------------------------------------------------------*/
-void send_RFID_cmd(const BYTE cmd[])
+static void send_RFID_cmd(const BYTE cmd[])
 {
 	serial_port_2_TX_array(cmd, (WORD)(cmd[2]+3));
 }
@@ -89,30 +90,27 @@ void explane_RFID_ret_data(const BYTE *data, WORD length)
 	WORD cmd = 0;
 	DWORD cardID = 0x00000000;
 	
-	if (4 == length)
+	if (RFID_MODUL_TYPE_UNKNOW == RFID_modul_type)	/* 检测卡的类型 */
 	{
-		if (0x00014115 == *((DWORD *)data))
+		if (4 == length && 0x00014115 == *((DWORD *)data))
 		{
-			g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK = 1;
+			//g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK = 1;
+			RFID_modul_type = RFID_MODUL_TYPE_NEW;
 		}
+		else if (2 == length && 0x4115 == *((WORD *)data))
+		{
+			//g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK = 1;
+			RFID_modul_type = RFID_MODUL_TYPE_OLD;
+		}
+		return;
 	}
-	cmd = data[0];
-	switch (cmd)
+	else	/* 卡类型已知 执行相应命令 */
 	{
-		case RFID_CMD_ENERGETIC_MODE :
-		if (2 == length)
-		{
-			if (0x15 == data[1])
-			{
-				g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK = 1;
-			}
-		}
-		else if (5 == length)
+		if (5 == length && RFID_CMD_ENERGETIC_MODE == data[0])
 		{
 			cardID = *(DWORD *)(data+1);
 			explane_RFID_ret_cardID(cardID);
 		}
-		break;
 	}
 }
 
@@ -126,4 +124,27 @@ void explane_RFID_ret_cardID(DWORD id)
 	RFID_site_data.is_new_site = 1;
 	RFID_site_data.time = g_time_basis_PIT;
 	//serial_port_1_TX_array((BYTE *)&id, sizeof(id));
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 初始化模块                                                            */
+/* 返回0成功                                                             */
+/* 返回其他失败                                                          */
+/*-----------------------------------------------------------------------*/
+int init_RFID_modul_type(void)
+{
+	send_RFID_cmd(rfid_cmd_energetic_mode_enable);
+	delay_ms(10);
+	send_RFID_cmd(rfid_cmd_energetic_mode_enable_new);
+	delay_ms(10);
+	
+	if (RFID_MODUL_TYPE_UNKNOW == RFID_modul_type)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
 }

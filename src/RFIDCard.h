@@ -21,6 +21,9 @@
 #define RFID_FRAME_STATE_OK (1)
 #define RFID_FRAME_STATE_NOK (0)
 
+#define RFID_MODUL_TYPE_UNKNOW (0)
+#define RFID_MODUL_TYPE_OLD (1)
+#define RFID_MODUL_TYPE_NEW (2)
 
 extern const BYTE rfid_cmd_get_id[];
 extern const BYTE rfid_cmd_get_data[];
@@ -29,6 +32,7 @@ extern const BYTE rfid_cmd_energetic_mode_enable_new[];
 extern const BYTE rfid_cmd_energetic_mode_disable[];
 extern const BYTE rfid_cmd_energetic_mode_disable_new[];
 //extern DWORD rfid_site;
+
 
 /* Î»ÖÃÊý¾Ý */
 #ifdef __CONTROL_C_
@@ -50,6 +54,6 @@ extern struct
 extern int rev_RFID_frame(BYTE rev);
 extern void explane_RFID_ret_data(const BYTE *data, WORD length);
 extern void explane_RFID_ret_cardID(DWORD id);
-
+extern int init_RFID_modul_type(void);
 
 #endif
