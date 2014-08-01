@@ -271,36 +271,21 @@ void init_all_and_POST(void)
 		if (FR_OK == f_mount(&fatfs, path, 1))
 		{
 			/* 文件读写测试 */
-			FIL fil;
+			FIL fil1, fil2, fil3;
 			TCHAR *tchar = "TEST";
 			UINT br;
 			UINT wr;
 			DWORD test_write_to_TFCard = 0x0A1B2C3D;
 			DWORD test_read_from_TFCard = 0x00000000;
 			
-			/* 一次写入 */
-			f_open(&fil, tchar, FA_CREATE_ALWAYS);
-			f_close(&fil);
-			f_open(&fil, tchar, FA_WRITE);
-			f_write(&fil, (const void *)&test_write_to_TFCard, sizeof(test_write_to_TFCard), &wr);
-			f_close(&fil);
-			f_open(&fil, tchar, FA_READ);
-			f_read(&fil, (void *)&test_read_from_TFCard, sizeof(test_read_from_TFCard), &br);
-			f_close(&fil);
-			
-			/* 二次写入 */
-			test_write_to_TFCard = 0xA0B1C2D3;
-			test_read_from_TFCard = 0x00000000;
-			f_open(&fil, tchar, FA_CREATE_ALWAYS);
-			f_close(&fil);
-			f_open(&fil, tchar, FA_WRITE);
-			f_write(&fil, (const void *)&test_write_to_TFCard, sizeof(test_write_to_TFCard), &wr);
-			f_close(&fil);
-			f_open(&fil, tchar, FA_READ);
-			f_read(&fil, (void *)&test_read_from_TFCard, sizeof(test_read_from_TFCard), &br);
-			f_close(&fil);
-			
-			
+			f_open(&fil1, tchar, FA_CREATE_ALWAYS);
+			f_close(&fil1);
+			f_open(&fil2, tchar, FA_WRITE);
+			f_write(&fil2, (const void *)&test_write_to_TFCard, sizeof(test_write_to_TFCard), &wr);
+			f_close(&fil2);
+			f_open(&fil3, tchar, FA_READ);
+			f_read(&fil3, (void *)&test_read_from_TFCard, sizeof(test_read_from_TFCard), &br);
+			f_close(&fil3);
 			if (test_write_to_TFCard == test_read_from_TFCard)
 			{
 				g_devices_init_status.TFCard_is_OK = 1;

@@ -307,7 +307,7 @@ int read_steer_helm_data_from_TF()
 	serial_port_1_TX(f_open(&fil, tchar, FA_READ));
 	serial_port_1_TX(f_read(&fil, (void *)&data_steer_helm, sizeof(data_steer_helm), &br));
 	serial_port_1_TX(f_close(&fil));
-	serial_port_1_TX(br);
+	serial_port_1_TX((BYTE)br);
 	
 	return 0;
 }
@@ -318,37 +318,33 @@ int read_steer_helm_data_from_TF()
 /*-----------------------------------------------------------------------*/
 int write_steer_helm_data_to_TF()
 {
-	FIL fil;
+	FIL fil1, fil2;
 	TCHAR *tchar = "STEHEL";
 	UINT wr;
 	int sucess_f = 1;
 
-#if 0
-	if (FR_OK != f_open(&fil, tchar, FA_CREATE_ALWAYS))
+	if (FR_OK != f_open(&fil1, tchar, FA_CREATE_ALWAYS))
 	{
 		sucess_f = 0;
 	}
-	if (FR_OK != f_close(&fil))
+	if (FR_OK != f_close(&fil1))
 	{
 		sucess_f = 0;
 	}
-#endif
-	if (FR_OK != f_open(&fil, tchar, FA_WRITE))
+	if (FR_OK != f_open(&fil2, tchar, FA_WRITE))
 	{
 		sucess_f = 0;
 	}
-	if (FR_OK != f_write(&fil, (const void *)&data_steer_helm, sizeof(data_steer_helm), &wr))
+	if (FR_OK != f_write(&fil2, (const void *)&data_steer_helm, sizeof(data_steer_helm), &wr))
 	{
 		sucess_f = 0;
 	}
-	serial_port_1_TX(f_close(&fil));
-#if 0
-	if (FR_OK != f_close(&fil))
+	if (FR_OK != f_close(&fil2))
 	{
 		D0 = 0;
 		sucess_f = 0;
 	}
-#endif
+	
 	if (sucess_f)
 	{
 		return 0;
