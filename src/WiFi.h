@@ -18,6 +18,8 @@
 #define WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF (0x000E)	/* 方向舵机数据写入TF卡 */
 #define WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF (0x000F)	/* 发送方向舵机数据至上位机 */
 #define WIFI_CMD_NET (0x0010)	/* 封装网络数据 */
+#define WIFI_CMD_GET_SEEED_NOW (0x0011)	/* 获取当前速度 */
+#define WIFI_CMD_UNGET_SPEED_NOW (0x0012)	/* 停止获取当前速度 */
 
 #define WIFI_NET_CMD_CAR_REPORT_CURRENT_SITE (0x0001)	/* 车报告当前读到的位置 */
 #define WIFI_NET_CMD_CAR_REPORT_CACHE_SITE (0x0002)	/* 车报告缓存的位置 即最近一次读到的位置 */
@@ -38,11 +40,13 @@ extern BYTE g_device_NO;
 struct
 {
 	int send_gyro_data;	/* 发送陀螺仪数据 */
-} g_remote_control_flags = { 0 };
+	int send_seppd_now;	/* 发送当前速度 */
+} g_remote_control_flags = { 0, 0 };
 #else
 extern struct
 {
 	int send_gyro_data;
+	int send_seppd_now;
 } g_remote_control_flags;
 #endif
 

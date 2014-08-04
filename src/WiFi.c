@@ -77,6 +77,13 @@ void execute_remote_cmd(const BYTE *data)
 		case WIFI_CMD_UNGET_GYRO_DATA :
 		g_remote_control_flags.send_gyro_data = 0;
 		break;
+		
+		case WIFI_CMD_GET_SEEED_NOW :
+		g_remote_control_flags.send_seppd_now = 1;
+		break;
+		case WIFI_CMD_UNGET_SPEED_NOW :
+		g_remote_control_flags.send_seppd_now = 0;
+		break;
 	}
 }
 
