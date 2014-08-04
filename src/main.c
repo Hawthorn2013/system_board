@@ -36,8 +36,8 @@ int main(void)
 			{
 				speed_now_tmp = (SWORD)0 - (SWORD)(data_encoder.speed_now);
 			}
-			generate_remote_frame(WIFI_CMD_GET_SEEED_NOW, (const BYTE *)&speed_now_tmp, sizeof(speed_now_tmp));
-			delay_ms(10);
+			generate_remote_frame_2(g_device_NO, WIFI_ADDRESS_ANDRIUD_ZHOU, WIFI_CMD_GET_SEEED_NOW, sizeof(speed_now_tmp), (const BYTE *)&speed_now_tmp);
 		}
+		delay_ms(100);
 	}
 }
