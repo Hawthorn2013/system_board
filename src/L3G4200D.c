@@ -867,3 +867,59 @@ BYTE TestWhoAmI(void)
 	
 	return tmp_rx;
 }
+
+void control_steer_helm_1(void)
+{
+		#if 1
+		u8_t status;
+		static int max=0,min=0,cnt=0,pos_target=1130;
+		static int pos_z=0,error_count=0;
+		int error=0;
+		int Kp=3,Kd=3;
+		int steer_rate=0;
+		static int steer_pwm=0;
+		
+		#if 1	/* µ÷ÊÔÍÓÂÝÒÇ */
+			if (MEMS_SUCCESS == GetSatusReg(&status))
+			{
+				if (status & 80)
+				{
+					AngRateRaw_t rev;
+					GetAngRateRaw(&rev);
+					rev.z-=50;
+				//	LCD_PrintoutInt(0, 6, (rev.z));
+					if(rev.z>max)max=rev.z;
+					if(rev.z<min)min=rev.z;
+					if(rev.z>-100&&rev.z<100)
+					{
+						rev.z=0;
+					}	
+					rev.z/=500;
+					pos_z+=rev.z;
+					error=pos_target-pos_z;
+					if(abs(error)>20)
+					{
+					steer_rate = (Kp*error+Kd*error_count);
+					error_count = rev.z;
+					steer_pwm = (data_steer_helm.center)-steer_rate;
+					set_steer_helm((WORD)(steer_pwm));	
+					}
+					/*
+					cnt++;						
+					LCD_PrintoutInt(0, 0, (rev.z));
+					LCD_PrintoutInt(0, 2, (rev.y));
+					LCD_PrintoutInt(0, 4, (rev.z));
+					LCD_PrintoutInt(0, 0, (pos_z));
+					LCD_PrintoutInt(0, 2, (max));
+					LCD_PrintoutInt(0, 4, (min));
+					*/
+					if (g_remote_control_flags.send_gyro_data)
+					{
+						generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
+					}
+				}
+			//serial_port_0_TX(TestWhoAmI());
+			}
+		#endif
+	#endif
+}

@@ -368,6 +368,9 @@ u8_t WriteReg(u8_t Reg, u8_t Data);
 BYTE L3G4200D_read_write_byte(BYTE data);
 BYTE TestWhoAmI(void);
 
+//÷‹Àπ∫Ω
+extern void control_steer_helm_1(void);
+
 #endif /* __L3G4200D_H */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
