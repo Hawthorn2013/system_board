@@ -341,7 +341,6 @@ int write_steer_helm_data_to_TF()
 	}
 	if (FR_OK != f_close(&fil2))
 	{
-		D0 = 0;
 		sucess_f = 0;
 	}
 	
