@@ -28,8 +28,21 @@
 #define REMOTE_FRAME_LENGTH (32)
 #define REMOTE_FRAME_STATE_OK (1)
 #define REMOTE_FRAME_STATE_NOK (0)
-#define WIFI_ADDRESS (1)
+
+//#define WIFI_ADDRESS (1)
 #define ANDROID_ADDRESS (3)
+
+#define WIFI_ADDRESS_CAR_1 (1)	/* 警车1 漂移 */
+#define WIFI_ADDRESS_CAR_2 (2)	/* 警车2 */
+#define WIFI_ADDRESS_CAR_3 (3)	/* 匪车1 */
+#define WIFI_ADDRESS_CAR_4 (4)	/* 匪车2 */
+#define WIFI_ADDRESS_DRAWBRIDGE (5)	/* 吊桥 */
+#define WIFI_ADDRESS_DRAHTBRIDGE (6)	/* 钢丝桥 */
+#define WIFI_ADDRESS_PC (7)	/* PC上位机 */
+#define WIFI_ADDRESS_ANDRIUD_ZHOU (8)	/* Andriud上位机 of 周斯航 */
+#define WIFI_ADDRESS_ANDRIUD_YE (9)	/* Andriud上位机 of 叶川 */
+#define WIFI_ADDRESS_ANDRIUD_JIAO (10)	/* Andriud上位机 of 焦剑 */
+#define WIFI_ADDRESS_ANDRIUD_YU (11)	/* Andriud上位机 of 余婧 */
 
 extern BYTE remote_frame_data[];
 extern int g_remote_frame_state;
@@ -53,7 +66,9 @@ extern struct
 extern BYTE check_sum(const BYTE *data, WORD length);
 extern void execute_remote_cmd(const BYTE *data);
 extern int rev_remote_frame(BYTE rev);
+extern int rev_remote_frame_2(BYTE rev);
 extern void generate_remote_frame(WORD cmd, const BYTE data[], BYTE length);
+extern void generate_remote_frame_2(BYTE scr, BYTE des, WORD cmd, BYTE length, const BYTE data[]);
 extern void generate_remote_net_frame_to_send_site(WORD cmd, DWORD site, BYTE data[]);
 
 

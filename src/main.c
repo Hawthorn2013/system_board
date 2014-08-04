@@ -24,12 +24,10 @@ int main(void)
 		}
 #endif
 		/* 发送当前速度 */
-		D1 = ~D1;
 		if (g_remote_control_flags.send_seppd_now)
 		{
 			SWORD speed_now_tmp;
 			
-			D2 = ~D2;
 			if (data_encoder.is_forward)
 			{
 				speed_now_tmp = (SWORD)(data_encoder.speed_now);
