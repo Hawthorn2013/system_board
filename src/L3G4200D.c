@@ -873,14 +873,14 @@ int control_steer_helm_1(void)
 {
 		u8_t status;
 		static int max=0,min=0,cnt=0;
-		static int pos_z=0,error_count=0,pos_target=1130;
+		static int pos_z=0,error_count=0,pos_target=1130,i=0;
 		int error=0;
-		int Kp=5,Kd=3;
+		int Kp=3,Kd=3;
 		int steer_rate=0;
-		static int steer_pwm=0;
+		static int steer_pwm=0,rev_count=0;
 		int start_flag=1;
 		
-			/* µ÷ÊÔÍÓÂÝÒÇ */
+	/* µ÷ÊÔÍÓÂÝÒÇ */
 			if (MEMS_SUCCESS == GetSatusReg(&status))
 			{
 				if (status & 80)
@@ -899,15 +899,28 @@ int control_steer_helm_1(void)
 					rev.z/=500;
 					pos_z+=rev.z;
 					error=pos_target-pos_z;
-					if(abs(error)>5)
+					rev_count+=abs(error);
+					cnt++;
+					if(cnt==10)
+					{
+						rev_count=0;
+					}
+					if(abs(error)>=10)
 					{
 					steer_rate = (Kp*error+Kd*error_count);
 					error_count = rev.z;
 					steer_pwm = (data_steer_helm.center)-steer_rate;
+				//	LCD_PrintoutInt(0, 6, (steer_pwm));
 					set_steer_helm((WORD)(steer_pwm));	
 					}
-					LCD_PrintoutInt(0, 4, (rev.z));
-					LCD_PrintoutInt(0, 0, (pos_z));
+					if(abs(error)<=50)
+					{
+						i++;
+					}
+					if(i!=0)
+					{
+						set_speed_target(10);
+					}
 					/*
 					cnt++;						
 					LCD_PrintoutInt(0, 0, (rev.z));
@@ -922,8 +935,84 @@ int control_steer_helm_1(void)
 						generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
 					}
 					
-					//if(abs(rev.z)<=1||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x0000012C)
-					if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x0000012C)
+					if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x0000012C)
+					{
+						start_flag=1;
+					}
+					return start_flag;
+					
+				}
+			//serial_port_0_TX(TestWhoAmI());
+			}
+
+}
+
+int control_steer_helm_2(void)
+{
+		u8_t status;
+		static int max=0,min=0,cnt=0;
+		static int pos_z=0,error_count=0,pos_target=1130,i=0;
+		int error=0;
+		int Kp=3,Kd=10;
+		int steer_rate=0;
+		static int steer_pwm=0,rev_count=0;
+		int start_flag=1;
+		static int cl_flag=0;
+		
+	/* µ÷ÊÔÍÓÂÝÒÇ */
+			if (MEMS_SUCCESS == GetSatusReg(&status))
+			{
+				if (status & 80)
+				{
+					AngRateRaw_t rev;
+					GetAngRateRaw(&rev);	
+					rev.z/=500;
+					pos_z+=rev.z;
+					error=pos_target-pos_z;
+					if(pos_z>(pos_target/3)&&cl_flag==0)
+					{
+						cl_flag=1;
+					}
+					if(pos_z>(pos_target*8/9)&&cl_flag==1)
+					{
+						cl_flag=2;
+					}
+					if(cl_flag==0)
+					{
+						set_steer_helm((WORD)(data_steer_helm.center-300));	
+					}
+					if(cl_flag==1)
+					{
+						set_steer_helm((WORD)(data_steer_helm.center+200));	
+						set_speed_target(40);
+					}
+					if(abs(error)>=10&&cl_flag==2)
+					{
+					steer_rate = (Kp*error+Kd*error_count);
+					error_count = rev.z;
+					steer_pwm = (data_steer_helm.center)-steer_rate;
+					set_steer_helm((WORD)(steer_pwm));	
+					}					
+					if(abs(error)<=200)
+					{
+						i++;
+					}
+					if(i!=0)
+					{
+						set_speed_target(10);
+					}
+					rev_count+=abs(error);
+					cnt++;
+					if(cnt==10)
+					{
+						rev_count=0;
+					}
+					if (g_remote_control_flags.send_gyro_data)
+					{
+						generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
+					}
+					
+					if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x0000012C)
 					{
 						start_flag=1;
 					}

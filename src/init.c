@@ -370,7 +370,7 @@ void init_all_and_POST(void)
 	delay_ms(1500);
 	LCD_Fill(0x00);
 	
-#if 0	
+#if 1	
 	/* ÀŸ∂»±’ª∑≤‚ ‘ */
 	
 	g_f_enable_speed_control = 1;	
