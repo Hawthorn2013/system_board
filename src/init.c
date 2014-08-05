@@ -370,9 +370,10 @@ void init_all_and_POST(void)
 	delay_ms(1500);
 	LCD_Fill(0x00);
 	
-	
+#if 0	
 	/* 速度闭环测试 */
-	g_f_enable_speed_control = 1;	/* 启用速度控制 */
+	
+	g_f_enable_speed_control = 1;	
 	LCD_P8x16Str(0, 0, (BYTE*)"S.T=10");
 	set_speed_target(10);
 	delay_ms(2000);
@@ -382,7 +383,7 @@ void init_all_and_POST(void)
 	LCD_P8x16Str(0, 4, (BYTE*)"S.T=0");
 	set_speed_target(0);
 	delay_ms(2000);
-	
+
 	/* 换屏 */
 	delay_ms(1500);
 	LCD_Fill(0x00);
@@ -401,6 +402,7 @@ void init_all_and_POST(void)
 	/* 换屏 */
 	delay_ms(1500);
 	LCD_Fill(0x00);
+#endif
 }
 
 
