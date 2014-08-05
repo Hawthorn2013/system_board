@@ -34,4 +34,15 @@ extern struct
 #endif
 
 
+extern void control_car_action(void);
+extern void WiFi_control_car_1_action(WORD cmd);
+extern void WiFi_control_car_2_action(WORD cmd);
+extern void WiFi_control_car_3_action(WORD cmd);
+extern void WiFi_control_car_4_action(WORD cmd);
+extern void RFID_control_car_1_action(DWORD site);
+extern void RFID_control_car_2_action(DWORD site);
+extern void RFID_control_car_3_action(DWORD site);
+extern void RFID_control_car_4_action(DWORD site);
+
+
 #endif

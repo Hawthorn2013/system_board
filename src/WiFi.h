@@ -17,9 +17,20 @@
 #define WIFI_CMD_SET_STEER_HELM_RIGHT (0x000D)	/* 设置方向舵机右极限 */
 #define WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF (0x000E)	/* 方向舵机数据写入TF卡 */
 #define WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF (0x000F)	/* 发送方向舵机数据至上位机 */
-#define WIFI_CMD_NET (0x0010)	/* 封装网络数据 */
 #define WIFI_CMD_GET_SEEED_NOW (0x0011)	/* 获取当前速度 */
 #define WIFI_CMD_UNGET_SPEED_NOW (0x0012)	/* 停止获取当前速度 */
+
+#define WIFI_CMD_NET (0x0100)	/* 封装网络数据 */
+#define WIFI_CMD_NET_0_1 (0x0101)
+#define WIFI_CMD_NET_0_2 (0x0102)
+#define WIFI_CMD_NET_0_3 (0x0103)
+#define WIFI_CMD_NET_0_4 (0x0104)
+#define WIFI_CMD_NET_2_1 (0x0105)
+#define WIFI_CMD_NET_2_2 (0x0106)
+#define WIFI_CMD_NET_6_2 (0x0107)
+#define WIFI_CMD_NET_6_3 (0x0108)
+#define WIFI_CMD_NET_6_4 (0x0109)
+#define WIFI_CMD_NET_7_1 (0x010A)
 
 #define WIFI_NET_CMD_CAR_REPORT_CURRENT_SITE (0x0001)	/* 车报告当前读到的位置 */
 #define WIFI_NET_CMD_CAR_REPORT_CACHE_SITE (0x0002)	/* 车报告缓存的位置 即最近一次读到的位置 */
@@ -61,6 +72,21 @@ extern struct
 	int send_gyro_data;
 	int send_seppd_now;
 } g_remote_control_flags;
+#endif
+
+/* 网络控制结构体 */
+#ifdef __WIFI_C_
+struct
+{
+	int is_new_cmd;
+	WORD cmd;
+} g_net_control_data = { 0, 0x00 };
+#else
+extern struct
+{
+	int is_new_cmd;
+	WORD cmd;
+} g_net_control_data;
 #endif
 
 extern BYTE check_sum(const BYTE *data, WORD length);
