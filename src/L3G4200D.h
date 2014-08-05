@@ -369,7 +369,7 @@ BYTE L3G4200D_read_write_byte(BYTE data);
 BYTE TestWhoAmI(void);
 
 //÷‹Àπ∫Ω
-extern void control_steer_helm_1(void);
+extern int control_steer_helm_1(void);
 
 #endif /* __L3G4200D_H */
 

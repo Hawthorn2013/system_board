@@ -6,6 +6,7 @@ int g_f_pit = 0;
 DWORD g_time_basis_PIT = 0x00000000;	/* 时间基准 */
 int g_f_enable_mag_steer_control = 0;	/* 启用电磁循迹标志位 */
 int g_f_enable_speed_control = 0;	/* 启用速度控制标志位 */
+int g_f_enable_rad_control = 0;		/* 启用陀螺仪角度控制标志位*/
 
 
 /*-----------------------------------------------------------------------*/
@@ -42,6 +43,17 @@ void PitISR(void)
 	{
 		mag_read();
 		control_steer_helm();
+	}
+	
+	/* 陀螺仪角度控制*/
+	if (g_f_enable_rad_control)
+	{
+		D1 = ~D1;
+		if (!control_steer_helm_1())
+		{
+			//g_f_enable_rad_control =0;
+		//	set_speed_target(10);
+		}
 	}
 	
 #if 0

@@ -868,9 +868,8 @@ BYTE TestWhoAmI(void)
 	return tmp_rx;
 }
 
-void control_steer_helm_1(void)
+int control_steer_helm_1(void)
 {
-		#if 1
 		u8_t status;
 		static int max=0,min=0,cnt=0,pos_target=1130;
 		static int pos_z=0,error_count=0;
@@ -878,8 +877,9 @@ void control_steer_helm_1(void)
 		int Kp=3,Kd=3;
 		int steer_rate=0;
 		static int steer_pwm=0;
+		int start_flag=1;
 		
-		#if 1	/* µ÷ÊÔÍÓÂÝÒÇ */
+			/* µ÷ÊÔÍÓÂÝÒÇ */
 			if (MEMS_SUCCESS == GetSatusReg(&status))
 			{
 				if (status & 80)
@@ -917,9 +917,15 @@ void control_steer_helm_1(void)
 					{
 						generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
 					}
+					
+					if(abs(rev.z)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x0000012C)
+					{
+						start_flag=0;
+					}
+					return start_flag;
+					
 				}
 			//serial_port_0_TX(TestWhoAmI());
 			}
-		#endif
-	#endif
+
 }

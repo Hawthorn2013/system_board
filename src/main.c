@@ -5,9 +5,7 @@ int main(void)
 {
 	int flag=1;
 	init_all_and_POST();
-	
-	g_f_enable_mag_steer_control = 1;
-	set_speed_target(20);
+	drift_left();
 
 	/* Loop forever */
 	for (;;)
