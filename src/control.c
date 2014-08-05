@@ -48,11 +48,10 @@ void PitISR(void)
 	/* ÍÓÂİÒÇ½Ç¶È¿ØÖÆ*/
 	if (g_f_enable_rad_control)
 	{
-		D1 = ~D1;
 		if (!control_steer_helm_1())
 		{
-			//g_f_enable_rad_control =0;
-		//	set_speed_target(10);
+			g_f_enable_rad_control =0;  
+			set_speed_target(10);
 		}
 	}
 	

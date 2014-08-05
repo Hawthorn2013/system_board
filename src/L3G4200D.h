@@ -29,6 +29,8 @@
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 
+extern int pos_target;
+
 //these could change accordingly with the architecture
 typedef BYTE u8_t;
 typedef WORD u16_t;

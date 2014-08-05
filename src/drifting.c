@@ -75,12 +75,12 @@ void drift_right6(void)//砖地面180度 背景布100度
 
 void drift_left(void)//使用陀螺仪
 {
-	set_speed_target(70);
+	set_speed_target(20);
 	delay_ms(1500);
-	D0 = 0;
 	set_steer_helm(data_steer_helm.left_limit);
-	g_f_enable_rad_control = 1;
-	set_speed_target(5);
+    pos_target = 1130;
+    g_f_enable_rad_control = 1;
+	set_speed_target(100);
 	start_time = g_time_basis_PIT;
 }
 

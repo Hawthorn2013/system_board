@@ -32,6 +32,8 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
+
+int pos_target=1130;
 BYTE L3G4200D_read_write_byte(BYTE data)
 {
 	uint32_t tmp_tx = 0x00000000;
@@ -871,7 +873,7 @@ BYTE TestWhoAmI(void)
 int control_steer_helm_1(void)
 {
 		u8_t status;
-		static int max=0,min=0,cnt=0,pos_target=1130;
+		static int max=0,min=0,cnt=0;
 		static int pos_z=0,error_count=0;
 		int error=0;
 		int Kp=3,Kd=3;
@@ -886,18 +888,19 @@ int control_steer_helm_1(void)
 				{
 					AngRateRaw_t rev;
 					GetAngRateRaw(&rev);
-					rev.z-=50;
+				//	rev.z-=50;
 				//	LCD_PrintoutInt(0, 6, (rev.z));
-					if(rev.z>max)max=rev.z;
-					if(rev.z<min)min=rev.z;
-					if(rev.z>-100&&rev.z<100)
+				//	if(rev.z>max)max=rev.z;
+				//	if(rev.z<min)min=rev.z;
+				/*	if(rev.z>-100&&rev.z<100)
 					{
 						rev.z=0;
-					}	
+					}
+				*/	
 					rev.z/=500;
 					pos_z+=rev.z;
 					error=pos_target-pos_z;
-					if(abs(error)>20)
+					if(abs(error)>5)
 					{
 					steer_rate = (Kp*error+Kd*error_count);
 					error_count = rev.z;
@@ -918,7 +921,7 @@ int control_steer_helm_1(void)
 						generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
 					}
 					
-					if(abs(rev.z)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x0000012C)
+					if(abs(rev.z)<=1||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x0000012C)
 					{
 						start_flag=0;
 					}
