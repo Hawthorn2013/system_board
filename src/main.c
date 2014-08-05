@@ -1,7 +1,6 @@
 #include "includes.h"
 
 
-/* 叶川到此一游 */
 int main(void)
 {
 	int flag=1;
