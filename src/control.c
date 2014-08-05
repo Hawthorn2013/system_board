@@ -224,17 +224,18 @@ void set_speed_KD(WORD kd)
 /*-----------------------------------------------------------------------*/
 void set_steer_helm(WORD helmData)
 {
-	/*
-	if(helmData<=STEER_HELM_LEFT)
+#if 1 
+
+	if(helmData<=data_steer_helm.left_limit)
 	{
-		helmData=STEER_HELM_LEFT;
+		helmData=data_steer_helm.left_limit;
 	}
-	else if(helmData>=STEER_HELM_RIGHT)
+	else if(helmData>=data_steer_helm.right_limit)
 	{
-		helmData=STEER_HELM_RIGHT;
+		helmData=data_steer_helm.right_limit;
 	}
-	*/
-	
+#endif
+//	LCD_PrintoutInt(0, 6, (SWORD)(helmData));	
 	EMIOS_0.CH[9].CBDR.R = helmData;
 	helm_data_record = helmData;
 }

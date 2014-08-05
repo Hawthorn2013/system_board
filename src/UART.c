@@ -108,14 +108,14 @@ void init_serial_port_1(void)
     INTC_InstallINTCInterruptHandler(intc_serial_port_1_RX, 99, 2);
 }
 
-
+#if 1
 void serial_port_1_TX(unsigned char data)
 {
 	LINFLEX_1.BDRL.B.DATA0=data;	//发送语句
 	while(!LINFLEX_1.UARTSR.B.DTF){}	//等待数据发送完成
 	LINFLEX_1.UARTSR.B.DTF=1;	//清空标志位
 }
-
+#endif
 
 void serial_port_1_TX_array(const BYTE data[], WORD n)
 {

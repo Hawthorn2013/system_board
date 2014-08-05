@@ -10,7 +10,6 @@ int main(void)
 	/* Loop forever */
 	for (;;)
 	{
-	control_steer_helm_1();
 
 #if 1
 		/* Ö´ĞĞÔ¶³ÌÃüÁî */
