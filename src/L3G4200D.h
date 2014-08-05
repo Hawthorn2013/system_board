@@ -29,6 +29,8 @@
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 
+extern int pos_target;
+
 //these could change accordingly with the architecture
 typedef BYTE u8_t;
 typedef WORD u16_t;
@@ -369,7 +371,7 @@ BYTE L3G4200D_read_write_byte(BYTE data);
 BYTE TestWhoAmI(void);
 
 //÷‹Àπ∫Ω
-extern void control_steer_helm_1(void);
+extern int control_steer_helm_1(void);
 
 #endif /* __L3G4200D_H */
 
