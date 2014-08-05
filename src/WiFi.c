@@ -84,6 +84,11 @@ void execute_remote_cmd(const BYTE *data)
 		case WIFI_CMD_UNGET_SPEED_NOW :
 		g_remote_control_flags.send_seppd_now = 0;
 		break;
+		
+		case WIFI_CMD_NET :
+		g_net_control_data.is_new_cmd = 1;
+		g_net_control_data.cmd = *((WORD *)(&(data[2])));
+		break;
 	}
 }
 
