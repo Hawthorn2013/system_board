@@ -900,21 +900,21 @@ int control_steer_helm_2(void)
 					/* 判断开始漂移（z轴转过6）为第三阶段 */
 					else if(pos_z>=(pos_target/15)&&cl_flag==2)
 					{
-						set_steer_helm((WORD)(data_steer_helm.center-600));	
+						set_steer_helm((WORD)(-600));	
 						set_speed_target(60);
 						cl_flag=3;	
 					}
 					/* 5~50为第四阶段 */
 					else if(pos_z>=(pos_target/9)&&cl_flag==3)
 					{
-						set_steer_helm((WORD)(data_steer_helm.center-200));	
+						set_steer_helm((WORD)(-200));	
 						set_speed_target(40);
 						cl_flag=4;	
 					}
 					/* 判断漂移过40度后为第五阶段 */
 					else if(pos_z>(pos_target*4/9)&&cl_flag==4)
 					{
-						set_steer_helm((WORD)(data_steer_helm.center+200));	
+						set_steer_helm((WORD)(200));	
 						cl_flag=5;
 						set_speed_target(40);
 					}
@@ -927,7 +927,7 @@ int control_steer_helm_2(void)
 					{
 					steer_rate = (Kp*error+Kd*error_count);
 					error_count = rev.z;
-					steer_pwm = (data_steer_helm.center)-steer_rate;
+					steer_pwm = -steer_rate;
 					set_steer_helm((WORD)(steer_pwm));	
 					set_speed_target(0);
 					}					
