@@ -2,7 +2,7 @@
 #include "includes.h"
 /*-----------------------------------------------------------------------*/
 /* 扎气球                                                                */
-/* 关循迹  car 3 & 4                                               */                                                          
+/* 关循迹  car 3 & 4                                                     */                                                          
 /*-----------------------------------------------------------------------*/
 void puncture_ballon()
 {
@@ -17,6 +17,18 @@ void puncture_ballon()
 	g_f_enable_mag_steer_control = 1;
 }
 /*-----------------------------------------------------------------------*/
+/* 脱离电磁线、左转、找新线                                              */
+/* 关循迹  car 3 & 4                                                     */                                                          
+/*-----------------------------------------------------------------------*/
+void turn_left_1()
+{
+		g_f_enable_mag_steer_control = 0;
+		set_steer_helm(data_steer_helm.left_limit);
+		delay_ms(800);
+		set_steer_helm(data_steer_helm.center);
+		g_f_enable_mag_steer_control = 1;
+}
+/*-----------------------------------------------------------------------*/
 /* 飞吊桥                                                                */
 /* 不关循迹  car 2 & 3 & 4                                               */                                                          
 /*-----------------------------------------------------------------------*/
@@ -29,6 +41,19 @@ void speed_up_bridge1()
 //	g_f_enable_mag_steer_control = 1;
 	delay_ms(500);
 	set_speed_target(20);	
+}
+/*-----------------------------------------------------------------------*/
+/* 脱离电磁线、找新线                                                    */
+/* 关循迹  car 2 & 4                                                     */                                                          
+/*-----------------------------------------------------------------------*/
+void turn_left_2()
+{
+	
+	g_f_enable_mag_steer_control = 0;
+	set_steer_helm(data_steer_helm.center);
+	set_speed_target(10);
+	delay_ms(1000);
+	g_f_enable_mag_steer_control = 1;
 }
 /*-----------------------------------------------------------------------*/
 /* 上钢丝桥                                                              */
@@ -79,6 +104,12 @@ void avoid_box()
 	g_f_enable_mag_steer_control=0;
 	set_speed_target(5);
 	set_steer_helm(data_steer_helm.center-200);
+	delay_ms(1500);
+	set_steer_helm(data_steer_helm.center);
+	delay_ms(1000);
+	set_steer_helm(data_steer_helm.center+200);
+	delay_ms(1500);
+	g_f_enable_mag_steer_control=1;
 }
 
 
@@ -92,7 +123,9 @@ void RFID_control_car_1_action(DWORD site)
 	if (RFID_CARD_ID_2_3 == site)
 	{
 		//[implement][CAR_1]执行漂移
+		g_f_enable_mag_steer_control=0;
 		drift_left();
+		g_f_enable_mag_steer_control=1;
 	}
 	else if (RFID_CARD_ID_4_1 == site)
 	{
@@ -102,7 +135,9 @@ void RFID_control_car_1_action(DWORD site)
 	else if (RFID_CARD_ID_4_2 == site)
 	{
 		//[implement][CAR_1]执行漂移
+		g_f_enable_mag_steer_control=0;
 		drift_left();
+		g_f_enable_mag_steer_control=1;
 	}
 }
 
@@ -123,10 +158,7 @@ void RFID_control_car_2_action(DWORD site)
 	else if (RFID_CARD_ID_5_1 == site)
 	{
 		//[implement][CAR_2]脱离电磁线，找新线
-		g_f_enable_mag_steer_control = 1;
-		set_steer_helm(data_steer_helm.center);
-		set_speed_target(10);
-		delay_ms(1000);
+		turn_left_2();
 	}
 	else if (RFID_CARD_ID_6_1 == site)
 	{
@@ -145,38 +177,13 @@ void RFID_control_car_2_action(DWORD site)
 	}
 	else if (RFID_CARD_ID_6_4 == site)
 	{
-		//[implement][CAR_1]null
 		//[implement][CAR_2]减速下钢丝桥，准备躲箱子
-	//	set speed
+		avoid_box();
 	}
-	else if (RFID_CARD_ID_6_5 == site)
+	else if (RFID_CARD_ID_7_4 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]脱离电磁线，找新线
-	}
-	else if (RFID_CARD_ID_7_1 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]即将入隧道
-		//[implement][CAR_4]-->[CAR_1]漂移堵截
-	}
-	else if (RFID_CARD_ID_7_2 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]停车
-	}
-	else if (RFID_CARD_ID_7_3 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]停车
-		//[implement][CAR_4]null
+		//[implement][CAR_2]停车
+		set_speed_target(0);
 	}
 }
 
@@ -200,9 +207,7 @@ void RFID_control_car_3_action(DWORD site)
 	{
 
 		//[implement][CAR_3]脱离电磁线，找新线
-		g_f_enable_mag_steer_control = 0;
-	//	set_steer_helm();
-		g_f_enable_mag_steer_control = 1;
+		turn_left_1();
 	}
 
 	else if (RFID_CARD_ID_3_1 == site)
@@ -266,121 +271,69 @@ void RFID_control_car_4_action(DWORD site)
 	}
 	else if (RFID_CARD_ID_2_1 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]脱离电磁线，找新线
 		//[implement][CAR_4]-->[CAR_1]开始漂移
+		send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_0_1);
 		//[implement][CAR_4]-->[CAR_2]出发
+		send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);
 		//[implement][CAR_4]脱离电磁线，找新线
+		turn_left_1();
+		
 	}
 	else if (RFID_CARD_ID_2_2 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
+
 		//[implement][CAR_4]通知吊桥升起
+		send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_2_2);
+
 	}
 	else if (RFID_CARD_ID_3_1 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]开始加速飞跃
-		//[implement][CAR_3]开始加速飞跃
 		//[implement][CAR_4]开始加速飞跃
+		speed_up_bridge1();
 	}
-	else if (RFID_CARD_ID_4_1 == site)
-	{
-		//[implement][CAR_1]在维修区停止
-		//[implement][CAR_1]等待<--[CAR_4]漂移堵隧道口
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
+
 	else if (RFID_CARD_ID_5_1 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]脱离电磁线，找新线
-		//[implement][CAR_3]准备单边走
 		//[implement][CAR_4]脱离电磁线，找新线
+		turn_left_2();
 	}
-	else if (RFID_CARD_ID_5_2 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]单边走结束
-		//[implement][CAR_3]等待<--[CAR_4]推箱子
-		//[implement][CAR_4]脱离电磁线，找新线
-	}
-	else if (RFID_CARD_ID_5_3 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]箱子起点
-		//[implement][CAR_4]null
-	}
-	else if (RFID_CARD_ID_5_4 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]箱子终点
-		//[implement][CAR_4]null
-	}
+
+
+	
 	else if (RFID_CARD_ID_6_1 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]加速上钢丝桥
-		//[implement][CAR_3]null
 		//[implement][CAR_4]加速上钢丝桥
+		speed_up_bridge2();
 	}
 	else if (RFID_CARD_ID_6_2 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]已上钢丝桥，减速
-		//[implement][CAR_3]null
-		//[implement][CAR_4]已上钢丝桥，减速，准备走钢丝
+		//[implement][CAR_4]已上钢丝桥，减速
+		set_speed_target(25);
 	}
 	else if (RFID_CARD_ID_6_3 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]走钢丝结束
-		//[implement][CAR_3]null
-		//[implement][CAR_4]通知钢丝桥断开
+		//[implement][CAR_4]通知钢丝桥断开、减速
+		send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_6_3);
+		set_speed_target(10);
 	}
 	else if (RFID_CARD_ID_6_4 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]减速下钢丝桥，准备躲箱子
-		//[implement][CAR_3]null
-		//[implement][CAR_4]减速下钢丝桥
 		//[implement][CAR_4]-->[Car_3]推箱子
+		send_net_cmd(WIFI_ADDRESS_CAR_3,WIFI_CMD_NET_6_4);
 	}
 	else if (RFID_CARD_ID_6_5 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]脱离电磁线，找新线
+		//[implement][CAR_4]脱离电磁线，找新线(暂时定为循迹)
 	}
 	else if (RFID_CARD_ID_7_1 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]即将入隧道
 		//[implement][CAR_4]-->[CAR_1]漂移堵截
+		send_net_cmd(WIFI_ADDRESS_CAR_3,WIFI_CMD_NET_7_1);
 	}
 	else if (RFID_CARD_ID_7_2 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
 		//[implement][CAR_4]停车
-	}
-	else if (RFID_CARD_ID_7_3 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]停车
-		//[implement][CAR_4]null
+		set_speed_target(0);
 	}
 }
 
@@ -394,68 +347,15 @@ void WiFi_control_car_1_action(WORD cmd)
 {
 	if (WIFI_CMD_NET_0_1 == cmd)
 	{
-		//[implement][CAR_1]启动
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_0_2 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]启动
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_0_3 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]启动
-		//[implement][CAR_3]出发
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_0_4 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]启动
-		//[implement][CAR_4]出发
-	}
-	else if (WIFI_CMD_NET_2_1 == cmd)
-	{
-		//[implement][CAR_1]<--[CAR_3]开始漂移
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_2_2 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_6_2 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_6_4 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]<--[CAR_3]推箱子
+		//[implement][CAR_1]启动、准备漂移
+		g_f_enable_mag_steer_control=1;
+		set_speed_target(20);
 	}
 	else if (WIFI_CMD_NET_7_1 == cmd)
 	{
-		//[implement][CAR_1]<--[CAR_4]漂移堵
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
+		//[implement][CAR_1]<--[CAR_4]启动、准备漂移 堵
+		g_f_enable_mag_steer_control=1;
+		set_speed_target(20);
 	}
 }
 
@@ -467,74 +367,14 @@ void WiFi_control_car_1_action(WORD cmd)
 /*-----------------------------------------------------------------------*/
 void WiFi_control_car_2_action(WORD cmd)
 {
-	if (WIFI_CMD_NET_0_1 == cmd)
+	if (WIFI_CMD_NET_0_2 == cmd)
 	{
-		//[implement][CAR_1]启动
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_0_2 == cmd)
-	{
-		//[implement][CAR_1]null
 		//[implement][CAR_2]启动
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
+		g_f_enable_mag_steer_control=1;
+		set_speed_target(20);
 	}
-	else if (WIFI_CMD_NET_0_3 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]启动
-		//[implement][CAR_3]出发
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_0_4 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]启动
-		//[implement][CAR_4]出发
-	}
-	else if (WIFI_CMD_NET_2_1 == cmd)
-	{
-		//[implement][CAR_1]<--[CAR_3]开始漂移
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_2_2 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_6_2 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_6_4 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]<--[CAR_3]推箱子
-	}
-	else if (WIFI_CMD_NET_7_1 == cmd)
-	{
-		//[implement][CAR_1]<--[CAR_4]漂移堵
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
+
 }
-
-
 /*-----------------------------------------------------------------------*/
 /* 整车动作控制                                                          */
 /* WiFi                                                                  */
@@ -542,70 +382,18 @@ void WiFi_control_car_2_action(WORD cmd)
 /*-----------------------------------------------------------------------*/
 void WiFi_control_car_3_action(WORD cmd)
 {
-	if (WIFI_CMD_NET_0_1 == cmd)
+	if (WIFI_CMD_NET_0_3 == cmd)
 	{
-		//[implement][CAR_1]启动
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_0_2 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]启动
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_0_3 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
 		//[implement][CAR_3]启动
 		//[implement][CAR_3]出发
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_0_4 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]启动
-		//[implement][CAR_4]出发
-	}
-	else if (WIFI_CMD_NET_2_1 == cmd)
-	{
-		//[implement][CAR_1]<--[CAR_3]开始漂移
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_2_2 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_6_2 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
+		g_f_enable_mag_steer_control=1;
+		set_speed_target(20);
 	}
 	else if (WIFI_CMD_NET_6_4 == cmd)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]<--[CAR_3]推箱子
-	}
-	else if (WIFI_CMD_NET_7_1 == cmd)
-	{
-		//[implement][CAR_1]<--[CAR_4]漂移堵
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
+		//[implement][CAR_3]<--[CAR_4]推箱子 启动
+		g_f_enable_mag_steer_control=1;
+		set_speed_target(15);
 	}
 }
 
@@ -617,70 +405,12 @@ void WiFi_control_car_3_action(WORD cmd)
 /*-----------------------------------------------------------------------*/
 void WiFi_control_car_4_action(WORD cmd)
 {
-	if (WIFI_CMD_NET_0_1 == cmd)
+	if (WIFI_CMD_NET_0_4 == cmd)
 	{
-		//[implement][CAR_1]启动
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_0_2 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]启动
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_0_3 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]启动
-		//[implement][CAR_3]出发
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_0_4 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
 		//[implement][CAR_4]启动
 		//[implement][CAR_4]出发
-	}
-	else if (WIFI_CMD_NET_2_1 == cmd)
-	{
-		//[implement][CAR_1]<--[CAR_3]开始漂移
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_2_2 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_6_2 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
-	}
-	else if (WIFI_CMD_NET_6_4 == cmd)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]<--[CAR_3]推箱子
-	}
-	else if (WIFI_CMD_NET_7_1 == cmd)
-	{
-		//[implement][CAR_1]<--[CAR_4]漂移堵
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
+		g_f_enable_mag_steer_control=1;
+		set_speed_target(20);
 	}
 }
 
