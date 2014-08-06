@@ -303,19 +303,40 @@ void init_all_and_POST(void)
 		
 	/* 初始化陀螺仪 */
 	LCD_P8x16Str(0,2, (BYTE*)"L3G..");
-	for (i=0; i<5; i++)
+	switch (g_device_NO)
 	{
-		BYTE rev = 0x00;
-		
-		ReadReg(WHO_AM_I, &rev);
-		if (I_AM_L3G4200D == rev)
+		case WIFI_ADDRESS_CAR_1 :
+		case WIFI_ADDRESS_CAR_3 :
+		while (1)
 		{
-			g_devices_init_status.L3G4200D_is_OK = 1;
-			SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
-			SetMode(NORMAL);
-			break;
+			BYTE rev = 0x00;
+			
+			ReadReg(WHO_AM_I, &rev);
+			if (I_AM_L3G4200D == rev)
+			{
+				g_devices_init_status.L3G4200D_is_OK = 1;
+				SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
+				SetMode(NORMAL);
+				break;
+			}
 		}
-		
+		break;
+		case WIFI_ADDRESS_CAR_2 :
+		case WIFI_ADDRESS_CAR_4 :
+		for (i=0; i<5; i++)
+		{
+			BYTE rev = 0x00;
+			
+			ReadReg(WHO_AM_I, &rev);
+			if (I_AM_L3G4200D == rev)
+			{
+				g_devices_init_status.L3G4200D_is_OK = 1;
+				SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
+				SetMode(NORMAL);
+				break;
+			}
+		}
+		break;
 	}
 	if (g_devices_init_status.L3G4200D_is_OK)
 	{
@@ -369,17 +390,18 @@ void init_all_and_POST(void)
 	/* 换屏 */
 	delay_ms(1500);
 	LCD_Fill(0x00);
-	
-#if 0	
+
 	/* 速度闭环测试 */
 	
-	g_f_enable_speed_control = 1;	
+	g_f_enable_speed_control = 1;
+#if 0
 	LCD_P8x16Str(0, 0, (BYTE*)"S.T=10");
 	set_speed_target(10);
 	delay_ms(2000);
 	LCD_P8x16Str(0, 2, (BYTE*)"S.T=-10");
 	set_speed_target(-10);
 	delay_ms(2000);
+#endif
 	LCD_P8x16Str(0, 4, (BYTE*)"S.T=0");
 	set_speed_target(0);
 	delay_ms(2000);
@@ -402,7 +424,6 @@ void init_all_and_POST(void)
 	/* 换屏 */
 	delay_ms(1500);
 	LCD_Fill(0x00);
-#endif
 }
 
 
