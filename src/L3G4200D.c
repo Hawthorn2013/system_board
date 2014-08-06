@@ -33,6 +33,8 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 
+int cl_flag=0;
+
 BYTE L3G4200D_read_write_byte(BYTE data)
 {
 	uint32_t tmp_tx = 0x00000000;
@@ -869,95 +871,14 @@ BYTE TestWhoAmI(void)
 	return tmp_rx;
 }
 
-int control_steer_helm_1(void)
-{
-		u8_t status;
-		static int max=0,min=0,cnt=0;
-		static int pos_z=0,error_count=0,pos_target=1130,i=0;
-		int error=0;
-		int Kp=3,Kd=3;
-		int steer_rate=0;
-		static int steer_pwm=0,rev_count=0;
-		int start_flag=1;
-		
-	/* 调试陀螺仪 */
-			if (MEMS_SUCCESS == GetSatusReg(&status))
-			{
-				if (status & 80)
-				{
-					AngRateRaw_t rev;
-					GetAngRateRaw(&rev);
-				//	rev.z-=50;
-				//	LCD_PrintoutInt(0, 6, (rev.z));
-				//	if(rev.z>max)max=rev.z;
-				//	if(rev.z<min)min=rev.z;
-				/*	if(rev.z>-100&&rev.z<100)
-					{
-						rev.z=0;
-					}
-				*/	
-					rev.z/=500;
-					pos_z+=rev.z;
-					error=pos_target-pos_z;
-					rev_count+=abs(error);
-					cnt++;
-					if(cnt==10)
-					{
-						rev_count=0;
-					}
-					if(abs(error)>=10)
-					{
-					steer_rate = (Kp*error+Kd*error_count);
-					error_count = rev.z;
-					steer_pwm = (data_steer_helm.center)-steer_rate;
-				//	LCD_PrintoutInt(0, 6, (steer_pwm));
-					set_steer_helm((WORD)(steer_pwm));	
-					}
-					if(abs(error)<=50)
-					{
-						i++;
-					}
-					if(i!=0)
-					{
-						set_speed_target(10);
-					}
-					/*
-					cnt++;						
-					LCD_PrintoutInt(0, 0, (rev.z));
-					LCD_PrintoutInt(0, 2, (rev.y));
-					LCD_PrintoutInt(0, 4, (rev.z));
-					LCD_PrintoutInt(0, 0, (pos_z));
-					LCD_PrintoutInt(0, 2, (max));
-					LCD_PrintoutInt(0, 4, (min));
-					*/
-					if (g_remote_control_flags.send_gyro_data)
-					{
-						generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
-					}
-					
-					if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x0000012C)
-					{
-						start_flag=1;
-					}
-					return start_flag;
-					
-				}
-			//serial_port_0_TX(TestWhoAmI());
-			}
-
-}
-
+/* 由陀螺仪控制漂移 */
 int control_steer_helm_2(void)
 {
 		u8_t status;
-		static int max=0,min=0,cnt=0;
-		static int pos_z=0,error_count=0,pos_target=1130,i=0;
-		int error=0;
-		int Kp=3,Kd=10;
-		int steer_rate=0;
-		static int steer_pwm=0,rev_count=0;
-		int start_flag=1;
-		static int cl_flag=0;
+		static int pos_z=0,error_count=0,pos_target=1000,i=0;
+		int error=0,Kp=4,Kd=15,start_flag=1,steer_rate=0;
+		static int steer_pwm=0,rev_count=0,cnt=0;
+
 		
 	/* 调试陀螺仪 */
 			if (MEMS_SUCCESS == GetSatusReg(&status))
@@ -969,29 +890,46 @@ int control_steer_helm_2(void)
 					rev.z/=500;
 					pos_z+=rev.z;
 					error=pos_target-pos_z;
-					if(pos_z>(pos_target/3)&&cl_flag==0)
+					/* 0.5s后为第二阶段 */
+					if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000032&&cl_flag==1)
 					{
-						cl_flag=1;
+						set_speed_target(120);
+						set_steer_helm((WORD)(data_steer_helm.left_limit));
+						cl_flag=2;						
 					}
-					if(pos_z>(pos_target*8/9)&&cl_flag==1)
+					/* 判断开始漂移（z轴转过6）为第三阶段 */
+					else if(pos_z>=(pos_target/15)&&cl_flag==2)
 					{
-						cl_flag=2;
+						set_steer_helm((WORD)(-600));	
+						set_speed_target(60);
+						cl_flag=3;	
 					}
-					if(cl_flag==0)
+					/* 5~50为第四阶段 */
+					else if(pos_z>=(pos_target/9)&&cl_flag==3)
 					{
-						set_steer_helm((WORD)(data_steer_helm.center-300));	
+						set_steer_helm((WORD)(-200));	
+						set_speed_target(40);
+						cl_flag=4;	
 					}
-					if(cl_flag==1)
+					/* 判断漂移过40度后为第五阶段 */
+					else if(pos_z>(pos_target*4/9)&&cl_flag==4)
 					{
-						set_steer_helm((WORD)(data_steer_helm.center+200));	
+						set_steer_helm((WORD)(200));	
+						cl_flag=5;
 						set_speed_target(40);
 					}
-					if(abs(error)>=10&&cl_flag==2)
+					/* 判断漂移过80度为第六阶段 */
+					else if(pos_z>(pos_target*8/9)&&cl_flag==5)
+					{
+						cl_flag=6;
+					}
+					if(abs(error)>=1&&cl_flag==6)
 					{
 					steer_rate = (Kp*error+Kd*error_count);
 					error_count = rev.z;
-					steer_pwm = (data_steer_helm.center)-steer_rate;
+					steer_pwm = -steer_rate;
 					set_steer_helm((WORD)(steer_pwm));	
+					set_speed_target(0);
 					}					
 					if(abs(error)<=200)
 					{
@@ -1007,17 +945,15 @@ int control_steer_helm_2(void)
 					{
 						rev_count=0;
 					}
+					if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000190)
+					{
+						start_flag=0;
+					}
+					return start_flag;
 					if (g_remote_control_flags.send_gyro_data)
 					{
 						generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
 					}
-					
-					if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x0000012C)
-					{
-						start_flag=1;
-					}
-					return start_flag;
-					
 				}
 			//serial_port_0_TX(TestWhoAmI());
 			}

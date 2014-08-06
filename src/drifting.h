@@ -16,6 +16,6 @@ extern void drift_test();
 
 extern void send_speed();
 
-
+extern int cl_flag;
 
 #endif
