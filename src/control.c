@@ -226,7 +226,14 @@ void set_speed_KD(WORD kd)
 void set_steer_helm(WORD helmData)
 {
 #if 1 
-
+	if(data_steer_helm.left_limit<data_steer_helm.right_limit)
+	{
+		data_steer_helm.direction=1;
+	}
+	else 
+	{
+		data_steer_helm.direction=-1;
+	}
 	if(helmData<=data_steer_helm.left_limit)
 	{
 		helmData=data_steer_helm.left_limit;
