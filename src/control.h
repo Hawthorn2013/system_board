@@ -41,6 +41,7 @@ struct
 	WORD center;
 	WORD left_limit;
 	WORD right_limit;
+	int direction;
 } data_steer_helm = { STEER_HELM_CENTER, STEER_HELM_LEFT, STEER_HELM_RIGHT };
 #else
 extern struct
@@ -48,6 +49,7 @@ extern struct
 	WORD center;
 	WORD left_limit;
 	WORD right_limit;
+	int direction;
 } data_steer_helm;
 #endif
 

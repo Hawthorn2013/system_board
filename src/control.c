@@ -48,10 +48,11 @@ void PitISR(void)
 	/* ÍÓÂÝÒÇ½Ç¶È¿ØÖÆ*/
 	if (g_f_enable_rad_control)
 	{
-		if (!control_steer_helm_1())
+		if (!control_steer_helm_2())
 		{
 			g_f_enable_rad_control =0;  
-			set_speed_target(10);
+			set_steer_helm((WORD)(data_steer_helm.center));	
+			set_speed_target(5);
 		}
 	}
 	
@@ -225,7 +226,14 @@ void set_speed_KD(WORD kd)
 void set_steer_helm(WORD helmData)
 {
 #if 1 
-
+	if(data_steer_helm.left_limit<data_steer_helm.right_limit)
+	{
+		data_steer_helm.direction=1;
+	}
+	else 
+	{
+		data_steer_helm.direction=-1;
+	}
 	if(helmData<=data_steer_helm.left_limit)
 	{
 		helmData=data_steer_helm.left_limit;
