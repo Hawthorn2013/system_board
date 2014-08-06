@@ -5,7 +5,10 @@ int main(void)
 {
 	int flag=1;
 	init_all_and_POST();
-	drift_left();
+	//drift_left();
+	set_speed_target(30);
+	delay_ms(500);
+	g_f_enable_rad_control_2 = 1;
 
 
 	/* Loop forever */

@@ -77,7 +77,7 @@ void drift_left(void)//使用陀螺仪
 {
 	set_speed_target(40);
 	delay_ms(1000);
-	g_f_enable_rad_control = 1;
+	g_f_enable_rad_control_1 = 1;
 	start_time = g_time_basis_PIT;
 	/* 前0.5s为第一阶段 */
 //	while(diff_time_basis_PIT(g_time_basis_PIT,start_time)<=0x00000032)

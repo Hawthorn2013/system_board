@@ -960,9 +960,12 @@ int control_steer_helm_2(void)
 
 
 //由陀螺仪控制转向角度
-void control_steer_helm_3(int angle)
+int control_steer_helm_3(int angle_1)
 {
 	u8_t status;
+	static int pos_z=0,error_count=0,pos_target=1000,i=0;
+	int error=0,Kp=5,Kd=4,start_flag=1,steer_rate=0,angle_base=0;
+	static int steer_pwm=0;
 	
 	if (MEMS_SUCCESS == GetSatusReg(&status))
 	{
@@ -971,6 +974,25 @@ void control_steer_helm_3(int angle)
 			AngRateRaw_t rev;
 			GetAngRateRaw(&rev);	
 			rev.z/=500;
+			angle_base = angle_1*1000/90;
+			pos_z+=rev.z;
+			error=pos_target-pos_z;
+			if(abs(error)>=1)
+			{
+				steer_rate = (Kp*error+Kd*error_count);
+				error_count = rev.z;
+				steer_pwm = -steer_rate;
+				set_steer_helm((WORD)(steer_pwm));	 
+			}
+			if((abs(error))<=1)
+			{
+				start_flag=0;
+			}
+			return start_flag;
+			if (g_remote_control_flags.send_gyro_data)
+			{
+				generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
+			}
 		}
 	}
 }

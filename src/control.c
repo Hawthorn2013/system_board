@@ -6,7 +6,8 @@ int g_f_pit = 0;
 DWORD g_time_basis_PIT = 0x00000000;	/* 时间基准 */
 int g_f_enable_mag_steer_control = 0;	/* 启用电磁循迹标志位 */
 int g_f_enable_speed_control = 0;	/* 启用速度控制标志位 */
-int g_f_enable_rad_control = 0;		/* 启用陀螺仪角度控制标志位*/
+int g_f_enable_rad_control_1 = 0;		/* 启用陀螺仪角度控制漂移标志位*/
+int g_f_enable_rad_control_2 = 0;		/* 启用陀螺仪角度控制转向标志位 */
 int update_steer_helm_basement_to_steer_helm(void);
 
 
@@ -50,12 +51,23 @@ void PitISR(void)
 		control_steer_helm();
 	}
 	
-	/* 陀螺仪角度控制*/
-	if (g_f_enable_rad_control)
+	/* 陀螺仪角度控制漂移*/
+	if (g_f_enable_rad_control_1)
 	{
 		if (!control_steer_helm_2())
 		{
-			g_f_enable_rad_control =0;  
+			g_f_enable_rad_control_1 =0;  
+			set_steer_helm((WORD)(data_steer_helm.center));	
+			set_speed_target(5);
+		}
+	}
+	
+	/* 陀螺仪角度控制转向 */
+	if(g_f_enable_rad_control_2)
+	{
+		if (!control_steer_helm_3(90))
+		{
+			g_f_enable_rad_control_2 =0;  
 			set_steer_helm((WORD)(data_steer_helm.center));	
 			set_speed_target(5);
 		}
