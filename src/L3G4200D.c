@@ -874,88 +874,105 @@ BYTE TestWhoAmI(void)
 /* 由陀螺仪控制漂移 */
 int control_steer_helm_2(void)
 {
-		u8_t status;
-		static int pos_z=0,error_count=0,pos_target=1000,i=0;
-		int error=0,Kp=4,Kd=15,start_flag=1,steer_rate=0;
-		static int steer_pwm=0,rev_count=0,cnt=0;
-
-		
+	u8_t status;
+	static int pos_z=0,error_count=0,pos_target=1000,i=0;
+	int error=0,Kp=4,Kd=15,start_flag=1,steer_rate=0;
+	static int steer_pwm=0,rev_count=0,cnt=0;
+			
 	/* 调试陀螺仪 */
-			if (MEMS_SUCCESS == GetSatusReg(&status))
+	if (MEMS_SUCCESS == GetSatusReg(&status))
+	{
+		if (status & 80)
+		{
+			AngRateRaw_t rev;
+			GetAngRateRaw(&rev);	
+			rev.z/=500;
+			pos_z+=rev.z;
+			error=pos_target-pos_z;
+			/* 0.5s后为第二阶段 */
+			if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000032&&cl_flag==1)
 			{
-				if (status & 80)
-				{
-					AngRateRaw_t rev;
-					GetAngRateRaw(&rev);	
-					rev.z/=500;
-					pos_z+=rev.z;
-					error=pos_target-pos_z;
-					/* 0.5s后为第二阶段 */
-					if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000032&&cl_flag==1)
-					{
-						set_speed_target(120);
-						set_steer_helm((WORD)(data_steer_helm.left_limit));
-						cl_flag=2;						
-					}
-					/* 判断开始漂移（z轴转过6）为第三阶段 */
-					else if(pos_z>=(pos_target/15)&&cl_flag==2)
-					{
-						set_steer_helm((WORD)(-600));	
-						set_speed_target(60);
-						cl_flag=3;	
-					}
-					/* 5~50为第四阶段 */
-					else if(pos_z>=(pos_target/9)&&cl_flag==3)
-					{
-						set_steer_helm((WORD)(-200));	
-						set_speed_target(40);
-						cl_flag=4;	
-					}
-					/* 判断漂移过40度后为第五阶段 */
-					else if(pos_z>(pos_target*4/9)&&cl_flag==4)
-					{
-						set_steer_helm((WORD)(200));	
-						cl_flag=5;
-						set_speed_target(40);
-					}
-					/* 判断漂移过80度为第六阶段 */
-					else if(pos_z>(pos_target*8/9)&&cl_flag==5)
-					{
-						cl_flag=6;
-					}
-					if(abs(error)>=1&&cl_flag==6)
-					{
-					steer_rate = (Kp*error+Kd*error_count);
-					error_count = rev.z;
-					steer_pwm = -steer_rate;
-					set_steer_helm((WORD)(steer_pwm));	
-					set_speed_target(0);
-					}					
-					if(abs(error)<=200)
-					{
-						i++;
-					}
-					if(i!=0)
-					{
-						set_speed_target(10);
-					}
-					rev_count+=abs(error);
-					cnt++;
-					if(cnt==10)
-					{
-						rev_count=0;
-					}
-					if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000190)
-					{
-						start_flag=0;
-					}
-					return start_flag;
-					if (g_remote_control_flags.send_gyro_data)
-					{
-						generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
-					}
-				}
-			//serial_port_0_TX(TestWhoAmI());
+				set_speed_target(120);
+				set_steer_helm((WORD)(data_steer_helm.left_limit));
+				cl_flag=2;						
 			}
+			/* 判断开始漂移（z轴转过6）为第三阶段 */
+			else if(pos_z>=(pos_target/15)&&cl_flag==2)
+			{
+				set_steer_helm((WORD)(-600));	
+				set_speed_target(60);
+				cl_flag=3;	
+			}
+			/* 5~50为第四阶段 */
+			else if(pos_z>=(pos_target/9)&&cl_flag==3)
+			{	
+				set_steer_helm((WORD)(-200));	
+				set_speed_target(40);
+				cl_flag=4;	
+			}
+			/* 判断漂移过40度后为第五阶段 */
+			else if(pos_z>(pos_target*4/9)&&cl_flag==4)
+			{						
+				set_steer_helm((WORD)(200));	
+				cl_flag=5;
+				set_speed_target(40);
+			}
+			/* 判断漂移过80度为第六阶段 */
+			else if(pos_z>(pos_target*8/9)&&cl_flag==5)
+			{
+				cl_flag=6;
+			}
+			if(abs(error)>=1&&cl_flag==6)
+			{
+				steer_rate = (Kp*error+Kd*error_count);
+				error_count = rev.z;
+				steer_pwm = -steer_rate;
+				set_steer_helm((WORD)(steer_pwm));	
+				set_speed_target(0);
+			}					
+			if(abs(error)<=200)
+			{
+				i++;
+			}
+			if(i!=0)
+			{
+				set_speed_target(10);
+			}
+			rev_count+=abs(error);
+			cnt++;
+			if(cnt==10)
+			{
+				rev_count=0;
+			}
+			if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000190)
+			{
+				start_flag=0;
+			}
+			return start_flag;
+			if (g_remote_control_flags.send_gyro_data)
+			{
+				generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
+			}
+		}
+		//serial_port_0_TX(TestWhoAmI());
+	}
+}
 
+
+//由陀螺仪控制转向角度
+void control_steer_helm_3(int angle)
+{
+	u8_t status;
+	
+	if (MEMS_SUCCESS == GetSatusReg(&status))
+	{
+		if (status & 80)
+		{
+			AngRateRaw_t rev;
+			GetAngRateRaw(&rev);	
+			rev.z/=500;
+			pos_z+=rev.z;
+			error=angle-pos_z;
+		}
+	}
 }
