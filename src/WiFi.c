@@ -10,7 +10,7 @@ BYTE g_device_NO = WIFI_ADDRESS_CAR_1;	/* 设备号 即WiFi地址 */
 
 
 /*-----------------------------------------------------------------------*/
-/* 执行远程命令                                                          */
+/* 执行远程命令                                                                      */
 /*-----------------------------------------------------------------------*/
 void execute_remote_cmd(const BYTE *data)
 {
@@ -30,29 +30,26 @@ void execute_remote_cmd(const BYTE *data)
 		case WIFI_CMD_SET_HELM_KD :
 		break;
 		case WIFI_CMD_SET_STEER_HELM_CENTER :
-		data_steer_helm_basement.center = *((WORD *)(&(data[2])));
-		set_steer_helm_basement(*((WORD *)(&(data[2]))));
+		set_steer_helm_basement_center(*((WORD *)(&(data[2]))));
 		break;
 		case WIFI_CMD_SET_STEER_HELM_LEFT :
-		data_steer_helm_basement.left_limit = *((SWORD *)(&(data[2])));
-		set_steer_helm_basement(*((WORD *)(&(data[2]))));
+		set_steer_helm_basement_left_limit(*((SWORD *)(&(data[2]))));
 		break;
 		case WIFI_CMD_SET_STEER_HELM_RIGHT :
-		data_steer_helm_basement.right_limit = *((SWORD *)(&(data[2])));
-		set_steer_helm_basement(*((WORD *)(&(data[2]))));
+		set_steer_helm_basement_right_limit(*((SWORD *)(&(data[2]))));
 		break;
 		case WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF :
-		if (!write_steer_helm_data_to_TF())
+		if (update_steer_helm_basement_to_steer_helm())
 		{
-			//D3 = 0;
+			write_steer_helm_data_to_TF();
 		}
 		else
 		{
-			//D3 = 1;
+			//舵机数据不合理
 		}
 		break;
 		case WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF :
-		generate_remote_frame(WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF, (BYTE *)&data_steer_helm, sizeof(data_steer_helm));
+		generate_remote_frame(WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF, (BYTE *)&data_steer_helm_basement, sizeof(data_steer_helm_basement));
 		break;
 		
 		

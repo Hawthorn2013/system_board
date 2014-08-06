@@ -296,7 +296,7 @@ void clear_sd_buffer(BYTE buffer[][SD_SECTOR_SIZE])
 
 
 /*-----------------------------------------------------------------------*/
-/* 读取方向舵机数据从TF卡                                                */
+/* 读取方向舵机数据从TF卡                                                      */
 /*-----------------------------------------------------------------------*/
 int read_steer_helm_data_from_TF()
 {
@@ -304,29 +304,16 @@ int read_steer_helm_data_from_TF()
 	TCHAR *tchar = "STEHEL";
 	UINT br;
 	
-	serial_port_1_TX(f_open(&fil, tchar, FA_READ));
-	serial_port_1_TX(f_read(&fil, (void *)&data_steer_helm_basement, sizeof(data_steer_helm_basement), &br));
-	serial_port_1_TX(f_close(&fil));
-	serial_port_1_TX((BYTE)br);
-	if(data_steer_helm_basement.left_limit<data_steer_helm_basement.right_limit)
-	{
-		data_steer_helm_basement.direction=1;
-	}
-	else 
-	{
-		data_steer_helm_basement.direction=-1;
-	}
-	data_steer_helm.center=0;
-	data_steer_helm.left_limit=data_steer_helm_basement.left_limit-data_steer_helm_basement.center;
-	data_steer_helm.left_limit*=data_steer_helm_basement.direction;
-	data_steer_helm.right_limit=data_steer_helm_basement.right_limit-data_steer_helm_basement.center;
-	data_steer_helm.right_limit*=data_steer_helm_basement.direction;
+	f_open(&fil, tchar, FA_READ);
+	f_read(&fil, (void *)&data_steer_helm_basement, sizeof(data_steer_helm_basement), &br);
+	f_close(&fil);
+	
 	return 0;
 }
 
 
 /*-----------------------------------------------------------------------*/
-/* 写入方向舵机数据到TF卡                                                */
+/* 写入方向舵机数据到TF卡                                                       */
 /*-----------------------------------------------------------------------*/
 int write_steer_helm_data_to_TF()
 {
