@@ -1,7 +1,21 @@
 #define __ACTION_C_
 #include "includes.h"
-
-
+/*-----------------------------------------------------------------------*/
+/* 扎气球                                                                */
+/* 关循迹  car 3 & 4                                               */                                                          
+/*-----------------------------------------------------------------------*/
+void puncture_ballon()
+{
+	g_f_enable_mag_steer_control = 0;
+	set_steer_helm(data_steer_helm.left_limit);
+	set_speed_target(20);
+	delay_ms(700);
+	set_steer_helm(data_steer_helm.right_limit);
+	delay_ms(900);
+	set_steer_helm(data_steer_helm.center);
+	set_speed_target(10);
+	g_f_enable_mag_steer_control = 1;
+}
 /*-----------------------------------------------------------------------*/
 /* 飞吊桥                                                                */
 /* 不关循迹  car 2 & 3 & 4                                               */                                                          
@@ -41,7 +55,7 @@ void speed_down_bridge2()
 void push_box1()
 {
 	g_f_enable_mag_steer_control=0;
-	set_steer_helm(STEER_HELM_CENTER);
+	set_steer_helm(data_steer_helm.center);
 	set_speed_target(15);	
 }
 /*-----------------------------------------------------------------------*/
@@ -57,29 +71,14 @@ void push_box2()
 	set_speed_target(15);
 }
 /*-----------------------------------------------------------------------*/
-/* 戳气球                                                                */
-/* 传入RFID卡号                                                          */                                                          
+/* 躲箱子	                                                             */
+/* car 2                                                                 */                                                          
 /*-----------------------------------------------------------------------*/
-void punctured_ballon(DWORD site)
+void avoid_box()
 {
-	if (RFID_CARD_ID_PUNCTURED_BALLON_START == site)
-	{
-		set_speed_target(30);
-	}
-	else if (RFID_CARD_ID_PUNCTURED_BALLON_CAR3_TURN1 == site)
-	{
-		g_f_enable_mag_steer_control = 0;
-		set_steer_helm(STEER_HELM_RIGHT);
-		set_speed_target(30);
-		delay_ms(500);
-		set_steer_helm(STEER_HELM_LEFT);
-		while (!is_on_mag_line()) { }
-		g_f_enable_mag_steer_control = 0;
-	}
-	else if (RFID_CARD_ID_PUNCTURED_BALLON_STOP == site)
-	{
-		set_speed_target(0);
-	}
+	g_f_enable_mag_steer_control=0;
+	set_speed_target(5);
+	set_steer_helm(data_steer_helm.center-200);
 }
 
 
@@ -93,23 +92,17 @@ void RFID_control_car_1_action(DWORD site)
 	if (RFID_CARD_ID_2_3 == site)
 	{
 		//[implement][CAR_1]执行漂移
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
+		drift_left();
 	}
 	else if (RFID_CARD_ID_4_1 == site)
 	{
 		//[implement][CAR_1]停车
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
+		set_speed_target(0);
 	}
 	else if (RFID_CARD_ID_4_2 == site)
 	{
 		//[implement][CAR_1]执行漂移
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
+		drift_left();
 	}
 }
 
@@ -121,94 +114,40 @@ void RFID_control_car_1_action(DWORD site)
 /*-----------------------------------------------------------------------*/
 void RFID_control_car_2_action(DWORD site)
 {
-	if (RFID_CARD_ID_2_1 == site)
+
+	if (RFID_CARD_ID_3_1 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]脱离电磁线，找新线
-		//[implement][CAR_4]-->[CAR_1]开始漂移
-		//[implement][CAR_4]-->[CAR_2]出发
-		//[implement][CAR_4]脱离电磁线，找新线
-	}
-	else if (RFID_CARD_ID_2_2 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]通知吊桥升起
-	}
-	else if (RFID_CARD_ID_3_1 == site)
-	{
-		//[implement][CAR_1]null
 		//[implement][CAR_2]开始加速飞跃
-		//[implement][CAR_3]开始加速飞跃
-		//[implement][CAR_4]开始加速飞跃
-	}
-	else if (RFID_CARD_ID_4_1 == site)
-	{
-		//[implement][CAR_1]在维修区停止
-		//[implement][CAR_1]等待<--[CAR_4]漂移堵隧道口
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
+		speed_up_bridge1();
 	}
 	else if (RFID_CARD_ID_5_1 == site)
 	{
-		//[implement][CAR_1]null
 		//[implement][CAR_2]脱离电磁线，找新线
-		//[implement][CAR_3]准备单边走
-		//[implement][CAR_4]脱离电磁线，找新线
-	}
-	else if (RFID_CARD_ID_5_2 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]单边走结束
-		//[implement][CAR_3]等待<--[CAR_4]推箱子
-		//[implement][CAR_4]脱离电磁线，找新线
-	}
-	else if (RFID_CARD_ID_5_3 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]箱子起点
-		//[implement][CAR_4]null
-	}
-	else if (RFID_CARD_ID_5_4 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]箱子终点
-		//[implement][CAR_4]null
+		g_f_enable_mag_steer_control = 1;
+		set_steer_helm(data_steer_helm.center);
+		set_speed_target(10);
+		delay_ms(1000);
 	}
 	else if (RFID_CARD_ID_6_1 == site)
 	{
-		//[implement][CAR_1]null
 		//[implement][CAR_2]加速上钢丝桥
-		//[implement][CAR_3]null
-		//[implement][CAR_4]加速上钢丝桥
+		speed_up_bridge2();
 	}
 	else if (RFID_CARD_ID_6_2 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]已上钢丝桥，减速
-		//[implement][CAR_3]null
-		//[implement][CAR_4]已上钢丝桥，减速，准备走钢丝
+		//[implement][CAR_2]已上钢丝桥，减速，准备走钢丝
+		speed_down_bridge2();
 	}
 	else if (RFID_CARD_ID_6_3 == site)
 	{
-		//[implement][CAR_1]null
 		//[implement][CAR_2]走钢丝结束
-		//[implement][CAR_3]null
-		//[implement][CAR_4]通知钢丝桥断开
+		
 	}
 	else if (RFID_CARD_ID_6_4 == site)
 	{
 		//[implement][CAR_1]null
 		//[implement][CAR_2]减速下钢丝桥，准备躲箱子
-		//[implement][CAR_3]null
-		//[implement][CAR_4]减速下钢丝桥
-		//[implement][CAR_4]-->[Car_3]推箱子
+	//	set speed
 	}
 	else if (RFID_CARD_ID_6_5 == site)
 	{
@@ -249,147 +188,63 @@ void RFID_control_car_2_action(DWORD site)
 /*-----------------------------------------------------------------------*/
 void RFID_control_car_3_action(DWORD site)
 {
-	if (RFID_CARD_ID_1_2 == site)
+	if (RFID_CARD_ID_1_2 == site)//扎气球
 	{
-		g_f_enable_mag_steer_control = 0;
-		set_steer_helm(STEER_HELM_RIGHT);
-		set_speed_target(20);
-		delay_ms(700);
-		set_steer_helm(STEER_HELM_LEFT);
-		delay_ms(900);
-		set_steer_helm(STEER_HELM_CENTER);
-		set_speed_target(10);
-		g_f_enable_mag_steer_control = 1;
+		puncture_ballon();
 	}
-	else if (RFID_CARD_ID_1_4 == site)
+	else if (RFID_CARD_ID_1_4 == site)//扎气球
 	{
-		g_f_enable_mag_steer_control = 0;
-		set_steer_helm(STEER_HELM_RIGHT);
-		set_speed_target(20);
-		delay_ms(700);
-		set_steer_helm(STEER_HELM_LEFT);
-		delay_ms(900);
-		set_steer_helm(STEER_HELM_CENTER);
-		set_speed_target(10);
-		g_f_enable_mag_steer_control = 1;
+		puncture_ballon();
 	}
 	else if (RFID_CARD_ID_2_1 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
+
 		//[implement][CAR_3]脱离电磁线，找新线
-		//[implement][CAR_4]-->[CAR_1]开始漂移
-		//[implement][CAR_4]-->[CAR_2]出发
-		//[implement][CAR_4]脱离电磁线，找新线
+		g_f_enable_mag_steer_control = 0;
+	//	set_steer_helm();
+		g_f_enable_mag_steer_control = 1;
 	}
-	else if (RFID_CARD_ID_2_2 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]通知吊桥升起
-	}
+
 	else if (RFID_CARD_ID_3_1 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]开始加速飞跃
 		//[implement][CAR_3]开始加速飞跃
-		//[implement][CAR_4]开始加速飞跃
-	}
-	else if (RFID_CARD_ID_4_1 == site)
-	{
-		//[implement][CAR_1]在维修区停止
-		//[implement][CAR_1]等待<--[CAR_4]漂移堵隧道口
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]null
+		speed_up_bridge1();
 	}
 	else if (RFID_CARD_ID_5_1 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]脱离电磁线，找新线
 		//[implement][CAR_3]准备单边走
-		//[implement][CAR_4]脱离电磁线，找新线
+		set_speed_target(10);
+	}
+	else if (RFID_CARD_ID_5_5 == site)
+	{
+		//[implement][CAR_3]开始单边走
+		set_speed_target(0);
+		delay_ms(1500);
+		set_speed_target(35);
 	}
 	else if (RFID_CARD_ID_5_2 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
 		//[implement][CAR_3]单边走结束
 		//[implement][CAR_3]等待<--[CAR_4]推箱子
-		//[implement][CAR_4]脱离电磁线，找新线
+		set_speed_target(0);
+
 	}
 	else if (RFID_CARD_ID_5_3 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
 		//[implement][CAR_3]箱子起点
-		//[implement][CAR_4]null
+		push_box1();
 	}
 	else if (RFID_CARD_ID_5_4 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
 		//[implement][CAR_3]箱子终点
-		//[implement][CAR_4]null
+		push_box2();
 	}
-	else if (RFID_CARD_ID_6_1 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]加速上钢丝桥
-		//[implement][CAR_3]null
-		//[implement][CAR_4]加速上钢丝桥
-	}
-	else if (RFID_CARD_ID_6_2 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]已上钢丝桥，减速
-		//[implement][CAR_3]null
-		//[implement][CAR_4]已上钢丝桥，减速，准备走钢丝
-	}
-	else if (RFID_CARD_ID_6_3 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]走钢丝结束
-		//[implement][CAR_3]null
-		//[implement][CAR_4]通知钢丝桥断开
-	}
-	else if (RFID_CARD_ID_6_4 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]减速下钢丝桥，准备躲箱子
-		//[implement][CAR_3]null
-		//[implement][CAR_4]减速下钢丝桥
-		//[implement][CAR_4]-->[Car_3]推箱子
-	}
-	else if (RFID_CARD_ID_6_5 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]脱离电磁线，找新线
-	}
-	else if (RFID_CARD_ID_7_1 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]即将入隧道
-		//[implement][CAR_4]-->[CAR_1]漂移堵截
-	}
-	else if (RFID_CARD_ID_7_2 == site)
-	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]null
-		//[implement][CAR_4]停车
-	}
+
+
 	else if (RFID_CARD_ID_7_3 == site)
 	{
-		//[implement][CAR_1]null
-		//[implement][CAR_2]null
-		//[implement][CAR_3]停车
-		//[implement][CAR_4]null
+		//[implement][CAR_3]隧道停车
+		set_speed_target(0);
 	}
 }
 
@@ -403,27 +258,11 @@ void RFID_control_car_4_action(DWORD site)
 {
 	if (RFID_CARD_ID_1_1 == site)
 	{
-		g_f_enable_mag_steer_control = 0;
-		set_steer_helm(STEER_HELM_RIGHT);
-		set_speed_target(20);
-		delay_ms(700);
-		set_steer_helm(STEER_HELM_LEFT);
-		delay_ms(900);
-		set_steer_helm(STEER_HELM_CENTER);
-		set_speed_target(10);
-		g_f_enable_mag_steer_control = 1;
+		puncture_ballon();
 	}
 	else if (RFID_CARD_ID_1_4 == site)
 	{
-		g_f_enable_mag_steer_control = 0;
-		set_steer_helm(STEER_HELM_RIGHT);
-		set_speed_target(20);
-		delay_ms(700);
-		set_steer_helm(STEER_HELM_LEFT);
-		delay_ms(900);
-		set_steer_helm(STEER_HELM_CENTER);
-		set_speed_target(10);
-		g_f_enable_mag_steer_control = 1;
+		puncture_ballon();
 	}
 	else if (RFID_CARD_ID_2_1 == site)
 	{

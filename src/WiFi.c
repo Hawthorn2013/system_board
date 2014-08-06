@@ -30,16 +30,16 @@ void execute_remote_cmd(const BYTE *data)
 		case WIFI_CMD_SET_HELM_KD :
 		break;
 		case WIFI_CMD_SET_STEER_HELM_CENTER :
-		data_steer_helm.center = *((SWORD *)(&(data[2])));
-		set_steer_helm(*((SWORD *)(&(data[2]))));
+		data_steer_helm_basement.center = *((WORD *)(&(data[2])));
+		set_steer_helm_basement(*((WORD *)(&(data[2]))));
 		break;
 		case WIFI_CMD_SET_STEER_HELM_LEFT :
-		data_steer_helm.left_limit = *((SWORD *)(&(data[2])));
-		set_steer_helm(*((SWORD *)(&(data[2]))));
+		data_steer_helm_basement.left_limit = *((SWORD *)(&(data[2])));
+		set_steer_helm_basement(*((WORD *)(&(data[2]))));
 		break;
 		case WIFI_CMD_SET_STEER_HELM_RIGHT :
-		data_steer_helm.right_limit = *((SWORD *)(&(data[2])));
-		set_steer_helm(*((SWORD *)(&(data[2]))));
+		data_steer_helm_basement.right_limit = *((SWORD *)(&(data[2])));
+		set_steer_helm_basement(*((WORD *)(&(data[2]))));
 		break;
 		case WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF :
 		if (!write_steer_helm_data_to_TF())
@@ -304,20 +304,12 @@ void generate_remote_frame_2(BYTE scr, BYTE des, WORD cmd, BYTE length, const BY
 
 
 /*-----------------------------------------------------------------------*/
-/* 生成发送位置的远程网络命令                                            */
-/* 参数 : cmd WiFi Net命令字                                             */
-/*        site 卡号                                                      */
-/*        data 存放生成的命令                                            */
+/* 发送赛场网络控制命令                                                  */
+/* 依赖generate_remote_frame_2()                                         */
 /*-----------------------------------------------------------------------*/
-void generate_remote_net_frame_to_send_site(WORD cmd, DWORD site, BYTE data[])
+void send_net_cmd(BYTE des, WORD net_cmd)
 {
-	WORD i = 0, j = 0;
-	
-	data[i++] = g_device_NO;
-	data[i++] = (BYTE)(cmd>>8);
-	data[i++] = (BYTE)cmd;
-	*(DWORD *)&(data[i]) = site;
-	i += sizeof(site);
+	generate_remote_frame_2(g_device_NO, des, WIFI_CMD_NET, sizeof(net_cmd), (const BYTE *)(&net_cmd));
 }
 
 

@@ -305,10 +305,22 @@ int read_steer_helm_data_from_TF()
 	UINT br;
 	
 	serial_port_1_TX(f_open(&fil, tchar, FA_READ));
-	serial_port_1_TX(f_read(&fil, (void *)&data_steer_helm, sizeof(data_steer_helm), &br));
+	serial_port_1_TX(f_read(&fil, (void *)&data_steer_helm_basement, sizeof(data_steer_helm_basement), &br));
 	serial_port_1_TX(f_close(&fil));
 	serial_port_1_TX((BYTE)br);
-	
+	if(data_steer_helm_basement.left_limit<data_steer_helm_basement.right_limit)
+	{
+		data_steer_helm_basement.direction=1;
+	}
+	else 
+	{
+		data_steer_helm_basement.direction=-1;
+	}
+	data_steer_helm.center=0;
+	data_steer_helm.left_limit=data_steer_helm_basement.left_limit-data_steer_helm_basement.center;
+	data_steer_helm.left_limit*=data_steer_helm_basement.direction;
+	data_steer_helm.right_limit=data_steer_helm_basement.right_limit-data_steer_helm_basement.center;
+	data_steer_helm.right_limit*=data_steer_helm_basement.direction;
 	return 0;
 }
 
@@ -335,7 +347,7 @@ int write_steer_helm_data_to_TF()
 	{
 		sucess_f = 0;
 	}
-	if (FR_OK != f_write(&fil2, (const void *)&data_steer_helm, sizeof(data_steer_helm), &wr))
+	if (FR_OK != f_write(&fil2, (const void *)&data_steer_helm_basement, sizeof(data_steer_helm_basement), &wr))
 	{
 		sucess_f = 0;
 	}
