@@ -34,7 +34,24 @@ extern int g_f_enable_mag_steer_control;
 extern int g_f_enable_speed_control;
 extern int g_f_enable_rad_control;
 
-/* 方向舵机数据 */
+/* 方向舵机上层数据 */
+#ifdef __CONTROL_C_
+struct
+{
+	SWORD center;
+	SWORD left_limit;
+	SWORD right_limit;
+} data_steer_helm = {(SWORD) 0, STEER_HELM_LEFT-STEER_HELM_CENTER, STEER_HELM_RIGHT-STEER_HELM_CENTER };
+#else
+extern struct
+{
+	SWORD center;
+	SWORD left_limit;
+	SWORD right_limit;
+} data_steer_helm;
+#endif
+
+/* 方向舵机底层数据 */
 #ifdef __CONTROL_C_
 struct
 {
@@ -42,7 +59,7 @@ struct
 	WORD left_limit;
 	WORD right_limit;
 	int direction;
-} data_steer_helm = { STEER_HELM_CENTER, STEER_HELM_LEFT, STEER_HELM_RIGHT };
+} data_steer_helm_basement = { STEER_HELM_CENTER, STEER_HELM_LEFT, STEER_HELM_RIGHT };
 #else
 extern struct
 {
@@ -50,7 +67,7 @@ extern struct
 	WORD left_limit;
 	WORD right_limit;
 	int direction;
-} data_steer_helm;
+} data_steer_helm_basement;
 #endif
 
 /* 光编数据 */
@@ -116,10 +133,10 @@ extern void set_speed_target(SWORD speed_target);
 extern void set_speed_KP(WORD kp);
 extern void set_speed_KI(WORD ki);
 extern void set_speed_KD(WORD kd);
-extern void set_steer_helm(WORD helmData);
+extern void set_steer_helm(SWORD helmData);
 extern void contorl_speed_encoder_pid(void);
 extern DWORD diff_time_basis_PIT(DWORD new_time, DWORD old_time);
-extern void set_steer_helm(WORD helmData);
+extern void set_steer_helm(SWORD helmData);
 
 
 #endif

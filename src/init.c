@@ -292,6 +292,7 @@ void init_all_and_POST(void)
 			}
 		}
 	}
+	
 	if (g_devices_init_status.TFCard_is_OK)
 	{
 		LCD_P8x16Str(0,0, (BYTE*)"TF..OK");
@@ -385,6 +386,7 @@ void init_all_and_POST(void)
 	LCD_P8x16Str(0, 4, (BYTE*)"StH.C=");
 	LCD_PrintoutInt(48, 4, data_steer_helm.center);
 	set_steer_helm(data_steer_helm.center);
+
 #endif
 
 	/* »»ÆÁ */

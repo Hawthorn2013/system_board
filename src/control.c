@@ -7,7 +7,9 @@ DWORD g_time_basis_PIT = 0x00000000;	/* 时间基准 */
 int g_f_enable_mag_steer_control = 0;	/* 启用电磁循迹标志位 */
 int g_f_enable_speed_control = 0;	/* 启用速度控制标志位 */
 int g_f_enable_rad_control = 0;		/* 启用陀螺仪角度控制标志位*/
-
+/*-----------------------------------------------------------------------*/
+/* 舵机初始化 	                                                         */
+/*-----------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------*/
 /* PIT中断处理函数                                                       */
@@ -223,17 +225,8 @@ void set_speed_KD(WORD kd)
 /* 设置方向舵机位置                                                      */
 /* 面对舵机轴，占空比增大，舵机逆时针旋转，对我们的车是左舵。            */
 /*-----------------------------------------------------------------------*/
-void set_steer_helm(WORD helmData)
+void set_steer_helm(SWORD helmData)
 {
-#if 1 
-	if(data_steer_helm.left_limit<data_steer_helm.right_limit)
-	{
-		data_steer_helm.direction=1;
-	}
-	else 
-	{
-		data_steer_helm.direction=-1;
-	}
 	if(helmData<=data_steer_helm.left_limit)
 	{
 		helmData=data_steer_helm.left_limit;
@@ -242,10 +235,23 @@ void set_steer_helm(WORD helmData)
 	{
 		helmData=data_steer_helm.right_limit;
 	}
-#endif
-//	LCD_PrintoutInt(0, 6, (SWORD)(helmData));	
+	
+	helmData=helmData*data_steer_helm_basement.direction+data_steer_helm_basement.center;
 	EMIOS_0.CH[9].CBDR.R = helmData;
 	helm_data_record = helmData;
+}
+
+void set_steer_helm_basement(WORD helmData)
+{
+	if(helmData<=1500)
+	{
+		helmData=1500;
+	}
+	else if(helmData>=5000)
+	{
+		helmData=5000;
+	}
+	EMIOS_0.CH[9].CBDR.R = helmData;
 }
 
 
