@@ -43,7 +43,7 @@ struct
 	SWORD right_limit;
 } data_steer_helm = {(SWORD) 0, STEER_HELM_LEFT-STEER_HELM_CENTER, STEER_HELM_RIGHT-STEER_HELM_CENTER };
 #else
-extern struct
+extern const struct
 {
 	SWORD center;
 	SWORD left_limit;
@@ -61,7 +61,7 @@ struct
 	int direction;
 } data_steer_helm_basement = { STEER_HELM_CENTER, STEER_HELM_LEFT, STEER_HELM_RIGHT };
 #else
-extern struct
+extern const struct
 {
 	WORD center;
 	WORD left_limit;
@@ -137,6 +137,5 @@ extern void set_steer_helm(SWORD helmData);
 extern void contorl_speed_encoder_pid(void);
 extern DWORD diff_time_basis_PIT(DWORD new_time, DWORD old_time);
 extern void set_steer_helm(SWORD helmData);
-
 
 #endif

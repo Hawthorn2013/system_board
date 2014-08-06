@@ -7,12 +7,18 @@ DWORD g_time_basis_PIT = 0x00000000;	/* 时间基准 */
 int g_f_enable_mag_steer_control = 0;	/* 启用电磁循迹标志位 */
 int g_f_enable_speed_control = 0;	/* 启用速度控制标志位 */
 int g_f_enable_rad_control = 0;		/* 启用陀螺仪角度控制标志位*/
+int update_steer_helm_basement_to_steer_helm(void);
+
+
+static void set_steer_helm_basement(WORD helmData);
+
+
 /*-----------------------------------------------------------------------*/
-/* 舵机初始化 	                                                         */
+/* 舵机初始化 	                                                                      */
 /*-----------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------*/
-/* PIT中断处理函数                                                       */
+/* PIT中断处理函数                                                                 */
 /*-----------------------------------------------------------------------*/
 void PitISR(void)
 {
@@ -73,7 +79,7 @@ void PitISR(void)
 
 
 /*-----------------------------------------------------------------------*/
-/* 设置速度PWM                                                           */
+/* 设置速度PWM                                                                    */
 /*-----------------------------------------------------------------------*/
 void set_speed_pwm(int16_t speed_pwm)	//speed_pwm正为向前，负为向后
 {
@@ -107,7 +113,7 @@ void set_speed_pwm(int16_t speed_pwm)	//speed_pwm正为向前，负为向后
 
 
 /*-----------------------------------------------------------------------*/
-/* BangBang速度控制                                                      */
+/* BangBang速度控制                                                             */
 /*-----------------------------------------------------------------------*/
 void contorl_speed_encoder_bb(void)
 {
@@ -135,8 +141,8 @@ void contorl_speed_encoder_bb(void)
 
 
 /*-----------------------------------------------------------------------*/
-/* 获得速度偏差                                                          */
-/* 有问题找叶川                                                          */
+/* 获得速度偏差                                                                      */
+/* 有问题找叶川                                                                      */
 /*-----------------------------------------------------------------------*/
 static SWORD get_e0()
 {
@@ -157,8 +163,8 @@ static SWORD get_e0()
 
 
 /*-----------------------------------------------------------------------*/
-/* PID速度控制                                                           */
-/* 有问题找叶川                                                          */                                                          
+/* PID速度控制                                                                       */
+/* 有问题找叶川                                                                      */                                                          
 /*-----------------------------------------------------------------------*/
 void contorl_speed_encoder_pid(void)
 {
@@ -186,7 +192,7 @@ void contorl_speed_encoder_pid(void)
 
 
 /*-----------------------------------------------------------------------*/
-/* 设置目标速度                                                          */
+/* 设置目标速度                                                                      */
 /*-----------------------------------------------------------------------*/
 void set_speed_target(SWORD speed_target)
 {
@@ -195,7 +201,7 @@ void set_speed_target(SWORD speed_target)
 
 
 /*-----------------------------------------------------------------------*/
-/* 设置速度PID控制P值                                                    */
+/* 设置速度PID控制P值                                                            */
 /*-----------------------------------------------------------------------*/
 void set_speed_KP(WORD kp)
 {
@@ -204,7 +210,7 @@ void set_speed_KP(WORD kp)
 
 
 /*-----------------------------------------------------------------------*/
-/* 设置速度PID控制I值                                                    */
+/* 设置速度PID控制I值                                                             */
 /*-----------------------------------------------------------------------*/
 void set_speed_KI(WORD ki)
 {
@@ -213,7 +219,7 @@ void set_speed_KI(WORD ki)
 
 
 /*-----------------------------------------------------------------------*/
-/* 设置速度PID控制D值                                                    */
+/* 设置速度PID控制D值                                                            */
 /*-----------------------------------------------------------------------*/
 void set_speed_KD(WORD kd)
 {
@@ -222,40 +228,111 @@ void set_speed_KD(WORD kd)
 
 
 /*-----------------------------------------------------------------------*/
-/* 设置方向舵机位置                                                      */
-/* 面对舵机轴，占空比增大，舵机逆时针旋转，对我们的车是左舵。            */
+/* 设置方向舵机位置                                                                */
+/* 统一舵机访问接口                                                                */
+/* 负数左舵，正数右舵，零中值                                                 */
 /*-----------------------------------------------------------------------*/
 void set_steer_helm(SWORD helmData)
 {
-	if(helmData<=data_steer_helm.left_limit)
+	if(helmData <= data_steer_helm.left_limit)
 	{
-		helmData=data_steer_helm.left_limit;
+		helmData = data_steer_helm.left_limit;
 	}
-	else if(data_steer_helm_basement.direction*helmData>=data_steer_helm_basement.direction*data_steer_helm.right_limit)
+	else if(helmData >= data_steer_helm.right_limit)
 	{
-		helmData=data_steer_helm.right_limit;
+		helmData = data_steer_helm.right_limit;
 	}
-	helmData=helmData*data_steer_helm_basement.direction+data_steer_helm_basement.center;
-	EMIOS_0.CH[9].CBDR.R = helmData;
 	helm_data_record = helmData;
+	helmData = (WORD)(helmData*data_steer_helm_basement.direction + data_steer_helm_basement.center);
+	set_steer_helm_basement(helmData);
 }
 
-void set_steer_helm_basement(WORD helmData)
+/*-----------------------------------------------------------------------*/
+/* 设置方向舵机位置                                                                */
+/* 对于白色信号线的舵机：                                                       */
+/* 面对舵机轴，占空比增大，舵机逆时针旋转，对我们的车是左舵    */
+/* 对于橙色信号线的舵机：                                                       */
+/* 相反                                                                                  */
+/* 直接方向舵机寄存器                                                             */
+/* 有限幅                                                                               */
+/*-----------------------------------------------------------------------*/
+static void set_steer_helm_basement(WORD helmData)
 {
-	if(helmData<=1500)
+	if(helmData <= 1500)
 	{
-		helmData=1500;
+		helmData = 1500;
 	}
-	else if(helmData>=5000)
+	else if(helmData >= 5000)
 	{
-		helmData=5000;
+		helmData = 5000;
 	}
 	EMIOS_0.CH[9].CBDR.R = helmData;
 }
 
 
 /*-----------------------------------------------------------------------*/
-/* 获取两个周期计数的差值，常用故写成函数                                */
+/* 设置方向舵机底层数据 中值                                                   */
+/* 更改方向舵机寄存器                                                             */
+/*-----------------------------------------------------------------------*/
+void set_steer_helm_basement_center(WORD helmData)
+{
+	data_steer_helm_basement.center = helmData;
+	set_steer_helm_basement(helmData);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 设置方向舵机底层数据 左极限                                                */
+/* 更改方向舵机寄存器                                                             */
+/*-----------------------------------------------------------------------*/
+void set_steer_helm_basement_left_limit(WORD helmData)
+{
+	data_steer_helm_basement.left_limit = helmData;
+	set_steer_helm_basement(helmData);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 设置方向舵机底层数据 右极限                                                */
+/* 更改方向舵机寄存器                                                             */
+/*-----------------------------------------------------------------------*/
+void set_steer_helm_basement_right_limit(WORD helmData)
+{
+	data_steer_helm_basement.right_limit = helmData;
+	set_steer_helm_basement(helmData);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 将方向舵机底层数据更新到方向舵机上层数据                            */
+/* 校验数据是否合理                                                                */
+/* 合理则修改 返回0                                                                */
+/* 不合理拒绝修改 返回1                                                          */
+/*-----------------------------------------------------------------------*/
+int update_steer_helm_basement_to_steer_helm(void)
+{
+	if(data_steer_helm_basement.left_limit < data_steer_helm_basement.center && data_steer_helm_basement.center < data_steer_helm_basement.right_limit)
+	{
+		data_steer_helm_basement.direction = 1;
+		data_steer_helm.left_limit = (SWORD)(data_steer_helm_basement.left_limit - data_steer_helm_basement.center);
+		data_steer_helm.right_limit = (SWORD)(data_steer_helm_basement.right_limit - data_steer_helm_basement.center);
+	}
+	else if (data_steer_helm_basement.left_limit > data_steer_helm_basement.center && data_steer_helm_basement.center > data_steer_helm_basement.right_limit)
+	{
+		data_steer_helm_basement.direction = -1;
+		data_steer_helm.left_limit = (SWORD)(data_steer_helm_basement.center - data_steer_helm_basement.left_limit);
+		data_steer_helm.right_limit = (SWORD)(data_steer_helm_basement.center - data_steer_helm_basement.right_limit);
+	}
+	else
+	{
+		return 1;
+	}
+	return 0;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 获取两个周期计数的差值，常用故写成函数                               */
 /*-----------------------------------------------------------------------*/
 DWORD diff_time_basis_PIT(DWORD new_time, DWORD old_time)
 {
