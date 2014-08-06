@@ -892,22 +892,22 @@ int control_steer_helm_2(void)
 			/* 0.5s后为第二阶段 */
 			if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000032&&cl_flag==1)
 			{
-				set_speed_target(120);
+				set_speed_target(140);
 				set_steer_helm((WORD)(data_steer_helm.left_limit));
 				cl_flag=2;						
 			}
-			/* 判断开始漂移（z轴转过6）为第三阶段 */
-			else if(pos_z>=(pos_target/15)&&cl_flag==2)
+			/* 判断开始漂移（z轴转过9）为第三阶段 */
+			else if(pos_z>=(pos_target/10)&&cl_flag==2)
 			{
 				set_steer_helm((WORD)(-600));	
-				set_speed_target(60);
+				set_speed_target(80);
 				cl_flag=3;	
 			}
 			/* 5~50为第四阶段 */
 			else if(pos_z>=(pos_target/9)&&cl_flag==3)
 			{	
-				set_steer_helm((WORD)(-200));	
-				set_speed_target(40);
+				set_steer_helm((WORD)(-100));	
+				set_speed_target(60);
 				cl_flag=4;	
 			}
 			/* 判断漂移过40度后为第五阶段 */
