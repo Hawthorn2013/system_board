@@ -10,9 +10,6 @@ int g_f_enable_rad_control = 0;		/* 启用陀螺仪角度控制标志位*/
 int update_steer_helm_basement_to_steer_helm(void);
 
 
-static void set_steer_helm_basement(WORD helmData);
-
-
 /*-----------------------------------------------------------------------*/
 /* 舵机初始化 	                                                                      */
 /*-----------------------------------------------------------------------*/
@@ -256,7 +253,7 @@ void set_steer_helm(SWORD helmData)
 /* 直接方向舵机寄存器                                                             */
 /* 有限幅                                                                               */
 /*-----------------------------------------------------------------------*/
-static void set_steer_helm_basement(WORD helmData)
+void set_steer_helm_basement(WORD helmData)
 {
 	if(helmData <= 1500)
 	{

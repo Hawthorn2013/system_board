@@ -971,8 +971,6 @@ void control_steer_helm_3(int angle)
 			AngRateRaw_t rev;
 			GetAngRateRaw(&rev);	
 			rev.z/=500;
-			pos_z+=rev.z;
-			error=angle-pos_z;
 		}
 	}
 }

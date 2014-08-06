@@ -136,6 +136,11 @@ extern void set_speed_KD(WORD kd);
 extern void set_steer_helm(SWORD helmData);
 extern void contorl_speed_encoder_pid(void);
 extern DWORD diff_time_basis_PIT(DWORD new_time, DWORD old_time);
-extern void set_steer_helm(SWORD helmData);
+extern void set_steer_helm_basement_center(WORD helmData);
+extern void set_steer_helm_basement_left_limit(WORD helmData);
+extern void set_steer_helm_basement_right_limit(WORD helmData);
+extern int update_steer_helm_basement_to_steer_helm(void);
+extern void set_steer_helm_basement(WORD helmData);
+
 
 #endif
