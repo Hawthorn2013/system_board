@@ -99,12 +99,6 @@ void mag_TX(void)
 /*-----------------------------------------------------------------------*/
 /* 舵机参数控制                                                          */
 /*-----------------------------------------------------------------------*/
-/*
-#define data_steer_helm.center (3301)
-#define STEER_HELM_TEST (1500)
-#define STEER_HELM_LEFT (2247)
-#define STEER_HELM_RIGHT (4292)
-*/
 void control_steer_helm(void)
 {	
 	int error = 0,error_count = 0;
