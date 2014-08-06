@@ -5,7 +5,7 @@ int main(void)
 {
 	int flag=1;
 	init_all_and_POST();
-	drift_left();
+	//drift_left();
 
 	/* Loop forever */
 	for (;;)

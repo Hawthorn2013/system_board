@@ -375,17 +375,18 @@ void init_all_and_POST(void)
 	
 	/* 读取舵机参数 */
 	read_steer_helm_data_from_TF();
+	update_steer_helm_basement_to_steer_helm();
 	LCD_P8x16Str(0, 0, (BYTE*)"StH.L=");
-	LCD_PrintoutInt(48, 0, data_steer_helm.left_limit);
-	set_steer_helm(data_steer_helm.left_limit);
+	LCD_PrintoutInt(48, 0, data_steer_helm_basement.left_limit);
+	set_steer_helm_basement(data_steer_helm_basement.left_limit);
 	delay_ms(500);
 	LCD_P8x16Str(0, 2, (BYTE*)"StH.R=");
-	LCD_PrintoutInt(48, 2, data_steer_helm.right_limit);
-	set_steer_helm(data_steer_helm.right_limit);
+	LCD_PrintoutInt(48, 2, data_steer_helm_basement.right_limit);
+	set_steer_helm_basement(data_steer_helm_basement.right_limit);
 	delay_ms(500);
 	LCD_P8x16Str(0, 4, (BYTE*)"StH.C=");
-	LCD_PrintoutInt(48, 4, data_steer_helm.center);
-	set_steer_helm(data_steer_helm.center);
+	LCD_PrintoutInt(48, 4, data_steer_helm_basement.center);
+	set_steer_helm_basement(data_steer_helm_basement.center);
 
 #endif
 

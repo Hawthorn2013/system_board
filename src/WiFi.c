@@ -21,7 +21,7 @@ void execute_remote_cmd(const BYTE *data)
 	{
 		/* ¶æ»úµ÷²Î */
 		case WIFI_CMD_SET_HELM_TARGET :
-		set_steer_helm(*((SWORD *)(&(data[2]))));
+		set_steer_helm_basement(*((SWORD *)(&(data[2]))));
 		break;
 		case WIFI_CMD_SET_HELM_KP :
 		break;
@@ -39,7 +39,7 @@ void execute_remote_cmd(const BYTE *data)
 		set_steer_helm_basement_right_limit(*((SWORD *)(&(data[2]))));
 		break;
 		case WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF :
-		if (update_steer_helm_basement_to_steer_helm())
+		if (!update_steer_helm_basement_to_steer_helm())
 		{
 			write_steer_helm_data_to_TF();
 		}
