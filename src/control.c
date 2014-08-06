@@ -226,6 +226,7 @@ void set_speed_KD(WORD kd)
 void set_steer_helm(WORD helmData)
 {
 #if 1 
+	/*判断舵机左右极限方向*/
 	if(data_steer_helm.left_limit<data_steer_helm.right_limit)
 	{
 		data_steer_helm.direction=1;
@@ -234,16 +235,16 @@ void set_steer_helm(WORD helmData)
 	{
 		data_steer_helm.direction=-1;
 	}
-	if(helmData<=data_steer_helm.left_limit)
+	/*限幅*/
+	if(data_steer_helm.direction*helmData<=data_steer_helm.direction*data_steer_helm.left_limit)
 	{
 		helmData=data_steer_helm.left_limit;
 	}
-	else if(helmData>=data_steer_helm.right_limit)
+	else if(data_steer_helm.direction*helmData>=data_steer_helm.direction*data_steer_helm.right_limit)
 	{
 		helmData=data_steer_helm.right_limit;
 	}
 #endif
-//	LCD_PrintoutInt(0, 6, (SWORD)(helmData));	
 	EMIOS_0.CH[9].CBDR.R = helmData;
 	helm_data_record = helmData;
 }

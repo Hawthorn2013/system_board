@@ -75,27 +75,20 @@ void drift_right6(void)//砖地面180度 背景布100度
 
 void drift_left(void)//使用陀螺仪
 {
-	set_speed_target(20);
-	delay_ms(1500);
-	//LCD_PrintoutInt(0, 2, (SWORD)(data_steer_helm.left_limit));	
-	//set_steer_helm(data_steer_helm.left_limit);
+	set_speed_target(40);
+	delay_ms(1000);
 	g_f_enable_rad_control = 1;
-   // pos_target = 1130;
-	set_speed_target(80);
 	start_time = g_time_basis_PIT;
+	/* 前0.5s为第一阶段 */
+//	while(diff_time_basis_PIT(g_time_basis_PIT,start_time)<=0x00000032)
+//	{
+	//  先稍微向右打方向，因为总是会有超调。。
+		//set_steer_helm(data_steer_helm.center+10);
+//	}
+	cl_flag=1;
 }
 
-void drift_left_2(void)
-{
-	set_speed_target(20);
-	delay_ms(1500);
-	//LCD_PrintoutInt(0, 2, (SWORD)(data_steer_helm.left_limit));	
-	set_steer_helm(data_steer_helm.left_limit);
-	g_f_enable_rad_control = 1;
-   // pos_target = 1130;
-	set_speed_target(100);
-	start_time = g_time_basis_PIT;	
-}
+
 
 void drift_test(void)
 {
