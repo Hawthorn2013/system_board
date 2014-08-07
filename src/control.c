@@ -10,6 +10,7 @@ int g_f_enable_rad_control_1 = 0;		/* 启用陀螺仪角度控制漂移标志位*/
 int g_f_enable_rad_control_2 = 0;		/* 启用陀螺仪角度控制转向标志位 */
 int g_f_enable_speed_control_2 = 0;		/* 启用陀螺仪角度控制上下坡标志位 */
 int angle1=0;  /* 启用陀螺仪角度控制转向标志位   转向角度值 */
+int read_rad_xyz = 0;/* 启用读陀螺仪xyz三轴数据 */
 int update_steer_helm_basement_to_steer_helm(void);
 
 
@@ -51,6 +52,15 @@ void PitISR(void)
 	{
 		mag_read();
 		control_steer_helm();
+	}
+	
+	/* 读陀螺仪三轴数据 */
+	if(read_rad_xyz)
+	{
+		read_rev_data();	
+		LCD_PrintoutInt(0, 0, rad.y);
+	//	LCD_PrintoutInt(0, 2, rad.z);
+	//	LCD_PrintoutInt(0, 0, rad.x);
 	}
 	
 	/* 陀螺仪角度控制漂移*/

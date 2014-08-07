@@ -899,10 +899,10 @@ void read_rev_data(void)
 		if (status & 80)
 		{
 			GetAngRateRaw(&rev);	
-		//	rev.x/=500;
+			rev.x/=400;
 			rev.y/=200;
 			rev.z/=500;
-		//	rad.x+=rev.x;
+			rad.x+=rev.x;
 			rad.y+=rev.y;	
 			rad.z+=rev.z;	
 		}
@@ -912,11 +912,11 @@ void read_rev_data(void)
 /* 由陀螺仪控制漂移 */
 int control_steer_helm_2(void)
 {
-	static int pos_z=0,error_count=0,i=0;
+	static int error_count=0,i=0;
 	int error=0,Kp=4,Kd=15,start_flag=1,steer_rate=0;
 	static int steer_pwm=0,rev_count=0,cnt=0;
-	pos_z+=rev.z;
-	error=pos_target-pos_z;
+	rad.z+=rev.z;
+	error=pos_target-rad.z;
 	/* 0.5s后为第二阶段 */
 	if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000032&&cl_flag==1)
 	{
@@ -925,28 +925,28 @@ int control_steer_helm_2(void)
 		cl_flag=2;						
 	}
 	/* 判断开始漂移（z轴转过9）为第三阶段 */
-	else if(pos_z>=(pos_target/10)&&cl_flag==2)
+	else if(rad.z>=(pos_target/10)&&cl_flag==2)
 	{
 		set_steer_helm((WORD)(-600));	
 		set_speed_target(80);
 		cl_flag=3;	
 	}
 	/* 5~50为第四阶段 */
-	else if(pos_z>=(pos_target/9)&&cl_flag==3)
+	else if(rad.z>=(pos_target/9)&&cl_flag==3)
 	{	
 		set_steer_helm((WORD)(-100));	
 		set_speed_target(60);
 		cl_flag=4;	
 	}
 	/* 判断漂移过40度后为第五阶段 */
-	else if(pos_z>(pos_target*4/9)&&cl_flag==4)
+	else if(rad.z>(pos_target*4/9)&&cl_flag==4)
 	{						
 		set_steer_helm((WORD)(200));	
 		cl_flag=5;
 		set_speed_target(40);
 	}
 	/* 判断漂移过80度为第六阶段 */
-	else if(pos_z>(pos_target*8/9)&&cl_flag==5)
+	else if(rad.z>(pos_target*8/9)&&cl_flag==5)
 	{
 		cl_flag=6;
 	}
@@ -987,12 +987,12 @@ int control_steer_helm_2(void)
 //由陀螺仪控制转向角度
 int control_steer_helm_3(int angle_1)
 {
-	static int pos_z=0,error_count=0,i=0;
+	static int error_count=0,i=0;
 	int error=0,Kp=5,Kd=4,start_flag=1,steer_rate=0,angle_base=0;
 	static int steer_pwm=0;
 	angle_base = angle_1*pos_target/90;
-	pos_z+=rev.z;
-	error=angle_base-pos_z;
+	rad.z+=rev.z;
+	error=angle_base-rad.z;
 	if(abs(error)>=1)
 	{
 		steer_rate = (Kp*error+Kd*error_count);
@@ -1015,8 +1015,20 @@ int control_steer_helm_3(int angle_1)
 //由陀螺仪控制上坡加速下坡减速
 int control_speed_target_1(void)
 {
-	static int pos_z=0,error_count=0,i=0;
+	static int error_count=0,i=0;
 	int error=0,Kp=5,Kd=4,start_flag=1,steer_rate=0,angle_base=0;
-	static int steer_pwm=0;		
+	int speed=0;
+	if(rad.y<-100)
+	{
+		set_speed_target(80);
+	}
+	else	if(rad.y>100)
+	{
+		set_speed_target(0);
+	}
+	else 
+	{
+		set_speed_target(20);	
+	}
 	return start_flag;
 }
