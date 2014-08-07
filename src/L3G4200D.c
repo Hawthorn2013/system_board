@@ -37,6 +37,7 @@ int cl_flag=0;
 int pos_target=1000;
 AngRateRaw_t rev;
 
+
 BYTE L3G4200D_read_write_byte(BYTE data)
 {
 	uint32_t tmp_tx = 0x00000000;
@@ -1007,6 +1008,7 @@ int control_steer_helm_3(int angle_1)
 	if (g_remote_control_flags.send_gyro_data)
 	{
 		generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
+
 	}
 }
 
