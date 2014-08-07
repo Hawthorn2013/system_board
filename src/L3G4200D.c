@@ -992,7 +992,7 @@ int control_steer_helm_3(int angle_1)
 	static int steer_pwm=0;
 	angle_base = angle_1*pos_target/90;
 	pos_z+=rev.z;
-	error=pos_target-pos_z;
+	error=angle_base-pos_z;
 	if(abs(error)>=1)
 	{
 		steer_rate = (Kp*error+Kd*error_count);
