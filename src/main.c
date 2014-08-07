@@ -17,9 +17,7 @@ int main(void)
 	for (;;)
 	{
 	read_rev_data();
-	LCD_PrintoutInt(0, 0,rev.x);	
-	LCD_PrintoutInt(0, 2,rev.y);
-	LCD_PrintoutInt(0, 4,rev.z);
+	
 
 #if 0
 		/* ÷¥––‘∂≥Ã√¸¡Ó */
