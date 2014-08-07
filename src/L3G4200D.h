@@ -140,11 +140,13 @@ typedef enum {
   HPFLPF2                       =               0x03
 } HPF_LPF2_Enable;
 
+
 typedef struct{
   i16_t x;
   i16_t y;
   i16_t z;
 } AngRateRaw_t;
+
 
 typedef enum {
   SPI_4_WIRE                    =               0x00,
@@ -160,6 +162,12 @@ typedef enum {
   Z_DISABLE                     =               0x00    
 } AXISenable_t;
 
+/* 陀螺仪三轴角速度数据 */
+#ifdef __L3G4200D_C_
+AngRateRaw_t rev = { 0x0000, 0x0000, 0x0000,};
+#else
+extern AngRateRaw_t rev;
+#endif
 
 /* Exported constants --------------------------------------------------------*/
 
@@ -375,6 +383,8 @@ BYTE TestWhoAmI(void);
 extern int control_steer_helm_2(void);
 extern int control_steer_helm_3(int angle);
 extern void set_pos_target(void);
+extern int control_speed_target_1(void);
+extern void read_rev_data(void);
 
 #endif /* __L3G4200D_H */
 

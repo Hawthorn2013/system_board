@@ -9,15 +9,19 @@ int main(void)
 	set_speed_target(30);
 	delay_ms(500);
 	/* 向左转90度 */
-	g_f_enable_rad_control_2 = 1;
+	//g_f_enable_rad_control_2 = 1;
 	/* 循迹 */
 	//g_f_enable_mag_steer_control = 1;
 
 	/* Loop forever */
 	for (;;)
 	{
+	read_rev_data();
+	LCD_PrintoutInt(0, 0,rev.x);	
+	LCD_PrintoutInt(0, 2,rev.y);
+	LCD_PrintoutInt(0, 4,rev.z);
 
-#if 1
+#if 0
 		/* 执行远程命令 */
 		if (REMOTE_FRAME_STATE_OK == g_remote_frame_state)
 		{

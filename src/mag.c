@@ -130,6 +130,6 @@ void control_steer_helm(void)
 	{
 		steer_pwm = 0;
 	}
-	LCD_PrintoutInt(0, 0,(steer_pwm));
+//	LCD_PrintoutInt(0, 0,(steer_pwm));
 	set_steer_helm((WORD)(steer_pwm));	/* ¶ã¾¯¸æ */
 }

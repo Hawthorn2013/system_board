@@ -12,7 +12,7 @@
 * 22/03/2011         |	Initial Revision                |	Andrea Labombarda
 
 ********************************************************************************
-* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+* THE PRESENT FIRMWARE WHICH IS FOR GUID ANCE ONLY AIMS AT PROVIDING CUSTOMERS
 * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME.
 * AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY DIRECT,
 * INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE
@@ -34,7 +34,8 @@
 /* Private function prototypes -----------------------------------------------*/
 
 int cl_flag=0;
-static int pos_target=1000;
+int pos_target=1000;
+AngRateRaw_t rev;
 
 BYTE L3G4200D_read_write_byte(BYTE data)
 {
@@ -891,90 +892,91 @@ void set_pos_target(void)
 	}
 }
 
-/* 由陀螺仪控制漂移 */
-int control_steer_helm_2(void)
+void read_rev_data(void)
 {
 	u8_t status;
-	static int pos_z=0,error_count=0,i=0;
-	int error=0,Kp=4,Kd=15,start_flag=1,steer_rate=0;
-	static int steer_pwm=0,rev_count=0,cnt=0;
-			
-	/* 调试陀螺仪 */
 	if (MEMS_SUCCESS == GetSatusReg(&status))
 	{
 		if (status & 80)
 		{
-			AngRateRaw_t rev;
-			GetAngRateRaw(&rev);	
-			rev.z/=500;
-			pos_z+=rev.z;
-			error=pos_target-pos_z;
-			/* 0.5s后为第二阶段 */
-			if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000032&&cl_flag==1)
-			{
-				set_speed_target(140);
-				set_steer_helm((WORD)(data_steer_helm.left_limit));
-				cl_flag=2;						
-			}
-			/* 判断开始漂移（z轴转过9）为第三阶段 */
-			else if(pos_z>=(pos_target/10)&&cl_flag==2)
-			{
-				set_steer_helm((WORD)(-600));	
-				set_speed_target(80);
-				cl_flag=3;	
-			}
-			/* 5~50为第四阶段 */
-			else if(pos_z>=(pos_target/9)&&cl_flag==3)
-			{	
-				set_steer_helm((WORD)(-100));	
-				set_speed_target(60);
-				cl_flag=4;	
-			}
-			/* 判断漂移过40度后为第五阶段 */
-			else if(pos_z>(pos_target*4/9)&&cl_flag==4)
-			{						
-				set_steer_helm((WORD)(200));	
-				cl_flag=5;
-				set_speed_target(40);
-			}
-			/* 判断漂移过80度为第六阶段 */
-			else if(pos_z>(pos_target*8/9)&&cl_flag==5)
-			{
-				cl_flag=6;
-			}
-			if(abs(error)>=1&&cl_flag==6)
-			{
-				steer_rate = (Kp*error+Kd*error_count);
-				error_count = rev.z;
-				steer_pwm = -steer_rate;
-				set_steer_helm((WORD)(steer_pwm));	
-				set_speed_target(0);
-			}					
-			if(abs(error)<=200)
-			{
-				i++;
-			}
-			if(i!=0)
-			{
-				set_speed_target(10);
-			}
-			rev_count+=abs(error);
-			cnt++;
-			if(cnt==10)
-			{
-				rev_count=0;
-			}
-			if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000190)
-			{
-				start_flag=0;
-			}
-			return start_flag;
-			if (g_remote_control_flags.send_gyro_data)
-			{
-				generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
-			}
+			GetAngRateRaw(&rev);		
 		}
-		//serial_port_0_TX(TestWhoAmI());
+	}
+}
+
+/* 由陀螺仪控制漂移 */
+int control_steer_helm_2(void)
+{
+	static int pos_z=0,error_count=0,i=0;
+	int error=0,Kp=4,Kd=15,start_flag=1,steer_rate=0;
+	static int steer_pwm=0,rev_count=0,cnt=0;
+			
+	rev.z/=500;
+	pos_z+=rev.z;
+	error=pos_target-pos_z;
+	/* 0.5s后为第二阶段 */
+	if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000032&&cl_flag==1)
+	{
+		set_speed_target(140);
+		set_steer_helm((WORD)(data_steer_helm.left_limit));
+		cl_flag=2;						
+	}
+	/* 判断开始漂移（z轴转过9）为第三阶段 */
+	else if(pos_z>=(pos_target/10)&&cl_flag==2)
+	{
+		set_steer_helm((WORD)(-600));	
+		set_speed_target(80);
+		cl_flag=3;	
+	}
+	/* 5~50为第四阶段 */
+	else if(pos_z>=(pos_target/9)&&cl_flag==3)
+	{	
+		set_steer_helm((WORD)(-100));	
+		set_speed_target(60);
+		cl_flag=4;	
+	}
+	/* 判断漂移过40度后为第五阶段 */
+	else if(pos_z>(pos_target*4/9)&&cl_flag==4)
+	{						
+		set_steer_helm((WORD)(200));	
+		cl_flag=5;
+		set_speed_target(40);
+	}
+	/* 判断漂移过80度为第六阶段 */
+	else if(pos_z>(pos_target*8/9)&&cl_flag==5)
+	{
+		cl_flag=6;
+	}
+	if(abs(error)>=1&&cl_flag==6)
+	{
+		steer_rate = (Kp*error+Kd*error_count);
+		error_count = rev.z;
+		steer_pwm = -steer_rate;
+		set_steer_helm((WORD)(steer_pwm));	
+		set_speed_target(0);
+	}					
+	if(abs(error)<=200)
+	{
+		i++;
+	}
+	if(i!=0)
+	{
+		set_speed_target(10);
+	}
+	rev_count+=abs(error);
+	cnt++;
+	if(cnt==10)
+	{
+		rev_count=0;
+	}
+	if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000190)
+	{
+		start_flag=0;
+	}
+	return start_flag;
+	if (g_remote_control_flags.send_gyro_data)
+	{
+		generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
 	}
 }
 
@@ -982,58 +984,40 @@ int control_steer_helm_2(void)
 //由陀螺仪控制转向角度
 int control_steer_helm_3(int angle_1)
 {
-	u8_t status;
 	static int pos_z=0,error_count=0,i=0;
 	int error=0,Kp=5,Kd=4,start_flag=1,steer_rate=0,angle_base=0;
 	static int steer_pwm=0;
-	
-	if (MEMS_SUCCESS == GetSatusReg(&status))
+
+	rev.z/=500;
+	angle_base = angle_1*pos_target/90;
+	pos_z+=rev.z;
+	error=pos_target-pos_z;
+	if(abs(error)>=1)
 	{
-		if (status & 80)
-		{
-			AngRateRaw_t rev;
-			LCD_PrintoutInt(0, 0,pos_target);
-			GetAngRateRaw(&rev);	
-			rev.z/=500;
-			angle_base = angle_1*pos_target/90;
-			pos_z+=rev.z;
-			error=pos_target-pos_z;
-			LCD_PrintoutInt(48, 2,pos_z);
-			if(abs(error)>=1)
-			{
-				steer_rate = (Kp*error+Kd*error_count);
-				error_count = rev.z;
-				steer_pwm = -steer_rate;
-				set_steer_helm((WORD)(steer_pwm));	 
-			}
-			if((abs(error))<=1)
-			{
-				start_flag=0;
-			}
-			return start_flag;
-			if (g_remote_control_flags.send_gyro_data)
-			{
-				generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
-			}
-		}
+		steer_rate = (Kp*error+Kd*error_count);
+		error_count = rev.z;
+		steer_pwm = -steer_rate;
+		set_steer_helm((WORD)(steer_pwm));	 
+	}
+	if((abs(error))<=1)
+	{
+		start_flag=0;
+	}
+	return start_flag;
+	if (g_remote_control_flags.send_gyro_data)
+	{
+		generate_remote_frame(WIFI_CMD_GET_GYRO_DATA, (BYTE *)&rev, sizeof(rev));
 	}
 }
 
 //由陀螺仪控制上坡加速下坡减速
-int control_speed_target_1(int angle_1)
+int control_speed_target_1(void)
 {
-	u8_t status;
 	static int pos_z=0,error_count=0,i=0;
 	int error=0,Kp=5,Kd=4,start_flag=1,steer_rate=0,angle_base=0;
 	static int steer_pwm=0;	
-
-	if (MEMS_SUCCESS == GetSatusReg(&status))
-	{
-		if (status & 80)
-		{
-			AngRateRaw_t rev;
-			GetAngRateRaw(&rev);
-		//	LCD_PrintoutInt(0, 0,pos_z);		
-		}
-	}
+	LCD_PrintoutInt(0, 0,rev.x);	
+	LCD_PrintoutInt(0, 0,rev.y);
+	LCD_PrintoutInt(0, 0,rev.z);	
+	return start_flag;
 }
