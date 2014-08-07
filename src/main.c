@@ -13,10 +13,10 @@ int main(void)
 	/* Ñ­¼£ */
 	//g_f_enable_mag_steer_control = 1;
 //	g_f_enable_speed_control_2=1;
-	read_rad_xyz = 1;
-	g_f_enable_speed_control_2 = 1;
+//	read_rad_xyz = 1;
+//	g_f_enable_speed_control_2 = 1;
 
-		g_f_enable_mag_steer_control=0;
+		g_f_enable_mag_steer_control=1;
 		set_speed_target(0);
 
 	/* Loop forever */

@@ -115,11 +115,9 @@ void control_steer_helm(void)
 	{
 	error_count = (error-last_error);
 	steer_rate = (kp*(error)+kd*error_count);
-	/*
 	LCD_PrintoutInt(0, 0,(steer_rate));
 	LCD_PrintoutInt(0, 2,(mag_right));
 	LCD_PrintoutInt(0, 4,(mag_left));
-	*/
 	last_error = error;
 	if(mag_left<=30)steer_rate=data_steer_helm.right_limit;
 	if(mag_right<=30)steer_rate=data_steer_helm.left_limit;
