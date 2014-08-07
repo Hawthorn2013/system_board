@@ -9,19 +9,20 @@ int main(void)
 	set_speed_target(30);
 	delay_ms(500);
 	/* 向左转90度 */
-	control_angle_steer_helm(-30);
+	//control_angle_steer_helm(-30);
 	/* 循迹 */
 	//g_f_enable_mag_steer_control = 1;
+//	g_f_enable_speed_control_2=1;
 
 	/* Loop forever */
 	for (;;)
 	{
 	read_rev_data();
-	LCD_PrintoutInt(0, 0,rev.x);	
-	LCD_PrintoutInt(0, 2,rev.y);
-	LCD_PrintoutInt(0, 4,rev.z);
+//	LCD_PrintoutInt(0, 0, rad.x);
+//	LCD_PrintoutInt(0, 2, rad.y);	
 
-#if 0
+
+#if 1
 		/* 执行远程命令 */
 		if (REMOTE_FRAME_STATE_OK == g_remote_frame_state)
 		{
@@ -45,7 +46,7 @@ int main(void)
 			}
 			generate_remote_frame_2(g_device_NO, WIFI_ADDRESS_ANDRIUD_ZHOU, WIFI_CMD_GET_SEEED_NOW, sizeof(speed_now_tmp), (const BYTE *)&speed_now_tmp);
 		}
-		//delay_ms(100);
+		delay_ms(10);
 
 #if 0
 		/* 整车动作控制 */

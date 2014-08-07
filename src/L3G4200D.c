@@ -35,8 +35,6 @@
 
 int cl_flag=0;
 int pos_target=1000;
-AngRateRaw_t rev;
-
 
 BYTE L3G4200D_read_write_byte(BYTE data)
 {
@@ -900,7 +898,13 @@ void read_rev_data(void)
 	{
 		if (status & 80)
 		{
-			GetAngRateRaw(&rev);		
+			GetAngRateRaw(&rev);	
+		//	rev.x/=500;
+			rev.y/=200;
+			rev.z/=500;
+		//	rad.x+=rev.x;
+			rad.y+=rev.y;	
+			rad.z+=rev.z;	
 		}
 	}
 }
@@ -911,8 +915,6 @@ int control_steer_helm_2(void)
 	static int pos_z=0,error_count=0,i=0;
 	int error=0,Kp=4,Kd=15,start_flag=1,steer_rate=0;
 	static int steer_pwm=0,rev_count=0,cnt=0;
-			
-	rev.z/=500;
 	pos_z+=rev.z;
 	error=pos_target-pos_z;
 	/* 0.5s后为第二阶段 */
@@ -988,8 +990,6 @@ int control_steer_helm_3(int angle_1)
 	static int pos_z=0,error_count=0,i=0;
 	int error=0,Kp=5,Kd=4,start_flag=1,steer_rate=0,angle_base=0;
 	static int steer_pwm=0;
-
-	rev.z/=500;
 	angle_base = angle_1*pos_target/90;
 	pos_z+=rev.z;
 	error=pos_target-pos_z;
@@ -1017,9 +1017,6 @@ int control_speed_target_1(void)
 {
 	static int pos_z=0,error_count=0,i=0;
 	int error=0,Kp=5,Kd=4,start_flag=1,steer_rate=0,angle_base=0;
-	static int steer_pwm=0;	
-	LCD_PrintoutInt(0, 0,rev.x);	
-	LCD_PrintoutInt(0, 0,rev.y);
-	LCD_PrintoutInt(0, 0,rev.z);	
+	static int steer_pwm=0;		
 	return start_flag;
 }

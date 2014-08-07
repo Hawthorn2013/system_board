@@ -216,7 +216,6 @@ int rev_remote_frame_2(BYTE rev)
 	else if (g_remote_frame_cnt==remote_frame_data[4]+4+1)	//接收校验字节	
 	{
 		BYTE sum;
-		
 		remote_frame_data[g_remote_frame_cnt++] = rev;
 		sum = check_sum((const BYTE *)(remote_frame_data+2), (WORD)(remote_frame_data[4]+3));
 		if (sum != remote_frame_data[remote_frame_data[4]+5])

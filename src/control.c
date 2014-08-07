@@ -78,7 +78,10 @@ void PitISR(void)
 	/* мсбщрг©ьжфиообфб */
 	if(g_f_enable_speed_control_2)
 	{
-		
+		if(!control_speed_target_1())
+		{
+			
+		}
 	}
 	
 #if 0
