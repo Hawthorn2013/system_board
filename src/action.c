@@ -23,9 +23,9 @@ void puncture_ballon()
 void turn_left_1()
 {
 		g_f_enable_mag_steer_control = 0;
-		set_steer_helm(data_steer_helm.left_limit);
-		delay_ms(800);
-		set_steer_helm(data_steer_helm.center);
+		control_angle_steer_helm(90);
+		set_speed_target(20);
+		delay_ms(300);
 		g_f_enable_mag_steer_control = 1;
 }
 /*-----------------------------------------------------------------------*/

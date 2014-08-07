@@ -34,7 +34,7 @@
 /* Private function prototypes -----------------------------------------------*/
 
 int cl_flag=0;
-static int pos_target=1000;
+int pos_target=1000;
 
 BYTE L3G4200D_read_write_byte(BYTE data)
 {
@@ -992,13 +992,13 @@ int control_steer_helm_3(int angle_1)
 		if (status & 80)
 		{
 			AngRateRaw_t rev;
-			LCD_PrintoutInt(0, 0,pos_target);
+			LCD_PrintoutInt(0, 0,(SWORD)pos_target);
 			GetAngRateRaw(&rev);	
 			rev.z/=500;
 			angle_base = angle_1*pos_target/90;
 			pos_z+=rev.z;
-			error=pos_target-pos_z;
-			LCD_PrintoutInt(48, 2,pos_z);
+			error=angle_base-pos_z;
+			LCD_PrintoutInt(48, 2,(SWORD)pos_z);
 			if(abs(error)>=1)
 			{
 				steer_rate = (Kp*error+Kd*error_count);
