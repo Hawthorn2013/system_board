@@ -104,7 +104,7 @@ void control_steer_helm(void)
 	int error = 0,error_count = 0;
 	int kp=3,kd=0,ki=0;
 	int pos=0;
-	int steer_rate = 0;
+       static	int steer_rate = 0;
 	static int last_error=0;
 	static int steer_pwm =0;	/* 由全局变量改为局部静态变量 */
 	
@@ -115,18 +115,21 @@ void control_steer_helm(void)
 	{
 	error_count = (error-last_error);
 	steer_rate = (kp*(error)+kd*error_count);
-	//LCD_PrintoutInt(0, 0,(steer_rate));
-	//LCD_PrintoutInt(0, 2,(mag_right));
-	//LCD_PrintoutInt(0, 4,(mag_left));
+	/*
+	LCD_PrintoutInt(0, 0,(steer_rate));
+	LCD_PrintoutInt(0, 2,(mag_right));
+	LCD_PrintoutInt(0, 4,(mag_left));
+	*/
 	last_error = error;
-	if(mag_left<=30)steer_rate=1400;
-	if(mag_right<=30)steer_rate=-1400;
+	if(mag_left<=30)steer_rate=data_steer_helm.right_limit;
+	if(mag_right<=30)steer_rate=data_steer_helm.left_limit;
 	steer_pwm = steer_rate;
 	//LCD_PrintoutInt(0,2,(steer_pwm));
-	set_steer_helm((WORD)(3293+steer_pwm));	/* 躲警告 */
 	}
 	else
 	{
-		set_steer_helm(3293);
+		steer_pwm = 0;
 	}
+	LCD_PrintoutInt(0, 0,(steer_pwm));
+	set_steer_helm((WORD)(steer_pwm));	/* 躲警告 */
 }

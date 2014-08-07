@@ -977,6 +977,7 @@ int control_steer_helm_3(int angle_1)
 			angle_base = angle_1*1000/90;
 			pos_z+=rev.z;
 			error=pos_target-pos_z;
+			LCD_PrintoutInt(48, 2,pos_z);
 			if(abs(error)>=1)
 			{
 				steer_rate = (Kp*error+Kd*error_count);
@@ -996,3 +997,5 @@ int control_steer_helm_3(int angle_1)
 		}
 	}
 }
+
+//由陀螺仪控制上坡加速下坡减速
