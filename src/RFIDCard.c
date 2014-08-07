@@ -89,7 +89,7 @@ void explane_RFID_ret_data(const BYTE *data, WORD length)
 {
 	WORD cmd = 0;
 	DWORD cardID = 0x00000000;
-	
+
 	if (RFID_MODUL_TYPE_UNKNOW == RFID_modul_type)	/* ºÏ≤‚ø®µƒ¿‡–Õ */
 	{
 		if (4 == length && 0x00014115 == *((DWORD *)data))
@@ -109,7 +109,10 @@ void explane_RFID_ret_data(const BYTE *data, WORD length)
 		if (5 == length && RFID_CMD_ENERGETIC_MODE == data[0])
 		{
 			cardID = *(DWORD *)(data+1);
-			explane_RFID_ret_cardID(cardID);
+			//explane_RFID_ret_cardID(cardID);
+			RFID_site_data.site = cardID;
+			RFID_site_data.is_new_site = 1;
+			RFID_site_data.time = g_time_basis_PIT;
 		}
 	}
 }
@@ -135,9 +138,9 @@ void explane_RFID_ret_cardID(DWORD id)
 int init_RFID_modul_type(void)
 {
 	send_RFID_cmd(rfid_cmd_energetic_mode_enable);
-	delay_ms(10);
+	delay_ms(100);
 	send_RFID_cmd(rfid_cmd_energetic_mode_enable_new);
-	delay_ms(10);
+	delay_ms(100);
 	
 	if (RFID_MODUL_TYPE_UNKNOW == RFID_modul_type)
 	{
