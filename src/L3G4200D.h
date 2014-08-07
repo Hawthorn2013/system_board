@@ -169,6 +169,22 @@ AngRateRaw_t rev = { 0x0000, 0x0000, 0x0000,};
 extern AngRateRaw_t rev;
 #endif
 
+/* 陀螺仪三轴角度数据 */
+#ifdef __L3G4200D_C_
+struct 
+{
+	i16_t x;
+	i16_t y;
+	i16_t z;
+} rad = { 0x0000, 0x0000, 0x0000,};
+#else
+extern const struct{
+	i16_t x;
+	i16_t y;
+	i16_t z;
+} rad;
+#endif
+
 /* Exported constants --------------------------------------------------------*/
 
 //#define BIT(x) ( 1<<(x) )
