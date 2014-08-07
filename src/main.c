@@ -9,9 +9,9 @@ int main(void)
 	set_speed_target(30);
 	delay_ms(500);
 	/* Ïò×ó×ª90¶È */
-	//g_f_enable_rad_control_2 = 1;
+	g_f_enable_rad_control_2 = 1;
 	/* Ñ­¼£ */
-	g_f_enable_mag_steer_control = 1;
+	//g_f_enable_mag_steer_control = 1;
 
 	/* Loop forever */
 	for (;;)

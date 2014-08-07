@@ -2,6 +2,7 @@
 #include "includes.h"
 
 
+
 /*-----------------------------------------------------------------------*/
 /* 设置单片机的模式和时钟                                                */
 /*-----------------------------------------------------------------------*/
@@ -347,6 +348,7 @@ void init_all_and_POST(void)
 	{
 		LCD_P8x16Str(0,2, (BYTE*)"L3G..NOK");
 	}
+	
 		
 	
 	
@@ -388,6 +390,7 @@ void init_all_and_POST(void)
 	LCD_PrintoutInt(48, 4, data_steer_helm_basement.center);
 	set_steer_helm_basement(data_steer_helm_basement.center);
 
+	set_pos_target();
 #endif
 
 	/* 换屏 */

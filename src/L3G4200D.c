@@ -34,6 +34,7 @@
 /* Private function prototypes -----------------------------------------------*/
 
 int cl_flag=0;
+static int pos_target=1000;
 
 BYTE L3G4200D_read_write_byte(BYTE data)
 {
@@ -871,11 +872,30 @@ BYTE TestWhoAmI(void)
 	return tmp_rx;
 }
 
+void set_pos_target(void)
+{	
+	switch(g_device_NO)
+	{
+		case(1):
+			pos_target = 1000;
+			break;
+		case(2):
+			pos_target = 1000;
+			break;
+		case(3):
+			pos_target = 750;
+			break;
+		case(4):
+			pos_target = 1000;
+			break;	
+	}
+}
+
 /* 由陀螺仪控制漂移 */
 int control_steer_helm_2(void)
 {
 	u8_t status;
-	static int pos_z=0,error_count=0,pos_target=1000,i=0;
+	static int pos_z=0,error_count=0,i=0;
 	int error=0,Kp=4,Kd=15,start_flag=1,steer_rate=0;
 	static int steer_pwm=0,rev_count=0,cnt=0;
 			
@@ -963,7 +983,7 @@ int control_steer_helm_2(void)
 int control_steer_helm_3(int angle_1)
 {
 	u8_t status;
-	static int pos_z=0,error_count=0,pos_target=1000,i=0;
+	static int pos_z=0,error_count=0,i=0;
 	int error=0,Kp=5,Kd=4,start_flag=1,steer_rate=0,angle_base=0;
 	static int steer_pwm=0;
 	
@@ -972,9 +992,10 @@ int control_steer_helm_3(int angle_1)
 		if (status & 80)
 		{
 			AngRateRaw_t rev;
+			LCD_PrintoutInt(0, 0,pos_target);
 			GetAngRateRaw(&rev);	
 			rev.z/=500;
-			angle_base = angle_1*1000/90;
+			angle_base = angle_1*pos_target/90;
 			pos_z+=rev.z;
 			error=pos_target-pos_z;
 			LCD_PrintoutInt(48, 2,pos_z);
@@ -999,3 +1020,20 @@ int control_steer_helm_3(int angle_1)
 }
 
 //由陀螺仪控制上坡加速下坡减速
+int control_speed_target_1(int angle_1)
+{
+	u8_t status;
+	static int pos_z=0,error_count=0,i=0;
+	int error=0,Kp=5,Kd=4,start_flag=1,steer_rate=0,angle_base=0;
+	static int steer_pwm=0;	
+
+	if (MEMS_SUCCESS == GetSatusReg(&status))
+	{
+		if (status & 80)
+		{
+			AngRateRaw_t rev;
+			GetAngRateRaw(&rev);
+		//	LCD_PrintoutInt(0, 0,pos_z);		
+		}
+	}
+}
