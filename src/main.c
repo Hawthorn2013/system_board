@@ -14,6 +14,9 @@ int main(void)
 	//g_f_enable_mag_steer_control = 1;
 //	g_f_enable_speed_control_2=1;
 
+		g_f_enable_mag_steer_control=0;
+		set_speed_target(0);
+
 	/* Loop forever */
 	for (;;)
 	{
@@ -46,7 +49,7 @@ int main(void)
 		}
 		delay_ms(10);
 
-#if 0
+#if 1
 		/* 整车动作控制 */
 		control_car_action();
 #endif

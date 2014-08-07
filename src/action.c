@@ -25,7 +25,8 @@ void turn_left_1()
 		g_f_enable_mag_steer_control = 0;
 		control_angle_steer_helm(90);
 		set_speed_target(20);
-		delay_ms(300);
+		delay_ms(1000);
+		g_f_enable_rad_control_2=0;
 		g_f_enable_mag_steer_control = 1;
 }
 /*-----------------------------------------------------------------------*/
@@ -53,6 +54,7 @@ void turn_left_2()
 	set_steer_helm(data_steer_helm.center);
 	set_speed_target(10);
 	delay_ms(1000);
+	g_f_enable_rad_control_2=0;
 	g_f_enable_mag_steer_control = 1;
 }
 /*-----------------------------------------------------------------------*/
@@ -173,7 +175,7 @@ void RFID_control_car_2_action(DWORD site)
 	else if (RFID_CARD_ID_6_3 == site)
 	{
 		//[implement][CAR_2]×ß¸ÖË¿½áÊø
-		
+		set_speed_target(5);	
 	}
 	else if (RFID_CARD_ID_6_4 == site)
 	{
