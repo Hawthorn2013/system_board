@@ -12,8 +12,11 @@ int main(void)
 	/* Ïò×ó×ª90¶È */
 	//control_angle_steer_helm(-30);
 	/* Ñ­¼£ */
-	g_f_enable_mag_steer_control = 1;
-	control_speed_motor(20);
+	set_speed_target(10);
+//	control_angle_steer_helm(40);
+//	delay_ms(2000);
+	g_f_enable_mag_steer_control =1;
+
 //	control_speed_motor(0);
 //	g_f_enable_mag_steer_control=1;
 
