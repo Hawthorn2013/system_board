@@ -672,10 +672,8 @@ status_t GetAngRateRaw(AngRateRaw_t* buff) {
   u8_t valueL;
   u8_t valueH;
   
-
   if( !ReadReg(OUT_X_L, &valueL) )
       return MEMS_ERROR;
-  
   if( !ReadReg(OUT_X_H, &valueH) )
       return MEMS_ERROR;
   
@@ -914,8 +912,8 @@ void read_rev_data(void)
 			rad.y+=rev.y;	
 			rad.z+=rev.z;
 		//	LCD_PrintoutInt(0, 0,(SWORD)rev.x);
-			LCD_PrintoutInt(0, 0,(SWORD)rad.x);
-			LCD_PrintoutInt(0, 2,(SWORD)rad.y);
+			//LCD_PrintoutInt(0, 0,(SWORD)rad.x);
+			//LCD_PrintoutInt(0, 2,(SWORD)rad.y);
 		}
 	}
 }

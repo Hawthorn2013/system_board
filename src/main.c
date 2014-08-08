@@ -20,7 +20,6 @@ int main(void)
 //	control_speed_motor(40);
 //	control_speed_motor(0);
 //	g_f_enable_mag_steer_control=1;
-
 	/* Loop forever */
 	for (;;)
 	{
