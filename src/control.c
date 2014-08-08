@@ -263,6 +263,9 @@ void control_angle_steer_helm(int angle_target)
 	g_f_enable_rad_control_2=1;
 	angle1=angle_target;
 }
+/*-----------------------------------------------------------------------*/
+/* 陀螺仪控制速度   //周斯航添加                                            */
+/*-----------------------------------------------------------------------*/
 
 void control_speed_motor(int speed_target)
 {

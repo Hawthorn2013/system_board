@@ -877,13 +877,13 @@ void set_pos_target(void)
 	switch(g_device_NO)
 	{
 		case(1):
-			pos_target = 1000;
+			pos_target = 2700;
 			break;
 		case(2):
-			pos_target = 1000;
+			pos_target = 2757;
 			break;
 		case(3):
-			pos_target = 750;
+			pos_target = 2750;
 			break;
 		case(4):
 			pos_target = 1000;
@@ -990,7 +990,7 @@ int control_steer_helm_2(void)
 int control_steer_helm_3(int angle_1)
 {
 	static int error_count=0,i=0;
-	int error=0,Kp=5,Kd=4,start_flag=1,steer_rate=0,angle_base=0;
+	int error=0,Kp=6,Kd=3,start_flag=1,steer_rate=0,angle_base=0;
 	static int steer_pwm=0;
 	angle_base = angle_1*pos_target/90;
 	rad.z+=rev.z;
@@ -1039,5 +1039,4 @@ void control_speed_target_1(int speed)
 		speed_2 = 0;
 	}
 	set_speed_target((SWORD)(speed+speed_1+speed_2));
-//	LCD_PrintoutInt(0, 0,(speed+speed_1+speed_2));
 }
