@@ -8,11 +8,10 @@ int main(void)
 	//drift_left();
 //	set_speed_target(20);
 	delay_ms(500);
-	read_rad_xyz = 1;
 	/* Ïò×ó×ª90¶È */
 	//control_angle_steer_helm(-30);
 	/* Ñ­¼£ */
-	set_speed_target(10);
+	set_speed_target(20);
 //	control_angle_steer_helm(40);
 //	delay_ms(2000);
 	g_f_enable_mag_steer_control =1;
