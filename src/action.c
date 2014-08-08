@@ -53,9 +53,10 @@ void turn_left_2()
 	g_f_enable_mag_steer_control = 0;
 	set_steer_helm(data_steer_helm.center);
 	set_speed_target(10);
-	delay_ms(500);
+	delay_ms(1500);
 	control_angle_steer_helm(30);
 	delay_ms(1000);
+	g_f_enable_rad_control_2=0;
 	g_f_enable_mag_steer_control = 1;
 }
 /*-----------------------------------------------------------------------*/
@@ -64,7 +65,7 @@ void turn_left_2()
 /*-----------------------------------------------------------------------*/
 void speed_up_bridge2()
 {
-    control_speed_motor(20);	
+    control_speed_motor(15);	
 }
 /*-----------------------------------------------------------------------*/
 /* ¼õËÙ¹ý¸ÖË¿ÇÅ                                                          */
@@ -74,6 +75,7 @@ void speed_down_bridge2()
 {
 	set_speed_target(0);
 	g_f_enable_speed_control_2=0;
+	read_rad_xyz = 0;
 	delay_ms(2000);
 	set_speed_target(15);	
 }
@@ -109,6 +111,7 @@ void avoid_box()
 	set_speed_target(5);
 	control_angle_steer_helm(30);
 	delay_ms(2000);
+	g_f_enable_rad_control_2=0;
 	g_f_enable_mag_steer_control=1;
 	set_speed_target(15);
 }

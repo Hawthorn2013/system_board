@@ -890,7 +890,15 @@ void set_pos_target(void)
 			break;	
 	}
 }
-
+/*-----------------------------------------------------------------------*/
+/* Õ”¬›“«÷√¡„   //“∂¥®ÃÌº”                                            */
+/*-----------------------------------------------------------------------*/
+void reset_rev_data(void)
+{
+	rad.x=0;
+	rad.y=0;	
+	rad.z=0;	
+}
 void read_rev_data(void)
 {
 	u8_t status;
@@ -899,13 +907,14 @@ void read_rev_data(void)
 		if (status & 80)
 		{
 			GetAngRateRaw(&rev);	
-			rev.x/=400;
-			rev.y/=200;
+			rev.x/=1000;
+			rev.y/=300;
 			rev.z/=500;
 			rad.x+=rev.x;
 			rad.y+=rev.y;	
 			rad.z+=rev.z;
-			LCD_PrintoutInt(0, 0,(SWORD)rev.y);
+		//	LCD_PrintoutInt(0, 0,(SWORD)rev.x);
+			LCD_PrintoutInt(0, 0,(SWORD)rad.x);
 			LCD_PrintoutInt(0, 2,(SWORD)rad.y);
 		}
 	}
@@ -1018,13 +1027,25 @@ int control_steer_helm_3(int angle_1)
 void control_speed_target_1(int speed)
 {
 	static int speed_1=0,speed_2=0;
-	if(rad.y<-400)
+	if(rad.y<-500)
 	{
 	speed_1 = 20;
 	}
-	else	if(rad.y<-200)
+	else if(rad.y>400)
+	{
+	speed_1 = 20;
+	}
+	else	if(rad.y<-300)
 	{
 		speed_1 = 10;
+	}
+	else if(rad.y>100)
+	{
+		speed_1 = -10;
+	}
+	else if(rad.y>200)
+	{
+		speed_1 = -20;
 	}
 	else 
 	{
