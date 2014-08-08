@@ -102,7 +102,7 @@ void mag_TX(void)
 void control_steer_helm(void)
 {	
 	int error = 0,error_count = 0;
-	int kp=2,kd=0,ki=0;
+	int kp=1,kd=1,ki=0;
 	int pos=0;
        static	int steer_rate = 0;
 	static int last_error=0;
@@ -127,6 +127,16 @@ void control_steer_helm(void)
 	else
 	{
 		steer_pwm = 0;
+	}
+	/* 过单边桥时使用陀螺仪辅助控制 */
+	if(g_f_enable_single_bridge_control)
+	{
+		steer_pwm=steer_rate+abs(rad.x);
+		if(rad.x>=230&&steer_pwm<-50)
+		{
+			steer_pwm = -50;
+		}
+	//	D0 = ~D0;
 	}
 	set_steer_helm((WORD)(steer_pwm));	/* 躲警告 */
 }

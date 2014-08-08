@@ -6,7 +6,7 @@ int main(void)
 	int flag=1;
 	init_all_and_POST();
 	//drift_left();
-//	set_speed_target(20);
+	//set_speed_target(20);
 	delay_ms(500);
 	/* Ïò×ó×ª90¶È */
 	//control_angle_steer_helm(-30);
@@ -16,6 +16,8 @@ int main(void)
 //	delay_ms(2000);
 	g_f_enable_mag_steer_control =1;
 
+//	set_speed_target(40);
+//	control_speed_motor(40);
 //	control_speed_motor(0);
 //	g_f_enable_mag_steer_control=1;
 

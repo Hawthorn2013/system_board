@@ -49,7 +49,7 @@ void execute_remote_cmd(const BYTE *data)
 		}
 		break;
 		case WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF :
-		generate_remote_frame(WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF, (BYTE *)&data_steer_helm_basement, sizeof(data_steer_helm_basement));
+		generate_remote_frame_2(g_device_NO, ANDROID_ADDRESS, WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF, sizeof(data_steer_helm_basement), (const BYTE *)&data_steer_helm_basement);
 		break;
 		
 		
