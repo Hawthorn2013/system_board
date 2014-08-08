@@ -13,6 +13,8 @@ int main(void)
 	//control_angle_steer_helm(-30);
 	/* 循迹 */
 	g_f_enable_mag_steer_control = 1;
+	/* 启用陀螺仪与电磁线共同控制单边桥 */
+	g_f_enable_single_bridge_control = 1;
 	control_speed_motor(20);
 //	control_speed_motor(0);
 //	g_f_enable_mag_steer_control=1;

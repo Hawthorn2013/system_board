@@ -128,5 +128,10 @@ void control_steer_helm(void)
 	{
 		steer_pwm = 0;
 	}
+	/* 过单边桥时使用陀螺仪辅助控制 */
+	if(g_f_enable_single_bridge_control)
+	{
+		steer_pwm+=rev.x/2;
+	}
 	set_steer_helm((WORD)(steer_pwm));	/* 躲警告 */
 }

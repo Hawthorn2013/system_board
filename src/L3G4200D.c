@@ -904,7 +904,9 @@ void read_rev_data(void)
 			rev.z/=500;
 			rad.x+=rev.x;
 			rad.y+=rev.y;	
-			rad.z+=rev.z;	
+			rad.z+=rev.z;
+			LCD_PrintoutInt(0, 0,(SWORD)rev.y);
+			LCD_PrintoutInt(0, 2,(SWORD)rad.y);
 		}
 	}
 }
@@ -1020,7 +1022,7 @@ void control_speed_target_1(int speed)
 	{
 	speed_1 = 20;
 	}
-		else	if(rad.y<-200)
+	else	if(rad.y<-200)
 	{
 		speed_1 = 10;
 	}
@@ -1037,5 +1039,5 @@ void control_speed_target_1(int speed)
 		speed_2 = 0;
 	}
 	set_speed_target((SWORD)(speed+speed_1+speed_2));
-	LCD_PrintoutInt(0, 0,(speed+speed_1+speed_2));
+//	LCD_PrintoutInt(0, 0,(speed+speed_1+speed_2));
 }
