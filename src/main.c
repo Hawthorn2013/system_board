@@ -6,18 +6,16 @@ int main(void)
 	int flag=1;
 	init_all_and_POST();
 	//drift_left();
-	set_speed_target(20);
+//	set_speed_target(20);
 	delay_ms(500);
+	read_rad_xyz = 1;
 	/* Ïò×ó×ª90¶È */
 	//control_angle_steer_helm(-30);
 	/* Ñ­¼£ */
-	//g_f_enable_mag_steer_control = 1;
-//	g_f_enable_speed_control_2=1;
-//	read_rad_xyz = 1;
-//	g_f_enable_speed_control_2 = 1;
-
-		g_f_enable_mag_steer_control=1;
-		set_speed_target(0);
+	g_f_enable_mag_steer_control = 1;
+	control_speed_motor(20);
+//	control_speed_motor(0);
+//	g_f_enable_mag_steer_control=1;
 
 	/* Loop forever */
 	for (;;)

@@ -399,7 +399,7 @@ BYTE TestWhoAmI(void);
 extern int control_steer_helm_2(void);
 extern int control_steer_helm_3(int angle);
 extern void set_pos_target(void);
-extern int control_speed_target_1(void);
+extern void control_speed_target_1(int speed);
 extern void read_rev_data(void);
 
 #endif /* __L3G4200D_H */

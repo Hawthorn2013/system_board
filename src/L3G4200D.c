@@ -1013,22 +1013,29 @@ int control_steer_helm_3(int angle_1)
 }
 
 //由陀螺仪控制上坡加速下坡减速
-int control_speed_target_1(void)
+void control_speed_target_1(int speed)
 {
-	static int error_count=0,i=0;
-	int error=0,Kp=5,Kd=4,start_flag=1,steer_rate=0,angle_base=0;
-	int speed=0;
-	if(rad.y<-100)
+	static int speed_1=0,speed_2=0;
+	if(rad.y<-400)
 	{
-		set_speed_target(80);
+	speed_1 = 20;
 	}
-	else	if(rad.y>100)
+		else	if(rad.y<-200)
 	{
-		set_speed_target(0);
+		speed_1 = 10;
 	}
 	else 
 	{
-		set_speed_target(20);	
+		speed_1 = 0;
 	}
-	return start_flag;
+	if(abs(rad.z)>50)
+	{
+		speed_2 = -5;
+	}
+	else
+	{
+		speed_2 = 0;
+	}
+	set_speed_target((SWORD)(speed+speed_1+speed_2));
+	LCD_PrintoutInt(0, 0,(speed+speed_1+speed_2));
 }

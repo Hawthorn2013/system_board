@@ -10,6 +10,7 @@ int g_f_enable_rad_control_1 = 0;		/* 启用陀螺仪角度控制漂移标志位*/
 int g_f_enable_rad_control_2 = 0;		/* 启用陀螺仪角度控制转向标志位 */
 int g_f_enable_speed_control_2 = 0;		/* 启用陀螺仪角度控制上下坡标志位 */
 int angle1=0;  /* 启用陀螺仪角度控制转向标志位   转向角度值 */
+int speed =0;
 int read_rad_xyz = 0;/* 启用读陀螺仪xyz三轴数据 */
 int update_steer_helm_basement_to_steer_helm(void);
 
@@ -58,7 +59,7 @@ void PitISR(void)
 	if(read_rad_xyz)
 	{
 		read_rev_data();	
-		LCD_PrintoutInt(0, 0, rad.y);
+	//	LCD_PrintoutInt(0, 0, rad.y);
 	//	LCD_PrintoutInt(0, 2, rad.z);
 	//	LCD_PrintoutInt(0, 0, rad.x);
 	}
@@ -88,10 +89,7 @@ void PitISR(void)
 	/* 陀螺仪控制上下坡 */
 	if(g_f_enable_speed_control_2)
 	{
-		if(!control_speed_target_1())
-		{
-			
-		}
+		control_speed_target_1(speed);
 	}
 	
 #if 0
@@ -261,8 +259,14 @@ void set_speed_KD(WORD kd)
 /*-----------------------------------------------------------------------*/
 void control_angle_steer_helm(int angle_target)
 {
-		g_f_enable_rad_control_2=1;
-		angle1=angle_target;
+	g_f_enable_rad_control_2=1;
+	angle1=angle_target;
+}
+
+void control_speed_motor(int speed_target)
+{
+	g_f_enable_speed_control_2 = 1;	
+	speed = speed_target;
 }
 
 
