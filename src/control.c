@@ -84,6 +84,7 @@ void PitISR(void)
 			g_f_enable_rad_control_2 =0;  
 			set_steer_helm((WORD)(data_steer_helm.center));	
 			set_speed_target(5);
+			read_rad_xyz = 0;
 		}
 	}
 	
@@ -103,7 +104,7 @@ void PitISR(void)
 	}
 #endif
 
-	PIT.CH[1].TFLG.B.TIF = 1;	// MPC56xxB/P/S: Clear PIT 1 flag by writing 1 
+	PIT.CH[1].TFLG.B.TIF = 1;	// MPC56xxB/P/S: Clear PIT 1 flag by writing 1
 }
 
 
@@ -260,6 +261,8 @@ void set_speed_KD(WORD kd)
 /*-----------------------------------------------------------------------*/
 void control_angle_steer_helm(int angle_target)
 {
+	reset_rev_data();
+	read_rad_xyz = 1;
 	g_f_enable_rad_control_2=1;
 	angle1=angle_target;
 }
@@ -269,6 +272,8 @@ void control_angle_steer_helm(int angle_target)
 
 void control_speed_motor(int speed_target)
 {
+	reset_rev_data();
+	read_rad_xyz = 1;
 	g_f_enable_speed_control_2 = 1;	
 	speed = speed_target;
 }

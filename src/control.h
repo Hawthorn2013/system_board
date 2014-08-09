@@ -62,7 +62,7 @@ struct
 	WORD center;
 	WORD left_limit;
 	WORD right_limit;
-	int direction;
+	SWORD direction;
 } data_steer_helm_basement = { STEER_HELM_CENTER, STEER_HELM_LEFT, STEER_HELM_RIGHT };
 #else
 extern const struct
@@ -70,7 +70,7 @@ extern const struct
 	WORD center;
 	WORD left_limit;
 	WORD right_limit;
-	int direction;
+	SWORD direction;
 } data_steer_helm_basement;
 #endif
 

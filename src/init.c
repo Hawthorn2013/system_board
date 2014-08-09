@@ -302,6 +302,11 @@ void init_all_and_POST(void)
 	{
 		LCD_P8x16Str(0,0, (BYTE*)"TF..NOK");
 	}
+	
+	/* 读取设备号 */
+	read_device_no_from_TF();
+	LCD_P8x16Str(0, 4, (BYTE*)"DeviceNo=");
+	LCD_PrintoutInt(72, 4, g_device_NO);
 		
 	/* 初始化陀螺仪 */
 	LCD_P8x16Str(0,2, (BYTE*)"L3G..");
@@ -356,11 +361,6 @@ void init_all_and_POST(void)
 	
 	
 #if 1
-	/* 读取设备号 */
-	read_device_no_from_TF();
-	LCD_P8x16Str(0, 4, (BYTE*)"DeviceNo=");
-	LCD_PrintoutInt(72, 4, g_device_NO);
-	
 	/* 开启RFID读卡器主动模式 */
 	if (!init_RFID_modul_type())
 	{
