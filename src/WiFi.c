@@ -290,7 +290,7 @@ void generate_remote_frame_2(BYTE scr, BYTE des, WORD cmd, BYTE length, const BY
 	{
 		remote_frame_data_send[i++] = data[j];
 	}
-	remote_frame_data_send[i++] = check_sum(remote_frame_data_send+2, i-3);
+	remote_frame_data_send[i++] = check_sum(remote_frame_data_send+2, i-2);
 	for (; i < REMOTE_FRAME_LENGTH; i++)	/* 清空未使用区域 */
 	{
 		remote_frame_data_send[i] = 0x00;
