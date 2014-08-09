@@ -317,6 +317,8 @@ void init_all_and_POST(void)
 			if (I_AM_L3G4200D == rev)
 			{
 				g_devices_init_status.L3G4200D_is_OK = 1;
+				SetODR(  ODR_100Hz_BW_12_5 );
+				SetInt1Filters( LPF2 );
 				SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
 				SetMode(NORMAL);
 				break;
@@ -333,6 +335,7 @@ void init_all_and_POST(void)
 			if (I_AM_L3G4200D == rev)
 			{
 				g_devices_init_status.L3G4200D_is_OK = 1;
+				SetODR(ODR_100Hz_BW_12_5);
 				SetAxis(X_ENABLE | Y_ENABLE | Z_ENABLE);
 				SetMode(NORMAL);
 				break;

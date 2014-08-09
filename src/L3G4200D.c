@@ -899,15 +899,15 @@ void read_rev_data(void)
 		if (status & 80)
 		{
 			GetAngRateRaw(&rev);	
-			rev.x/=1000;
-			rev.y/=300;
-			rev.z/=500;
+		//	rev.x/=1000;
+		//	rev.y/=300;
+		//	rev.z/=500;
 			rad.x+=rev.x;
 			rad.y+=rev.y;	
 			rad.z+=rev.z;
 		//	LCD_PrintoutInt(0, 0,(SWORD)rev.x);
-			LCD_PrintoutInt(0, 0,(SWORD)rad.x);
-			LCD_PrintoutInt(0, 2,(SWORD)rad.y);
+		//	LCD_PrintoutInt(0, 0,(SWORD)rad.x);
+		//	LCD_PrintoutInt(0, 2,(SWORD)rad.y);
 		}
 	}
 }
