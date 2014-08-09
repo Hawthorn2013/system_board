@@ -15,7 +15,7 @@ int main(void)
 //	control_angle_steer_helm(40);
 //	delay_ms(2000);
 	g_f_enable_mag_steer_control =0;
-
+read_rad_xyz=1;
 //	set_speed_target(40);
 //	control_speed_motor(40);
 //	control_speed_motor(0);

@@ -34,7 +34,6 @@
 /* Private function prototypes -----------------------------------------------*/
 
 int cl_flag=0;
-int pos_target=1000;
 
 BYTE L3G4200D_read_write_byte(BYTE data)
 {
@@ -875,16 +874,24 @@ void set_pos_target(void)
 	switch(g_device_NO)
 	{
 		case(1):
-			pos_target = 2700;
+			pos_target.x = 455;
+			pos_target.y = -904;
+			pos_target.z = 1072;
 			break;
 		case(2):
-			pos_target = 2757;
+			pos_target.x = 468;
+			pos_target.y = -1018;
+			pos_target.z = 1066;
 			break;
 		case(3):
-			pos_target = 2750;
+			pos_target.x = 478;
+			pos_target.y = -997;
+			pos_target.z = 945;
 			break;
 		case(4):
-			pos_target = 1000;
+			pos_target.x = 0;
+			pos_target.y = 0;
+			pos_target.z = 1000;
 			break;	
 	}
 }
@@ -906,7 +913,7 @@ void read_rev_data(void)
 		{
 			GetAngRateRaw(&rev);	
 			rev.x/=1000;
-			rev.y/=300;
+			rev.y/=500;
 			rev.z/=500;
 			rad.x+=rev.x;
 			rad.y+=rev.y;	
@@ -922,7 +929,7 @@ int control_steer_helm_2(void)
 	int error=0,Kp=4,Kd=15,start_flag=1,steer_rate=0;
 	static int steer_pwm=0,rev_count=0,cnt=0;
 	rad.z+=rev.z;
-	error=pos_target-rad.z;
+	error=pos_target.z-rad.z;
 	/* 0.5s后为第二阶段 */
 	if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000032&&cl_flag==1)
 	{
@@ -931,28 +938,28 @@ int control_steer_helm_2(void)
 		cl_flag=2;						
 	}
 	/* 判断开始漂移（z轴转过9）为第三阶段 */
-	else if(rad.z>=(pos_target/10)&&cl_flag==2)
+	else if(rad.z>=(pos_target.z/10)&&cl_flag==2)
 	{
 		set_steer_helm((WORD)(-600));	
 		set_speed_target(80);
 		cl_flag=3;	
 	}
 	/* 5~50为第四阶段 */
-	else if(rad.z>=(pos_target/9)&&cl_flag==3)
+	else if(rad.z>=(pos_target.z/9)&&cl_flag==3)
 	{	
 		set_steer_helm((WORD)(-100));	
 		set_speed_target(60);
 		cl_flag=4;	
 	}
 	/* 判断漂移过40度后为第五阶段 */
-	else if(rad.z>(pos_target*4/9)&&cl_flag==4)
+	else if(rad.z>(pos_target.z*4/9)&&cl_flag==4)
 	{						
 		set_steer_helm((WORD)(200));	
 		cl_flag=5;
 		set_speed_target(40);
 	}
 	/* 判断漂移过80度为第六阶段 */
-	else if(rad.z>(pos_target*8/9)&&cl_flag==5)
+	else if(rad.z>(pos_target.z*8/9)&&cl_flag==5)
 	{
 		cl_flag=6;
 	}
@@ -996,7 +1003,7 @@ int control_steer_helm_3(int angle_1)
 	static int error_count=0,i=0;
 	int error=0,Kp=6,Kd=3,start_flag=1,steer_rate=0,angle_base=0;
 	static int steer_pwm=0;
-	angle_base = angle_1*pos_target/90;
+	angle_base = angle_1*pos_target.z/90;
 	rad.z+=rev.z;
 	error=angle_base-rad.z;
 	if(abs(error)>=1)

@@ -29,7 +29,6 @@
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 
-extern int pos_target;
 extern int cl_flag;
 
 //these could change accordingly with the architecture
@@ -184,6 +183,24 @@ extern  struct{
 	i16_t z;
 } rad;
 #endif
+
+/* 陀螺仪三轴角度90度标准数据 */
+#ifdef __L3G4200D_C_
+struct 
+{
+	i16_t x;
+	i16_t y;
+	i16_t z;
+} pos_target = { 0x0000, 0x0000, 0x0000,};
+#else
+extern  struct{
+	i16_t x;
+	i16_t y;
+	i16_t z;
+} pos_target;
+#endif
+
+
 
 /* Exported constants --------------------------------------------------------*/
 
