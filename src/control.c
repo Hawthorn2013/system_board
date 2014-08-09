@@ -9,8 +9,10 @@ int g_f_enable_speed_control = 0;	/* 启用速度控制标志位 */
 int g_f_enable_rad_control_1 = 0;		/* 启用陀螺仪角度控制漂移标志位*/
 int g_f_enable_rad_control_2 = 0;		/* 启用陀螺仪角度控制转向标志位 */
 int g_f_enable_speed_control_2 = 0;		/* 启用陀螺仪角度控制上下坡标志位 */
-int g_f_enable_single_bridge_control = 0;		/*陀螺仪与电磁线共同控制单边桥标志位*/
-int angle1=0;  /* 启用陀螺仪角度控制转向标志位   转向角度值 */
+int angle1=0; 		 /* 启用陀螺仪角度控制转向标志位   转向角度值 */
+int g_f_enable_single_bridge_control = 0;		/*单边桥标志位*/
+int g_f_enable_fly_bridge = 0;		/* 飞桥标志位 */
+int g_f_enable_steer_bridge = 0;		/* 钢丝桥标志位 */
 int speed =0;
 int read_rad_xyz = 0;/* 启用读陀螺仪xyz三轴数据 */
 int update_steer_helm_basement_to_steer_helm(void);
@@ -59,10 +61,14 @@ void PitISR(void)
 	/* 读陀螺仪三轴数据 */
 	if(read_rad_xyz)
 	{
-		read_rev_data();	
+		read_rev_data();
+		/*
 		LCD_PrintoutInt(0, 0, rev.x);
 		LCD_PrintoutInt(0, 2, rev.y);
 		LCD_PrintoutInt(0, 4, rev.z);
+		*/
+		LCD_PrintoutInt(0, 0, rad.z);
+
 	}
 	
 	/* 陀螺仪角度控制漂移*/
@@ -84,7 +90,6 @@ void PitISR(void)
 			g_f_enable_rad_control_2 =0;  
 			set_steer_helm((WORD)(data_steer_helm.center));	
 			set_speed_target(5);
-			read_rad_xyz = 0;
 		}
 	}
 	

@@ -36,6 +36,8 @@ extern int g_f_enable_rad_control_1;
 extern int g_f_enable_rad_control_2;
 extern int g_f_enable_speed_control_2;
 extern int g_f_enable_single_bridge_control;
+extern int g_f_enable_fly_bridge;
+extern int g_f_enable_steer_bridge;
 extern int read_rad_xyz;
 
 /* 方向舵机上层数据 */

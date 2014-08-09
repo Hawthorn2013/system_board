@@ -875,13 +875,13 @@ void set_pos_target(void)
 	switch(g_device_NO)
 	{
 		case(1):
-			pos_target = 2700;
+			pos_target = 3700;
 			break;
 		case(2):
-			pos_target = 2757;
+			pos_target = 1040;
 			break;
 		case(3):
-			pos_target = 2750;
+			pos_target = 900;
 			break;
 		case(4):
 			pos_target = 1000;
@@ -923,6 +923,8 @@ int control_steer_helm_2(void)
 	static int steer_pwm=0,rev_count=0,cnt=0;
 	rad.z+=rev.z;
 	error=pos_target-rad.z;
+//	LCD_PrintoutInt(0, 0, error);
+	D0 = ~D0;
 	/* 0.5sºóÎªµÚ¶ş½×¶Î */
 	if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000032&&cl_flag==1)
 	{
@@ -980,7 +982,7 @@ int control_steer_helm_2(void)
 	}
 	if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000190)
 	{
-		start_flag=0;
+		start_flag=1;
 	}
 	return start_flag;
 	if (g_remote_control_flags.send_gyro_data)
@@ -1022,37 +1024,51 @@ int control_steer_helm_3(int angle_1)
 void control_speed_target_1(int speed)
 {
 	static int speed_1=0,speed_2=0;
-	if(rad.y<-500)
+	/* ¸ÖË¿ÇÅ */
+	if(g_f_enable_steer_bridge)
 	{
-	speed_1 = 20;
+		
 	}
-	else if(rad.y>400)
+	/* µ¥±ßÇÅ */
+	if(g_f_enable_single_bridge_control)
 	{
-	speed_1 = 20;
+		if(rad.y>200)
+		{
+			speed_1 = -15;
+		}
+		else if(rad.y>100)
+		{
+			speed_1 = -25;
+		}
+		else 
+		{
+			speed_1 = 0;
+		}
+		if(abs(rad.z)>50)
+		{
+			speed_2 = -5;
+		}
+		else
+		{
+			speed_2 = 0;
+		}		
 	}
-	else	if(rad.y<-300)
+	/* ·ÉÇÅ */
+	if(g_f_enable_fly_bridge)
 	{
-		speed_1 = 10;
+		if(rad.y<-300)
+		{
+			speed_1 = 20;
+		}
+		else if(rad.y<-150)
+		{
+			speed_1 = 10;
+		}
+		else
+		{
+			speed_1 = 0;
+		}
 	}
-	else if(rad.y>100)
-	{
-		speed_1 = -10;
-	}
-	else if(rad.y>200)
-	{
-		speed_1 = -20;
-	}
-	else 
-	{
-		speed_1 = 0;
-	}
-	if(abs(rad.z)>50)
-	{
-		speed_2 = -5;
-	}
-	else
-	{
-		speed_2 = 0;
-	}
+	
 	set_speed_target((SWORD)(speed+speed_1+speed_2));
 }

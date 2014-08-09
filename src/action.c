@@ -75,7 +75,6 @@ void speed_down_bridge2()
 {
 	set_speed_target(0);
 	g_f_enable_speed_control_2=0;
-	read_rad_xyz = 0;
 	delay_ms(2000);
 	set_speed_target(15);	
 }
@@ -115,7 +114,17 @@ void avoid_box()
 	g_f_enable_mag_steer_control=1;
 	set_speed_target(15);
 }
-
+/*-----------------------------------------------------------------------*/
+/* 飞桥	                                                             */
+/* car 2,3,4                                                                 */                                                          
+/*-----------------------------------------------------------------------*/
+void fly_bridge()
+{
+	g_f_enable_mag_steer_control=1;
+	reset_rev_data();
+	read_rad_xyz = 1;
+	g_f_enable_fly_bridge = 1;
+}
 
 /*-----------------------------------------------------------------------*/
 /* 整车动作控制                                                          */
