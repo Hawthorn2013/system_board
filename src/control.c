@@ -62,9 +62,9 @@ void PitISR(void)
 	if(read_rad_xyz)
 	{
 		read_rev_data();	
-		LCD_PrintoutInt(0, 0, rad.x);
-		LCD_PrintoutInt(0, 2, rad.y);
-		LCD_PrintoutInt(0, 4, rad.z);
+	//	LCD_PrintoutInt(0, 0, rad.x);
+	//	LCD_PrintoutInt(0, 2, rad.y);
+	//	LCD_PrintoutInt(0, 4, rad.z);
 	}
 	
 	/* ÍÓÂÝÒÇ½Ç¶È¿ØÖÆÆ¯ÒÆ*/

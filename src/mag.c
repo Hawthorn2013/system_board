@@ -150,5 +150,14 @@ void control_steer_helm(void)
 	{
 		steer_pwm = 0;
 	}
+		/* ¹ý·ÉÇÅ */
+	if(g_f_enable_fly_bridge)
+	{
+		if(rad.y<-80)
+		{
+			if(steer_pwm>50)steer_pwm = 50;
+			else if(steer_pwm<-50)steer_pwm = -50;
+		}
+	}
 	set_steer_helm((WORD)(steer_pwm));	/* ¶ã¾¯¸æ */
 }

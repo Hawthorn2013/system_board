@@ -1024,15 +1024,42 @@ int control_steer_helm_3(int angle_1)
 
 	}
 }
+//ÅĞ¶ÏÊÇ·ñÎÈ¶¨
+int check_stable(void)
+{
+	static int cnt = 0,rad_cnt_z = 0;
+	cnt++;
+	rad_cnt_z+=rev.z;
+	if(cnt==4&&rad_cnt_z<=5)
+	{
+		return 0;
+	}
+	else if(cnt==5)
+	{
+		rad_cnt_z = 0;
+		cnt = 0;
+		return 1;	
+	}
+}
 
 //ÓÉÍÓÂİÒÇ¿ØÖÆÉÏÆÂ¼ÓËÙÏÂÆÂ¼õËÙ
 void control_speed_target_1(int speed)
 {
 	static int speed_1=0,speed_2=0;
+	static fly_flag = 0;
+	static int cnt = 0,rad_cnt_z = 0;
 	/* ¸ÖË¿ÇÅ */
 	if(g_f_enable_steer_bridge)
 	{
-		
+		if(rad.y<-80&&fly_flag == 0)
+		{
+			speed_1 = 10;
+			fly_flag = 2;
+		}
+		else if(rad.y>-10&&fly_flag ==2)
+		{
+			speed_1=0;
+		}
 	}
 	/* µ¥±ßÇÅ */
 	if(g_f_enable_single_bridge_control)
@@ -1060,20 +1087,51 @@ void control_speed_target_1(int speed)
 	}
 	/* ·ÉÇÅ */
 	if(g_f_enable_fly_bridge)
-	{
-		if(rad.y<-300)
+	{	
+		if(fly_flag == 0)
 		{
-			speed_1 = 20;
+			speed_1 =10 -speed;
+			cnt++;
+			rad_cnt_z+=rev.z;
+			if(cnt==4&&rad_cnt_z<=5)
+			{
+				fly_flag = 1;
+			}
+			else if(cnt==5)
+			{
+				rad_cnt_z = 0;
+				cnt = 0;
+			}	
 		}
-		else if(rad.y<-150)
-		{
-			speed_1 = 10;
-		}
-		else
+		if(fly_flag==1)
 		{
 			speed_1 = 0;
+			fly_flag = 2;
+		}
+		if(rad.y<-30&&fly_flag==2)
+		{
+			speed_1 = 100;
+			fly_flag = 3;
+		}
+		if(rad.y<-80&&fly_flag == 3)
+		{
+			speed_1 = 150;
+			fly_flag = 4;
+		}
+		if(rad.y>0&&fly_flag ==4)
+		{
+			speed_1 =15 -speed;
+			set_steer_helm(0);
+			fly_flag=5;
 		}
 	}
-	
 	set_speed_target((SWORD)(speed+speed_1+speed_2));
+	if(fly_flag ==5) 
+	{
+		g_f_enable_fly_bridge=0;
+		g_f_enable_speed_control_2=0;
+		speed_1=0;
+		speed_2=0;
+		fly_flag=0;
+	}
 }

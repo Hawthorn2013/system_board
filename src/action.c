@@ -121,9 +121,8 @@ void avoid_box()
 void fly_bridge()
 {
 	g_f_enable_mag_steer_control=1;
-	reset_rev_data();
-	read_rad_xyz = 1;
 	g_f_enable_fly_bridge = 1;
+	control_speed_motor(150);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -165,8 +164,9 @@ void RFID_control_car_2_action(DWORD site)
 
 	if (RFID_CARD_ID_3_1 == site)
 	{
+		D1=~D1;
 		//[implement][CAR_2]开始加速飞跃
-		speed_up_bridge1();
+		fly_bridge();
 	}
 	else if (RFID_CARD_ID_5_1 == site)
 	{
