@@ -13,16 +13,11 @@ int main(void)
 	/* 向左转90度 */
 	//control_angle_steer_helm(-30);
 	/* 循迹 */
-	/* 启用控制单边桥（陀螺仪，电磁循迹） */
-//	g_f_enable_single_bridge_control = 1;
-//	set_speed_target(20);
+	set_speed_target(0);
 //	control_angle_steer_helm(40);
 //	delay_ms(2000);
-//	g_f_enable_mag_steer_control =1;
-//	set_speed_target(40);
-//	control_speed_motor(40);
-//	control_speed_motor(0);
-//	g_f_enable_mag_steer_control=1;
+	g_f_enable_mag_steer_control =0;
+	read_rad_xyz=1;
 	/* Loop forever */
 	for (;;)
 	{
@@ -53,7 +48,7 @@ int main(void)
 		}
 		delay_ms(10);
 
-#if 1
+#if 0
 		/* 整车动作控制 */
 		control_car_action();
 #endif

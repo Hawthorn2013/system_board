@@ -274,6 +274,7 @@ void RFID_control_car_3_action(DWORD site)
 /*-----------------------------------------------------------------------*/
 void RFID_control_car_4_action(DWORD site)
 {
+	int i;
 	if (RFID_CARD_ID_1_1 == site)
 	{
 		puncture_ballon();
@@ -285,9 +286,11 @@ void RFID_control_car_4_action(DWORD site)
 	else if (RFID_CARD_ID_2_1 == site)
 	{
 		//[implement][CAR_4]-->[CAR_1]开始漂移
-		send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_0_1);
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_0_1);
 		//[implement][CAR_4]-->[CAR_2]出发
-		send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);
 		//[implement][CAR_4]脱离电磁线，找新线
 		turn_left_1();
 		
@@ -296,7 +299,8 @@ void RFID_control_car_4_action(DWORD site)
 	{
 
 		//[implement][CAR_4]通知吊桥升起
-		send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_2_2);
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_2_2);
 
 	}
 	else if (RFID_CARD_ID_3_1 == site)
@@ -326,13 +330,16 @@ void RFID_control_car_4_action(DWORD site)
 	else if (RFID_CARD_ID_6_3 == site)
 	{
 		//[implement][CAR_4]通知钢丝桥断开、减速
-		send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_6_3);
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_6_3);
 		set_speed_target(10);
 	}
 	else if (RFID_CARD_ID_6_4 == site)
 	{
+		
 		//[implement][CAR_4]-->[Car_3]推箱子
-		send_net_cmd(WIFI_ADDRESS_CAR_3,WIFI_CMD_NET_6_4);
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_3,WIFI_CMD_NET_6_4);
 	}
 	else if (RFID_CARD_ID_6_5 == site)
 	{
@@ -341,7 +348,8 @@ void RFID_control_car_4_action(DWORD site)
 	else if (RFID_CARD_ID_7_1 == site)
 	{
 		//[implement][CAR_4]-->[CAR_1]漂移堵截
-		send_net_cmd(WIFI_ADDRESS_CAR_3,WIFI_CMD_NET_7_1);
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_3,WIFI_CMD_NET_7_1);
 	}
 	else if (RFID_CARD_ID_7_2 == site)
 	{
