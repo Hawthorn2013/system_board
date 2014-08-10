@@ -43,6 +43,7 @@
 //#define WIFI_ADDRESS (1)
 #define ANDROID_ADDRESS (3)
 
+#define WIFI_ADDRESS_WITHOUT_INIT (0)	/* ¾¯³µ1 Æ¯ÒÆ */
 #define WIFI_ADDRESS_CAR_1 (1)	/* ¾¯³µ1 Æ¯ÒÆ */
 #define WIFI_ADDRESS_CAR_2 (2)	/* ¾¯³µ2 */
 #define WIFI_ADDRESS_CAR_3 (3)	/* ·Ë³µ1 */

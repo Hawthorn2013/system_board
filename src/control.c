@@ -57,7 +57,7 @@ void PitISR(void)
 		mag_read();
 		control_steer_helm();
 	}
-	
+
 	/* ¶ÁÍÓÂİÒÇÈıÖáÊı¾İ */
 	if(read_rad_xyz)
 	{
