@@ -2,6 +2,7 @@
 #include "includes.h"
 
 
+FATFS fatfs1;	/* 会被文件系统引用，不得释放 */
 
 /*-----------------------------------------------------------------------*/
 /* 设置单片机的模式和时钟                                                */
@@ -223,7 +224,6 @@ void init_all_and_POST(void)
 {
 	int i = 0;
 	/* TF卡 */
-	FATFS fatfs;
 	TCHAR *path = "0:";
 	
 	disable_watchdog();
@@ -260,40 +260,24 @@ void init_all_and_POST(void)
 	initLCD();
 	//LCD_DISPLAY();
 	LCD_Fill(0xFF);	/* 亮屏 */
-	delay_ms(500);
+	delay_ms(50);
 	LCD_Fill(0x00);	/* 黑屏 */
-	delay_ms(500);
+	delay_ms(50);
 	
 	/* 初始化TF卡 */
 	LCD_P8x16Str(0,0, (BYTE*)"TF..");
 	if (!SD_init())
 	{
 		/* 挂载TF卡文件系统 */
-		if (FR_OK == f_mount(&fatfs, path, 1))
+		if (FR_OK == f_mount(&fatfs1, path, 1))
 		{
 			/* 文件读写测试 */
-			FIL fil1, fil2, fil3;
-			TCHAR *tchar = "TEST";
-			UINT br;
-			UINT wr;
-			DWORD test_write_to_TFCard = 0x0A1B2C3D;
-			DWORD test_read_from_TFCard = 0x00000000;
-			
-			f_open(&fil1, tchar, FA_CREATE_ALWAYS);
-			f_close(&fil1);
-			f_open(&fil2, tchar, FA_WRITE);
-			f_write(&fil2, (const void *)&test_write_to_TFCard, sizeof(test_write_to_TFCard), &wr);
-			f_close(&fil2);
-			f_open(&fil3, tchar, FA_READ);
-			f_read(&fil3, (void *)&test_read_from_TFCard, sizeof(test_read_from_TFCard), &br);
-			f_close(&fil3);
-			if (test_write_to_TFCard == test_read_from_TFCard)
+			if (!test_file_system())
 			{
 				g_devices_init_status.TFCard_is_OK = 1;
 			}
 		}
 	}
-	
 	if (g_devices_init_status.TFCard_is_OK)
 	{
 		LCD_P8x16Str(0,0, (BYTE*)"TF..OK");
@@ -301,13 +285,29 @@ void init_all_and_POST(void)
 	else
 	{
 		LCD_P8x16Str(0,0, (BYTE*)"TF..NOK");
+		suicide();
 	}
 	
+	
 	/* 读取设备号 */
-	read_device_no_from_TF();
 	LCD_P8x16Str(0, 4, (BYTE*)"DeviceNo=");
-	LCD_PrintoutInt(72, 4, g_device_NO);
-		
+	if (!read_device_no_from_TF())
+	{
+		if (WIFI_ADDRESS_WITHOUT_INIT != g_device_NO)
+		{
+			LCD_PrintoutInt(72, 4, g_device_NO);
+		}
+		else
+		{
+			suicide();
+		}
+	}
+	else
+	{
+		suicide();
+	}
+	
+	
 	/* 初始化陀螺仪 */
 	LCD_P8x16Str(0,2, (BYTE*)"L3G..");
 	switch (g_device_NO)
@@ -357,9 +357,6 @@ void init_all_and_POST(void)
 		LCD_P8x16Str(0,2, (BYTE*)"L3G..NOK");
 	}
 	
-		
-	
-	
 #if 1
 	/* 开启RFID读卡器主动模式 */
 	if (!init_RFID_modul_type())
@@ -371,17 +368,19 @@ void init_all_and_POST(void)
 	{
 		g_devices_init_status.RFIDCard_energetic_mode_enable_is_OK = 0;
 		LCD_P8x16Str(0, 6, (BYTE*)"RFID..NOK");
+		suicide();
 	}
 	
-	
 	/* 换屏 */
-	delay_ms(1500);
 	LCD_Fill(0x00);
 	
 	/* 读取舵机参数 */
-	read_steer_helm_data_from_TF();
-	update_steer_helm_basement_to_steer_helm();
 	LCD_P8x16Str(0, 0, (BYTE*)"StH.L=");
+	if (read_steer_helm_data_from_TF())
+	{
+		suicide();
+	}
+	update_steer_helm_basement_to_steer_helm();
 	LCD_PrintoutInt(48, 0, data_steer_helm_basement.left_limit);
 	set_steer_helm_basement(data_steer_helm_basement.left_limit);
 	delay_ms(500);
@@ -397,28 +396,19 @@ void init_all_and_POST(void)
 #endif
 
 	/* 换屏 */
-	delay_ms(1500);
 	LCD_Fill(0x00);
 
 	/* 速度闭环测试 */
 	
 	g_f_enable_speed_control = 1;
-#if 0
-	LCD_P8x16Str(0, 0, (BYTE*)"S.T=10");
-	set_speed_target(10);
-	delay_ms(2000);
-	LCD_P8x16Str(0, 2, (BYTE*)"S.T=-10");
-	set_speed_target(-10);
-	delay_ms(2000);
-#endif
 	LCD_P8x16Str(0, 4, (BYTE*)"S.T=0");
 	set_speed_target(0);
 	delay_ms(2000);
 
 	/* 换屏 */
-	delay_ms(1500);
 	LCD_Fill(0x00);
-	
+
+#if 0
 	/* 测试电感 */
 	LCD_P8x16Str(0, 0, (BYTE*)"I.L=");
 	LCD_P8x16Str(0, 2, (BYTE*)"I.R=");
@@ -429,14 +419,22 @@ void init_all_and_POST(void)
 		LCD_PrintoutInt(32, 2, mag_right);
 		delay_ms(500);
 	}
-	
+#endif
+
 	/* 换屏 */
-	delay_ms(1500);
 	LCD_Fill(0x00);
 }
 
 
-
+/*-----------------------------------------------------------------------*/
+/* 自杀                                                                                  */
+/* 在系统初始化出错时一直卡住                                                 */
+/* 阻止系统在外设不正确的情况下启动                                        */
+/*-----------------------------------------------------------------------*/
+void suicide(void)
+{
+	while (1) { }
+}
 
 
 

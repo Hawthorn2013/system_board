@@ -42,11 +42,12 @@ static BYTE DSPI_read_write_byte(BYTE byte_write)
 {
 	DWORD tmp_tx = 0x00000000;
 	WORD tmp_rx;
+	int i = 0;
 	
 	tmp_tx |= 0x98010000;
 	tmp_tx |= (DWORD)byte_write;
 	DSPI_1.PUSHR.R = tmp_tx;
-	while(!DSPI_1.SR.B.TCF){}
+	while(!DSPI_1.SR.B.TCF) { }
 	tmp_rx = (WORD)DSPI_1.POPR.B.RXDATA;
 	DSPI_1.SR.B.TCF = 1;
 	
@@ -69,23 +70,15 @@ static void DSPI_send_8_clocks(void)
 
 
 /*-----------------------------------------------------------------------*/
-/* 初始化TF卡                                                            */
-/* 正常返回0                                                             */
+/* 初始化TF卡                                                                         */
+/* 正常返回0                                                                          */
+/* 不成功卡着一直试                                                                */
 /*-----------------------------------------------------------------------*/
-int SD_init(void)
+SWORD SD_init(void)
 {
-	int i = 0;
-	
-	for (i=0; i<20; i++)
-	{
-		if (!SD_reset())
-		{
-			SD_SPI_to_4M();
-			return 0;
-		}
-	}
-	
-	return 1;
+	while (SD_reset()) { }
+	SD_SPI_to_4M();
+	return 0;
 }
 
 
@@ -298,16 +291,36 @@ void clear_sd_buffer(BYTE buffer[][SD_SECTOR_SIZE])
 
 /*-----------------------------------------------------------------------*/
 /* 读取方向舵机数据从TF卡                                                      */
+/* 正常返回0                                                                          */
 /*-----------------------------------------------------------------------*/
-int read_steer_helm_data_from_TF()
+SWORD read_steer_helm_data_from_TF()
 {
 	FIL fil;
 	TCHAR *tchar = "STEHEL";
 	UINT br;
 	
-	f_open(&fil, tchar, FA_READ);
-	f_read(&fil, (void *)&data_steer_helm_basement, sizeof(data_steer_helm_basement), &br);
-	f_close(&fil);
+	if (FR_OK == f_open(&fil, tchar, FA_READ))
+	{
+		if (FR_OK == f_read(&fil, (void *)&data_steer_helm_basement, sizeof(data_steer_helm_basement), &br))
+		{
+			if (FR_OK == f_close(&fil))
+			{
+				
+			}
+			else
+			{
+				return 3;
+			}
+		}
+		else
+		{
+			return 2;
+		}
+	}
+	else
+	{
+		return 1;
+	}
 	
 	return 0;
 }
@@ -315,48 +328,58 @@ int read_steer_helm_data_from_TF()
 
 /*-----------------------------------------------------------------------*/
 /* 写入方向舵机数据到TF卡                                                       */
+/* 正常返回0                                                                          */
 /*-----------------------------------------------------------------------*/
-int write_steer_helm_data_to_TF()
+SWORD write_steer_helm_data_to_TF()
 {
 	FIL fil1, fil2;
 	TCHAR *tchar = "STEHEL";
 	UINT wr;
-	int sucess_f = 1;
-
-	if (FR_OK != f_open(&fil1, tchar, FA_CREATE_ALWAYS))
-	{
-		sucess_f = 0;
-	}
-	if (FR_OK != f_close(&fil1))
-	{
-		sucess_f = 0;
-	}
-	if (FR_OK != f_open(&fil2, tchar, FA_WRITE))
-	{
-		sucess_f = 0;
-	}
-	if (FR_OK != f_write(&fil2, (const void *)&data_steer_helm_basement, sizeof(data_steer_helm_basement), &wr))
-	{
-		sucess_f = 0;
-	}
-	if (FR_OK != f_close(&fil2))
-	{
-		sucess_f = 0;
-	}
 	
-	if (sucess_f)
+	if (FR_OK == f_open(&fil1, tchar, FA_CREATE_ALWAYS))
 	{
-		return 0;
+		if (FR_OK == f_close(&fil1))
+		{
+			
+		}
+		else
+		{
+			return 2;
+		}
 	}
 	else
 	{
 		return 1;
 	}
+
+	if (FR_OK == f_open(&fil2, tchar, FA_WRITE))
+	{
+		if (FR_OK == f_write(&fil2, (const void *)&data_steer_helm_basement, sizeof(data_steer_helm_basement), &wr))
+		{
+			if (FR_OK == f_close(&fil2))
+			{
+				return 0;
+			}
+			else
+			{
+				return 5;
+			}
+		}
+		else
+		{
+			return 4;
+		}
+	}
+	else
+	{
+		return 3;
+	}
 }
 
 
 /*-----------------------------------------------------------------------*/
-/* 读取设备号从TF卡                                                */
+/* 读取设备号从TF卡                                                                */
+/* 正常返回0                                                                          */
 /*-----------------------------------------------------------------------*/
 int read_device_no_from_TF()
 {
@@ -364,9 +387,114 @@ int read_device_no_from_TF()
 	TCHAR *tchar = "DEVICE";
 	UINT br;
 	
-	f_open(&fil, tchar, FA_READ);
-	f_read(&fil, (void *)&g_device_NO, sizeof(g_device_NO), &br);
-	f_close(&fil);
+	if (FR_OK == f_open(&fil, tchar, FA_READ))
+	{
+		if (FR_OK == f_read(&fil, (void *)&g_device_NO, sizeof(g_device_NO), &br))
+		{
+			if (FR_OK == f_close(&fil))
+			{
+				
+			}
+			else
+			{
+				return 3;
+			}
+		}
+		else
+		{
+			return 2;
+		}
+	}
+	else
+	{
+		return 1;
+	}
 	
 	return 0;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 测试文件系统                                                                      */
+/* 正常返回0                                                                          */
+/*-----------------------------------------------------------------------*/
+SWORD test_file_system()
+{
+	FIL fil1, fil2, fil3;
+	TCHAR *tchar = "TEST";
+	UINT br;
+	UINT wr;
+	DWORD test_write_to_TFCard = 0x0A1B2C3D;
+	DWORD test_read_from_TFCard = 0x00000000;
+
+	if (FR_OK == f_open(&fil1, tchar, FA_CREATE_ALWAYS))
+	{
+		if (FR_OK == f_close(&fil1))
+		{
+			
+		}
+		else
+		{
+			return 2;
+		}
+	}
+	else
+	{
+		return 1;
+	}
+	
+	if (FR_OK == f_open(&fil2, tchar, FA_WRITE))
+	{
+		if (FR_OK == f_write(&fil2, (const void *)&test_write_to_TFCard, sizeof(test_write_to_TFCard), &wr))
+		{
+			if (FR_OK == f_close(&fil2))
+			{
+				
+			}
+			else
+			{
+				return 5;
+			}
+		}
+		else
+		{
+			return 4;
+		}
+	}
+	else
+	{
+		return 3;
+	}
+
+	if (FR_OK == f_open(&fil3, tchar, FA_READ))
+	{
+		if (FR_OK == f_read(&fil3, (void *)&test_read_from_TFCard, sizeof(test_read_from_TFCard), &br))
+		{
+			if (FR_OK == f_close(&fil3))
+			{
+				
+			}
+			else
+			{
+				return 8;
+			}
+		}
+		else
+		{
+			return 7;
+		}
+	}
+	else
+	{
+		return 6;
+	}
+	
+	if (test_write_to_TFCard == test_read_from_TFCard)
+	{
+		return 0;
+	}
+	else
+	{
+		return 7;
+	}
 }

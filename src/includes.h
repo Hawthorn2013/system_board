@@ -40,11 +40,11 @@ typedef unsigned short word;
 #endif
 
 #include "MPC5604B_M27V.h"
+#include "ff.h"	/* 定义了FATFS，后面要用 */
 #include "init.h"
 #include "control.h"
 #include "supersonic.h"
 #include "sdcard.h"
-#include "ff.h"
 #include "time.h"
 #include "lcd.h"
 #include "WiFi.h"

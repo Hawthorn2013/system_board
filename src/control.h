@@ -67,7 +67,7 @@ struct
 	WORD left_limit;
 	WORD right_limit;
 	SWORD direction;
-} data_steer_helm_basement = { STEER_HELM_CENTER, STEER_HELM_LEFT, STEER_HELM_RIGHT };
+} data_steer_helm_basement = { STEER_HELM_CENTER, STEER_HELM_LEFT, STEER_HELM_RIGHT, 1 };
 #else
 extern const struct
 {

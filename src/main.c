@@ -3,16 +3,17 @@
 
 int main(void)
 {
-	int flag=1;
+	int flag = 1;
+	
 	init_all_and_POST();
-	read_rad_xyz=1;
-//	reset_rev_data();
-	g_f_enable_mag_steer_control =1;
+	read_rad_xyz = 1;
+	//reset_rev_data();
+	g_f_enable_mag_steer_control = 0;
 	set_speed_target(10);
+	
 	/* Loop forever */
 	for (;;)
 	{
-
 #if 1
 		/* 执行远程命令 */
 		if (REMOTE_FRAME_STATE_OK == g_remote_frame_state)
@@ -22,6 +23,7 @@ int main(void)
 			execute_remote_cmd(remote_frame_data+5);
 		}
 #endif
+
 		/* 发送当前速度 */
 		if (g_remote_control_flags.send_seppd_now)
 		{

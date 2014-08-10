@@ -71,13 +71,16 @@ void PitISR(void)
 		}
 	}
 	
+
 	/* ¶ÁÍÓÂİÒÇÈıÖáÊı¾İ */
 	if(read_rad_xyz)
 	{
 		read_rev_data();	
-	//	LCD_PrintoutInt(0, 0, rad.x);
-	//	LCD_PrintoutInt(0, 2, rad.y);
-	//	LCD_PrintoutInt(0, 4, rad.z);
+		/*
+		LCD_PrintoutInt(64, 0, rad.x);
+		LCD_PrintoutInt(64, 2, rad.y);
+		LCD_PrintoutInt(64, 4, rad.z);
+		*/
 	}
 	
 	/* ÍÓÂİÒÇ½Ç¶È¿ØÖÆÆ¯ÒÆ*/
