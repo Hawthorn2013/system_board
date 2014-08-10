@@ -889,9 +889,9 @@ void set_pos_target(void)
 			pos_target.z = 945;
 			break;
 		case(4):
-			pos_target.x = 0;
-			pos_target.y = 0;
-			pos_target.z = 1000;
+			pos_target.x = 451;
+			pos_target.y = -963;
+			pos_target.z = 995;
 			break;	
 	}
 }
@@ -928,7 +928,6 @@ int control_steer_helm_2(void)
 	static int error_count=0,i=0;
 	int error=0,Kp=4,Kd=15,start_flag=1,steer_rate=0;
 	static int steer_pwm=0,rev_count=0,cnt=0;
-	rad.z+=rev.z;
 	error=pos_target.z-rad.z;
 	/* 0.5s后为第二阶段 */
 	if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000032&&cl_flag==1)
@@ -1004,8 +1003,8 @@ int control_steer_helm_3(int angle_1)
 	int error=0,Kp=6,Kd=3,start_flag=1,steer_rate=0,angle_base=0;
 	static int steer_pwm=0;
 	angle_base = angle_1*pos_target.z/90;
-	rad.z+=rev.z;
 	error=angle_base-rad.z;
+//	LCD_PrintoutInt(0, 6, pos_target.z);
 	if(abs(error)>=1)
 	{
 		steer_rate = (Kp*error+Kd*error_count);

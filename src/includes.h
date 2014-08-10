@@ -56,7 +56,7 @@ typedef unsigned short word;
 #include "action.h"
 
 ///****************LED****************///
-#if 1
+#if 0
 #define D0 SIU.GPDO[12].B.PDO
 #define D1 SIU.GPDO[13].B.PDO
 #define D2 SIU.GPDO[14].B.PDO

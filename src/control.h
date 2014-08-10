@@ -39,6 +39,8 @@ extern int g_f_enable_single_bridge_control;
 extern int g_f_enable_fly_bridge;
 extern int g_f_enable_steer_bridge;
 extern int read_rad_xyz;
+extern int find_mag_back_box;
+
 
 /* 方向舵机上层数据 */
 #ifdef __CONTROL_C_

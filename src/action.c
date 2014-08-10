@@ -1,5 +1,6 @@
 #define __ACTION_C_
 #include "includes.h"
+int flag_5_2=0;
 /*-----------------------------------------------------------------------*/
 /* 扎气球                                                                */
 /* 关循迹  car 3 & 4                                                     */                                                          
@@ -23,11 +24,9 @@ void puncture_ballon()
 void turn_left_1()
 {
 		g_f_enable_mag_steer_control = 0;
-		control_angle_steer_helm(90);
+		control_angle_steer_helm(45);
 		set_speed_target(20);
-		delay_ms(1000);
-		g_f_enable_rad_control_2=0;
-		g_f_enable_mag_steer_control = 1;
+		find_mag_back_box=1;
 }
 /*-----------------------------------------------------------------------*/
 /* 飞吊桥                                                                */
@@ -94,11 +93,13 @@ void push_box1()
 /*-----------------------------------------------------------------------*/
 void push_box2()
 {
+	g_f_enable_mag_steer_control=0;
+	set_steer_helm(data_steer_helm.center);
 	set_speed_target(-10);
-	delay_ms(1000);
-	set_speed_target(0);
-	g_f_enable_mag_steer_control=1;
-	set_speed_target(15);
+	delay_ms(1500);
+	set_speed_target(20);
+	control_angle_steer_helm(30);
+	find_mag_back_box=1;
 }
 /*-----------------------------------------------------------------------*/
 /* 躲箱子	                                                             */
@@ -111,8 +112,9 @@ void avoid_box()
 	control_angle_steer_helm(30);
 	delay_ms(2000);
 	g_f_enable_rad_control_2=0;
-	g_f_enable_mag_steer_control=1;
 	set_speed_target(15);
+	set_steer_helm(data_steer_helm.right_limit*0.85);
+	find_mag_back_box=1;
 }
 /*-----------------------------------------------------------------------*/
 /* 飞桥	                                                             */
@@ -163,8 +165,7 @@ void RFID_control_car_2_action(DWORD site)
 {
 
 	if (RFID_CARD_ID_3_1 == site)
-	{
-		D1=~D1;
+	{;
 		//[implement][CAR_2]开始加速飞跃
 		fly_bridge();
 	}
@@ -236,21 +237,23 @@ void RFID_control_car_3_action(DWORD site)
 	else if (RFID_CARD_ID_5_5 == site)
 	{
 		//[implement][CAR_3]开始单边走
-		set_speed_target(0);
-		delay_ms(1500);
-		set_speed_target(35);
+		g_f_enable_single_bridge_control=1;
+		control_speed_motor(40);
 	}
-	else if (RFID_CARD_ID_5_2 == site)
+	else if (RFID_CARD_ID_5_2 == site&&!flag_5_2)
 	{
 		//[implement][CAR_3]单边走结束
 		//[implement][CAR_3]等待<--[CAR_4]推箱子
+		flag_5_2=1;
+		g_f_enable_single_bridge_control=0;
+		g_f_enable_speed_control_2=0;
 		set_speed_target(0);
-
+		
 	}
 	else if (RFID_CARD_ID_5_3 == site)
 	{
 		//[implement][CAR_3]箱子起点
-		push_box1();
+	//	push_box1();
 	}
 	else if (RFID_CARD_ID_5_4 == site)
 	{
@@ -306,7 +309,7 @@ void RFID_control_car_4_action(DWORD site)
 	else if (RFID_CARD_ID_3_1 == site)
 	{
 		//[implement][CAR_4]开始加速飞跃
-		speed_up_bridge1();
+		fly_bridge();
 	}
 
 	else if (RFID_CARD_ID_5_1 == site)
