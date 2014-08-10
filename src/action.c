@@ -164,7 +164,6 @@ void RFID_control_car_2_action(DWORD site)
 
 	if (RFID_CARD_ID_3_1 == site)
 	{
-		D1=~D1;
 		//[implement][CAR_2]开始加速飞跃
 		fly_bridge();
 	}

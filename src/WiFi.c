@@ -41,6 +41,7 @@ void execute_remote_cmd(const BYTE *data)
 		case WIFI_CMD_WRITE_STEER_HELM_DATA_TO_TF :
 		if (!update_steer_helm_basement_to_steer_helm())
 		{
+			D0 = ~D0;
 			write_steer_helm_data_to_TF();
 		}
 		else

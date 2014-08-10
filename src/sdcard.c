@@ -322,7 +322,7 @@ int write_steer_helm_data_to_TF()
 	TCHAR *tchar = "STEHEL";
 	UINT wr;
 	int sucess_f = 1;
-
+	D1 = ~D1;
 	if (FR_OK != f_open(&fil1, tchar, FA_CREATE_ALWAYS))
 	{
 		sucess_f = 0;
