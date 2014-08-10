@@ -88,7 +88,8 @@ void PitISR(void)
 	{
 		if (!control_steer_helm_2())
 		{
-			g_f_enable_rad_control_1 =0;  
+			g_f_enable_rad_control_1 =0; 
+			g_f_enable_mag_steer_control=1; 
 			set_steer_helm((WORD)(data_steer_helm.center));	
 			set_speed_target(5);
 		}

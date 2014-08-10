@@ -986,7 +986,7 @@ int control_steer_helm_2(void)
 	}
 	if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000190)
 	{
-		start_flag=1;
+		start_flag=0;
 	}
 	return start_flag;
 	if (g_remote_control_flags.send_gyro_data)
