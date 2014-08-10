@@ -47,13 +47,7 @@ static BYTE DSPI_read_write_byte(BYTE byte_write)
 	tmp_tx |= 0x98010000;
 	tmp_tx |= (DWORD)byte_write;
 	DSPI_1.PUSHR.R = tmp_tx;
-	while(!DSPI_1.SR.B.TCF)
-	{
-		if (i++ >= 1000)
-		{
-			break;
-		}
-	}
+	while(!DSPI_1.SR.B.TCF) { }
 	tmp_rx = (WORD)DSPI_1.POPR.B.RXDATA;
 	DSPI_1.SR.B.TCF = 1;
 	

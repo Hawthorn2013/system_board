@@ -260,9 +260,9 @@ void init_all_and_POST(void)
 	initLCD();
 	//LCD_DISPLAY();
 	LCD_Fill(0xFF);	/* ÁÁÆÁ */
-	delay_ms(500);
+	delay_ms(50);
 	LCD_Fill(0x00);	/* ºÚÆÁ */
-	delay_ms(500);
+	delay_ms(50);
 	
 	/* ³õÊ¼»¯TF¿¨ */
 	LCD_P8x16Str(0,0, (BYTE*)"TF..");
