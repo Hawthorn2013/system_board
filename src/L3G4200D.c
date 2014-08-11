@@ -876,7 +876,7 @@ void set_pos_target(void)
 		case(1):
 			pos_target.x = 455;
 			pos_target.y = -904;
-			pos_target.z = 1072;
+			pos_target.z = 1100;
 			break;
 		case(2):
 			pos_target.x = 468;
@@ -984,9 +984,13 @@ int control_steer_helm_2(void)
 	{
 		rev_count=0;
 	}
-	if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000190)
+	if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000100)
 	{
 		start_flag=0;
+		error_count=0;
+		i=0;
+		rev_count=0;
+		cnt=0;
 	}
 	return start_flag;
 	if (g_remote_control_flags.send_gyro_data)

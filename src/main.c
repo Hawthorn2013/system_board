@@ -8,8 +8,8 @@ int main(void)
 	init_all_and_POST();
 	read_rad_xyz = 1;
 	//reset_rev_data();
-	g_f_enable_mag_steer_control = 0;
-	set_speed_target(20);
+	g_f_enable_mag_steer_control = 1;
+	set_speed_target(10);
 	
 	/* Loop forever */
 	for (;;)
