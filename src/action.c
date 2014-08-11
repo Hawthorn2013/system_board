@@ -10,9 +10,10 @@ void puncture_ballon()
 	g_f_enable_mag_steer_control = 0;
 	set_steer_helm(data_steer_helm.left_limit);
 	set_speed_target(20);
-	delay_ms(700);
+	delay_ms(650);
 	set_steer_helm(data_steer_helm.right_limit);
-	delay_ms(900);
+	set_speed_target(15);
+	delay_ms(1500);
 	set_steer_helm(data_steer_helm.center);
 	set_speed_target(10);
 	g_f_enable_mag_steer_control = 1;
@@ -29,18 +30,15 @@ void turn_left_1()
 		find_mag_back_box=1;
 }
 /*-----------------------------------------------------------------------*/
-/* 飞吊桥                                                                */
-/* 不关循迹  car 2 & 3 & 4                                               */                                                          
+/* 飞加速过吊桥（平）                                                                */
+/* 不关循迹  car 3                                               */                                                          
 /*-----------------------------------------------------------------------*/
 void speed_up_bridge1()
 {
     //g_f_enable_mag_steer_control = 0;
-    set_speed_target(260);
-	delay_ms(1500);
-	set_speed_target(0);
+    control_speed_motor(30);
 //	g_f_enable_mag_steer_control = 1;
-	delay_ms(500);
-	set_speed_target(20);	
+
 }
 /*-----------------------------------------------------------------------*/
 /* 脱离电磁线、找新线                                                    */
@@ -118,7 +116,7 @@ void avoid_box()
 }
 /*-----------------------------------------------------------------------*/
 /* 飞桥	                                                             */
-/* car 2,3,4                                                                 */                                                          
+/* car 2,,4                                                                 */                                                          
 /*-----------------------------------------------------------------------*/
 void fly_bridge()
 {
@@ -134,10 +132,18 @@ void fly_bridge()
 /*-----------------------------------------------------------------------*/
 void RFID_control_car_1_action(DWORD site)
 {
+	if (RFID_CARD_ID_2_4 == site)
+	{
+		//[implement][CAR_1]执行漂移
+		g_f_enable_mag_steer_control=0;
+		g_f_drifting=0;
+		drift_left();
+	}	
 	if (RFID_CARD_ID_2_3 == site)
 	{
 		//[implement][CAR_1]执行漂移
 		g_f_enable_mag_steer_control=0;
+		g_f_drifting=1;
 		drift_left();
 	}
 	else if (RFID_CARD_ID_4_1 == site)
@@ -207,6 +213,7 @@ void RFID_control_car_2_action(DWORD site)
 /*-----------------------------------------------------------------------*/
 void RFID_control_car_3_action(DWORD site)
 {
+	int i;
 	if (RFID_CARD_ID_1_2 == site)//扎气球
 	{
 		puncture_ballon();
@@ -224,8 +231,19 @@ void RFID_control_car_3_action(DWORD site)
 
 	else if (RFID_CARD_ID_3_1 == site)
 	{
-		//[implement][CAR_3]开始加速飞跃
+		//[implement][CAR_3]开始加速过吊桥（平）通知【1】车启动
 		speed_up_bridge1();
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_3_1);
+	}
+	else if (RFID_CARD_ID_3_2 == site)
+	{
+		//发指令拉吊桥
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_3_2);
+		set_speed_target(20);
+		g_f_enable_speed_control_2=0;
+		
 	}
 	else if (RFID_CARD_ID_5_1 == site)
 	{
@@ -296,14 +314,14 @@ void RFID_control_car_4_action(DWORD site)
 		turn_left_1();
 		
 	}
-	else if (RFID_CARD_ID_2_2 == site)
+/*	else if (RFID_CARD_ID_2_2 == site)
 	{
 
 		//[implement][CAR_4]通知吊桥升起
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_2_2);
 
-	}
+	}//改由3号通知拉起*/
 	else if (RFID_CARD_ID_3_1 == site)
 	{
 		//[implement][CAR_4]开始加速飞跃
@@ -337,7 +355,7 @@ void RFID_control_car_4_action(DWORD site)
 	}
 	else if (RFID_CARD_ID_6_4 == site)
 	{
-		
+		D0=~D0;
 		//[implement][CAR_4]-->[Car_3]推箱子
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_CAR_3,WIFI_CMD_NET_6_4);
@@ -370,6 +388,12 @@ void WiFi_control_car_1_action(WORD cmd)
 	if (WIFI_CMD_NET_0_1 == cmd)
 	{
 		//[implement][CAR_1]启动、准备漂移
+		g_f_enable_mag_steer_control=1;
+		set_speed_target(20);
+	}
+	else if (WIFI_CMD_NET_3_1 == cmd)
+	{
+		//[implement][CAR_1]启动
 		g_f_enable_mag_steer_control=1;
 		set_speed_target(20);
 	}

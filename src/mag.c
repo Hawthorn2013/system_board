@@ -102,8 +102,7 @@ void mag_TX(void)
 void control_steer_helm(void)
 {	
 	int error = 0,error_count = 0;
-//	int kp=3,kd=1;
-int kp = 5,kd = 0;
+	int kp=2,kd=1;
 	int pos=0;
        static	int steer_rate = 0;
 	static int last_error=0;

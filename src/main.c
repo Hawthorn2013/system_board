@@ -9,7 +9,7 @@ int main(void)
 	read_rad_xyz = 1;
 	//reset_rev_data();
 	g_f_enable_mag_steer_control = 1;
-	set_speed_target(15);
+	set_speed_target(10);
 	
 	/* Loop forever */
 	for (;;)
