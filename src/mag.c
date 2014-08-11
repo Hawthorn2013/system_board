@@ -102,21 +102,12 @@ void mag_TX(void)
 void control_steer_helm(void)
 {	
 	int error = 0,error_count = 0;
-	int kp=1,kd=1;
+	int kp=2,kd=1;
 	int pos=0;
        static	int steer_rate = 0;
 	static int last_error=0;
 	static int steer_pwm =0;	/* 由全局变量改为局部静态变量 */
 	
-	/* 过单边桥 */
-	if(g_f_enable_single_bridge_control)
-	{
-		steer_pwm=steer_rate+rad.x;
-		if(rad.x>=230&&steer_pwm<-50)
-		{
-			steer_pwm = -50;
-		}
-	}
 	/* 过飞桥 */
 	if(g_f_enable_fly_bridge)
 	{
@@ -129,16 +120,26 @@ void control_steer_helm(void)
 		kp=1;
 		kd=2;
 	}
-	
+	/* 过单边桥 */
+	if(g_f_enable_single_bridge_control)
+	{
+		if(rev.y>0)
+		{
+			kp = 1;
+			kd = 2;
+		}
+	}
 	pos = mag_left - mag_right;
 	error = -pos;
 	if(abs(error)>20)
 	{
 	error_count = (error-last_error);
 	steer_rate = (kp*(error)+kd*error_count);
-//	LCD_PrintoutInt(0, 0,(steer_rate));
-//	LCD_PrintoutInt(0, 2,(mag_right));
-//	LCD_PrintoutInt(0, 4,(mag_left));
+	/*
+	LCD_PrintoutInt(0, 0,(steer_rate));
+	LCD_PrintoutInt(0, 2,(mag_right));
+	LCD_PrintoutInt(0, 4,(mag_left));
+	*/
 	last_error = error;
 	if(mag_left<=30)steer_rate=data_steer_helm.right_limit;
 	if(mag_right<=30)steer_rate=data_steer_helm.left_limit;
@@ -147,6 +148,21 @@ void control_steer_helm(void)
 	else
 	{
 		steer_pwm = 0;
+	}
+	
+	/* 过单边桥 */
+	if(g_f_enable_single_bridge_control)
+	{
+		steer_pwm=steer_rate+rad.x;
+		if(rad.x>=230&&steer_pwm<-50)
+		{
+			steer_pwm = -50;
+		}
+		if(rev.y>5)
+		{
+			if(steer_pwm>100)steer_pwm = 100;
+			else if(steer_pwm<-100)steer_pwm = -100;
+		}
 	}
 		/* 过飞桥 */
 	if(g_f_enable_fly_bridge)
