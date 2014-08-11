@@ -92,7 +92,7 @@ void LCD_WrDat(BYTE data)//DC=1Êý¾Ý£¨XS128£©
 	uint32_t tmp_tx = 0x00000000;
 	uint16_t tmp_rx;
 	LCD_DC=1;
-	tmp_tx |= 0x98020000;
+	tmp_tx |= 0xB8020000;
 	tmp_tx |= (uint32_t)data;
 	DSPI_1.PUSHR.R = tmp_tx;
 	while(!DSPI_1.SR.B.TCF){}
@@ -124,7 +124,7 @@ void LCD_WrCmd(BYTE cmd)  //Êä³öcmd DC=0ÃüÁî
 	uint32_t tmp_tx = 0x00000000;
 	uint16_t tmp_rx;
 	LCD_DC=0;
-	tmp_tx |= 0x98020000;
+	tmp_tx |= 0xB8020000;
 	tmp_tx |= (uint32_t)cmd;
 	DSPI_1.PUSHR.R = tmp_tx;
 	while(!DSPI_1.SR.B.TCF){}
