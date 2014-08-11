@@ -40,6 +40,7 @@ extern int g_f_enable_fly_bridge;
 extern int g_f_enable_steer_bridge;
 extern int read_rad_xyz;
 extern int find_mag_back_box;
+extern int find_mag_back_box_2;
 extern int g_f_drifting;
 
 

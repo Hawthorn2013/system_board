@@ -13,7 +13,7 @@ void puncture_ballon()
 	delay_ms(650);
 	set_steer_helm(data_steer_helm.right_limit);
 	set_speed_target(15);
-	delay_ms(1500);
+	delay_ms(1400);
 	set_steer_helm(data_steer_helm.center);
 	set_speed_target(10);
 	g_f_enable_mag_steer_control = 1;
@@ -25,7 +25,7 @@ void puncture_ballon()
 void turn_left_1()
 {
 		g_f_enable_mag_steer_control = 0;
-		control_angle_steer_helm(45);
+		control_angle_steer_helm(50);
 		set_speed_target(20);
 		find_mag_back_box=1;
 }
@@ -298,7 +298,7 @@ void RFID_control_car_4_action(DWORD site)
 	{
 		puncture_ballon();
 	}
-	else if (RFID_CARD_ID_1_4 == site)
+	else if (RFID_CARD_ID_1_3 == site)
 	{
 		puncture_ballon();
 	}
@@ -355,10 +355,13 @@ void RFID_control_car_4_action(DWORD site)
 	}
 	else if (RFID_CARD_ID_6_4 == site)
 	{
-		D0=~D0;
+
 		//[implement][CAR_4]-->[Car_3]мфоДвс
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_CAR_3,WIFI_CMD_NET_6_4);
+		g_f_enable_mag_steer_control=0;
+		find_mag_back_box_2=1;
+		control_angle_steer_helm(-150);
 	}
 	else if (RFID_CARD_ID_6_5 == site)
 	{

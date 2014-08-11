@@ -18,7 +18,7 @@ int read_rad_xyz = 0;/* 启用读陀螺仪xyz三轴数据 */
 int find_mag_back_box = 0; 	/*找回磁线  推箱子*/
 int g_f_drifting = 3;  /*三次漂移标志位*/
 int update_steer_helm_basement_to_steer_helm(void);
-
+int find_mag_back_box_2=0;
 
 /*-----------------------------------------------------------------------*/
 /* 舵机初始化 	                                                                      */
@@ -110,6 +110,12 @@ void PitISR(void)
 		{
 			g_f_enable_rad_control_2 =0;  
 			set_steer_helm((WORD)(data_steer_helm.center));	
+			if(find_mag_back_box_2==1)
+			{
+				find_mag_back_box=0;
+				find_mag_back_box_2=1;
+				g_f_enable_mag_steer_control=1;
+			}
 		}
 	}
 	
