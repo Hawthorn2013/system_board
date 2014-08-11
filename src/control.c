@@ -15,6 +15,7 @@ int g_f_enable_fly_bridge = 0;		/* 飞桥标志位 */
 int g_f_enable_steer_bridge = 0;		/* 钢丝桥标志位 */
 int speed =0;
 int read_rad_xyz = 0;/* 启用读陀螺仪xyz三轴数据 */
+int find_mag_back_box = 0; 	/*找回磁线  推箱子*/
 int update_steer_helm_basement_to_steer_helm(void);
 
 
@@ -57,6 +58,19 @@ void PitISR(void)
 		mag_read();
 		control_steer_helm();
 	}
+	
+	/*找回磁线  推箱子*/
+	if(find_mag_back_box )
+	{
+		mag_read();
+		if(mag_left>500 && mag_right<100) 
+		{
+			g_f_enable_mag_steer_control=1;
+			find_mag_back_box=0;
+			g_f_enable_rad_control_2=0;
+		}
+	}
+	
 
 	/* 读陀螺仪三轴数据 */
 	if(read_rad_xyz)
@@ -74,7 +88,8 @@ void PitISR(void)
 	{
 		if (!control_steer_helm_2())
 		{
-			g_f_enable_rad_control_1 =0;  
+			g_f_enable_rad_control_1 =0; 
+			g_f_enable_mag_steer_control=1; 
 			set_steer_helm((WORD)(data_steer_helm.center));	
 			set_speed_target(5);
 		}
@@ -87,9 +102,9 @@ void PitISR(void)
 		{
 			g_f_enable_rad_control_2 =0;  
 			set_steer_helm((WORD)(data_steer_helm.center));	
-			set_speed_target(5);
 		}
 	}
+	
 	
 	/* 陀螺仪控制上下坡 */
 	if(g_f_enable_speed_control_2)
