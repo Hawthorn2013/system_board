@@ -140,14 +140,14 @@ void RFID_control_car_1_action(DWORD site)
 		//[implement][CAR_1]Ö´ÐÐÆ¯ÒÆ
 		g_f_enable_mag_steer_control=0;
 		g_f_drifting=0;
-		drift_left();
+		drift_left(1);
 	}	
 	else if (RFID_CARD_ID_2_3 == site)
 	{
 		//[implement][CAR_1]Ö´ÐÐÆ¯ÒÆ
 		g_f_enable_mag_steer_control=0;
 		g_f_drifting=1;
-		drift_left();
+		drift_left(2);
 	}
 	else if (RFID_CARD_ID_4_1 == site)
 	{
@@ -178,7 +178,7 @@ void RFID_control_car_1_action(DWORD site)
 	{
 		//[implement][CAR_1]Ö´ÐÐÆ¯ÒÆ
 		g_f_enable_mag_steer_control=0;
-		drift_left();
+		drift_left(3);
 	}
 }
 

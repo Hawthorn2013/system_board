@@ -9,7 +9,7 @@ extern void drift_right3();
 extern void drift_right4();
 extern void drift_right5();
 extern void drift_right6();
-extern void drift_left();
+extern void drift_left(int d);
 
 
 extern void drift_test();
