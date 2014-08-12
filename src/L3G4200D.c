@@ -876,7 +876,7 @@ void set_pos_target(void)
 		case(1):
 			pos_target.x = 455;
 			pos_target.y = -904;
-			pos_target.z = 1072;
+			pos_target.z = 1100;
 			break;
 		case(2):
 			pos_target.x = 468;
@@ -904,6 +904,7 @@ void reset_rev_data(void)
 	rad.y=0;	
 	rad.z=0;	
 }
+
 void read_rev_data(void)
 {
 	u8_t status;
@@ -984,9 +985,13 @@ int control_steer_helm_2(void)
 	{
 		rev_count=0;
 	}
-	if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000190)
+	if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000100)
 	{
 		start_flag=0;
+		error_count=0;
+		i=0;
+		rev_count=0;
+		cnt=0;
 	}
 	return start_flag;
 	if (g_remote_control_flags.send_gyro_data)
@@ -1045,17 +1050,17 @@ int check_stable(void)
 void control_speed_target_1(int speed)
 {
 	static int speed_1=0,speed_2=0;
-	static fly_flag = 0;
+	static fly_flag = 0,single_bridge_flag = 0;
 	static int cnt = 0,rad_cnt_z = 0;
 	/* ¸ÖË¿ÇÅ */
 	if(g_f_enable_steer_bridge)
 	{
-		if(rad.y<-80&&fly_flag == 0)
+		if(rad.y<-80)
 		{
 			speed_1 = 10;
 			fly_flag = 2;
 		}
-		else if(rad.y>-10&&fly_flag ==2)
+		else if(rad.y>-10)
 		{
 			speed_1=0;
 		}
@@ -1063,21 +1068,42 @@ void control_speed_target_1(int speed)
 	/* µ¥±ßÇÅ */
 	if(g_f_enable_single_bridge_control)
 	{
-		if(rad.y>200)
+		if(single_bridge_flag == 0)
 		{
-			speed_1 = -15;
+			speed_1 =10 -speed;
+			cnt++;
+			rad_cnt_z+=rev.z;
+			if(cnt==4&&rad_cnt_z<=5)
+			{
+				single_bridge_flag = 1;
+			}
+			else if(cnt==5)
+			{
+				rad_cnt_z = 0;
+				cnt = 0;
+			}	
 		}
-		else if(rad.y>100)
-		{
-			speed_1 = -25;
-		}
-		else 
+		if(single_bridge_flag ==1)
 		{
 			speed_1 = 0;
+			single_bridge_flag = 2;
+		}
+		if(rad.y>100&&single_bridge_flag==2)
+		{
+			D0 = ~D0;
+			rad_cnt_z = 0;
+			cnt = 0;
+			speed_1 = -15;
+			single_bridge_flag=3;
+		}
+		if(rad.y>200&&single_bridge_flag==3)
+		{
+			speed_1 = -25;
+			single_bridge_flag=4;
 		}
 		if(abs(rad.z)>50)
 		{
-			speed_2 = -5;
+			speed_2 = -10;
 		}
 		else
 		{
@@ -1104,6 +1130,8 @@ void control_speed_target_1(int speed)
 		}
 		if(fly_flag==1)
 		{
+			rad_cnt_z = 0;
+			cnt = 0;
 			speed_1 = 0;
 			fly_flag = 2;
 		}
@@ -1124,6 +1152,7 @@ void control_speed_target_1(int speed)
 			fly_flag=5;
 		}
 	}
+//	LCD_PrintoutInt(0, 0, (SWORD)(speed+speed_1+speed_2));
 	set_speed_target((SWORD)(speed+speed_1+speed_2));
 	if(fly_flag ==5) 
 	{

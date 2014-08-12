@@ -75,6 +75,7 @@ void drift_right6(void)//砖地面180度 背景布100度
 
 void drift_left(void)//使用陀螺仪
 {
+	reset_rev_data();
 	set_speed_target(40);
 	delay_ms(500);
 	g_f_enable_rad_control_1 = 1;
