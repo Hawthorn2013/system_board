@@ -85,9 +85,9 @@ void PitISR(void)
 	}
 	
 	/* ÍÓÂİÒÇ½Ç¶È¿ØÖÆÆ¯ÒÆ*/
-	if (g_f_enable_rad_control_1)
+	if (g_f_enable_rad_control_1 != 0)
 	{
-		if (!control_steer_helm_2())
+		if (!control_steer_helm_2(g_f_enable_rad_control_1))
 		{
 			g_f_enable_rad_control_1 =0; 
 			g_f_enable_mag_steer_control=1; 

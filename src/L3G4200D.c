@@ -924,7 +924,7 @@ void read_rev_data(void)
 }
 
 /* 由陀螺仪控制漂移 */
-int control_steer_helm_2(void)
+int control_steer_helm_2(int d_flag)
 {
 	static int error_count=0,i=0;
 	int error=0,Kp=4,Kd=15,start_flag=1,steer_rate=0;
@@ -933,9 +933,24 @@ int control_steer_helm_2(void)
 	/* 0.5s后为第二阶段 */
 	if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000032&&cl_flag==1)
 	{
-		set_speed_target(140);
-		set_steer_helm((WORD)(data_steer_helm.left_limit));
-		cl_flag=2;						
+		if(d_flag==1)
+		{
+			set_speed_target(140);
+			set_steer_helm((WORD)(data_steer_helm.left_limit));
+			cl_flag=2;	
+		}
+		if(d_flag==2)
+		{
+			set_speed_target(140);
+			set_steer_helm((WORD)(data_steer_helm.left_limit));
+			cl_flag=2;	
+		}
+		if(d_flag == 3)
+		{
+			set_speed_target(160);
+			set_steer_helm((WORD)(data_steer_helm.left_limit));
+			cl_flag=2;	
+		}
 	}
 	/* 判断开始漂移（z轴转过9）为第三阶段 */
 	else if(rad.z>=(pos_target.z/10)&&cl_flag==2)
