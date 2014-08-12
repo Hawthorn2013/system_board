@@ -10,7 +10,6 @@ int main(void)
 	//reset_rev_data();
 	g_f_enable_mag_steer_control = 0;
 	set_speed_target(20);
-	
 	/* Loop forever */
 	for (;;)
 	{
