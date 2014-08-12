@@ -629,7 +629,13 @@ void LCD_PrintoutInt(BYTE x, BYTE y, SWORD data)
      //********≤ªƒ‹œ‘ æ0*******
      if (0 == a)	/* ¡„ */
      {
-     	m[i++]=(BYTE)'0';
+     	//m[i++]=(BYTE)'0';
+     	m[i++] = ' ';
+     	m[i++] = ' ';
+     	m[i++] = ' ';
+     	m[i++] = ' ';
+     	m[i++] = ' ';
+     	m[i++] = '0';
      }
      else
      {
