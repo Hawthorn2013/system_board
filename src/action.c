@@ -139,14 +139,12 @@ void RFID_control_car_1_action(DWORD site)
 	{
 		//[implement][CAR_1]执行漂移
 		g_f_enable_mag_steer_control=0;
-		g_f_drifting=0;
 		drift_left(1);
 	}	
 	else if (RFID_CARD_ID_2_3 == site)
 	{
 		//[implement][CAR_1]执行漂移
 		g_f_enable_mag_steer_control=0;
-		g_f_drifting=1;
 		drift_left(2);
 	}
 	else if (RFID_CARD_ID_4_1 == site)
@@ -196,9 +194,18 @@ void RFID_control_car_2_action(DWORD site)
 		//[implement][CAR_2]开始加速飞跃
 		fly_bridge();
 	}
+	else if (RFID_CARD_ID_3_3 == site)
+	{
+		//过大U
+		
+		reset_rev_data();
+		g_f_big_U=1;
+		
+	}
 	else if (RFID_CARD_ID_5_1 == site)
 	{
 		//[implement][CAR_2]脱离电磁线，找新线
+		g_f_big_U=0;
 		turn_left_2();
 	}
 	else if (RFID_CARD_ID_6_1 == site)
@@ -254,6 +261,17 @@ void RFID_control_car_3_action(DWORD site)
 
 	else if (RFID_CARD_ID_3_1 == site)
 	{
+		g_f_enable_mag_steer_control = 0;
+		set_speed_target(0);
+		delay_ms(500);		
+		set_steer_helm((WORD)(data_steer_helm.right_limit));
+		delay_ms(500);
+		set_steer_helm((WORD)(data_steer_helm.left_limit));
+		delay_ms(1000);
+		set_steer_helm((WORD)(data_steer_helm.center));
+		delay_ms(500);
+		g_f_enable_mag_steer_control = 1;
+		delay_ms(500);		
 		//[implement][CAR_3]开始加速过吊桥（平）通知【1】车启动
 		speed_up_bridge1();
 		for(i=0;i<5;i++)
@@ -263,9 +281,18 @@ void RFID_control_car_3_action(DWORD site)
 	{
 		//发指令拉吊桥
 		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_3_2);
+		send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_3_2);
+		reset_rev_data();
 		set_speed_target(20);
 		g_f_enable_speed_control_2=0;
+		
+	}
+		else if (RFID_CARD_ID_3_3 == site)
+	{
+		//过大U
+		
+		reset_rev_data();
+		g_f_big_U=1;
 		
 	}
 	else if (RFID_CARD_ID_5_1 == site)
@@ -276,6 +303,7 @@ void RFID_control_car_3_action(DWORD site)
 	else if (RFID_CARD_ID_5_5 == site)
 	{
 		//[implement][CAR_3]开始单边走
+		g_f_big_U=0;
 		g_f_enable_single_bridge_control=1;
 		control_speed_motor(40);
 	}
@@ -350,10 +378,18 @@ void RFID_control_car_4_action(DWORD site)
 		//[implement][CAR_4]开始加速飞跃
 		fly_bridge();
 	}
-
+	else if (RFID_CARD_ID_3_3 == site)
+	{
+		//过大U
+		
+		reset_rev_data();
+		g_f_big_U=1;
+		
+	}
 	else if (RFID_CARD_ID_5_1 == site)
 	{
 		//[implement][CAR_4]脱离电磁线，找新线
+		g_f_big_U=0;
 		turn_left_2();
 	}
 
@@ -383,6 +419,7 @@ void RFID_control_car_4_action(DWORD site)
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_CAR_3,WIFI_CMD_NET_6_4);
 		g_f_enable_mag_steer_control=0;
+		delay_ms(1000);
 		find_mag_back_box_2=1;
 		control_angle_steer_helm(-150);
 	}

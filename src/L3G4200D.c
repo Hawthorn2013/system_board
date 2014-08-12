@@ -1004,7 +1004,7 @@ int control_steer_helm_2(int d_flag)
 	{
 		rev_count=0;
 	}
-	if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x00000100)
+	if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x000000C8)
 	{
 		start_flag=0;
 		error_count=0;
