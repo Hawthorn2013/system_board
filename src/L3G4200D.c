@@ -919,6 +919,10 @@ void read_rev_data(void)
 			rad.x+=rev.x;
 			rad.y+=rev.y;	
 			rad.z+=rev.z;
+	//		LCD_PrintoutInt(32, 0, rev.x);
+	//		LCD_PrintoutInt(32, 2, rev.y);
+	//		LCD_PrintoutInt(32, 4, rev.z);
+
 		}
 	}
 }

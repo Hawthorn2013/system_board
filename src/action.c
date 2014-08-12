@@ -1,6 +1,7 @@
 #define __ACTION_C_
 #include "includes.h"
 int flag_5_2=0;
+int flag_c_2_2=0;
 /*-----------------------------------------------------------------------*/
 /* 扎气球                                                                */
 /* 关循迹  car 3 & 4                                                     */                                                          
@@ -25,7 +26,7 @@ void puncture_ballon()
 void turn_left_1()
 {
 		g_f_enable_mag_steer_control = 0;
-		control_angle_steer_helm(50);
+		control_angle_steer_helm(45);
 		set_speed_target(20);
 		find_mag_back_box=1;
 }
@@ -314,14 +315,14 @@ void RFID_control_car_4_action(DWORD site)
 		turn_left_1();
 		
 	}
-/*	else if (RFID_CARD_ID_2_2 == site)
+	else if (RFID_CARD_ID_2_2 == site)
 	{
+		if(flag_c_2_2) return;
+		//[implement][CAR_4]停下等待吊桥升起
+		set_speed_target(0);
+		flag_c_2_2                                  = 1;
 
-		//[implement][CAR_4]通知吊桥升起
-		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_2_2);
-
-	}//改由3号通知拉起*/
+	}
 	else if (RFID_CARD_ID_3_1 == site)
 	{
 		//[implement][CAR_4]开始加速飞跃
@@ -416,7 +417,7 @@ void WiFi_control_car_1_action(WORD cmd)
 /*-----------------------------------------------------------------------*/
 void WiFi_control_car_2_action(WORD cmd)
 {
-	if (WIFI_CMD_NET_0_2 == cmd)
+	if (WIFI_CMD_NET_BRIDGE == cmd)
 	{
 		//[implement][CAR_2]启动
 		g_f_enable_mag_steer_control=1;
@@ -460,6 +461,12 @@ void WiFi_control_car_4_action(WORD cmd)
 		//[implement][CAR_4]出发
 		g_f_enable_mag_steer_control=1;
 		set_speed_target(20);
+	}
+	else if(WIFI_CMD_NET_BRIDGE == cmd)
+	{
+		//开始准备飞桥
+		g_f_enable_mag_steer_control=1;
+		set_speed_target(15);
 	}
 }
 
