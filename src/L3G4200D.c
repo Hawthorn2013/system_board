@@ -876,7 +876,7 @@ void set_pos_target(void)
 		case(1):
 			pos_target.x = 455;
 			pos_target.y = -904;
-			pos_target.z = 1100;
+			pos_target.z = 1200;
 			break;
 		case(2):
 			pos_target.x = 468;

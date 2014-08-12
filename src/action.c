@@ -2,6 +2,8 @@
 #include "includes.h"
 int flag_5_2=0;
 int flag_c_2_2=0;
+int flag_c_4_1=0;
+int flag_c_4_2=0;
 /*-----------------------------------------------------------------------*/
 /* ÔúÆøÇò                                                                */
 /* ¹ØÑ­¼£  car 3 & 4                                                     */                                                          
@@ -140,7 +142,7 @@ void RFID_control_car_1_action(DWORD site)
 		g_f_drifting=0;
 		drift_left();
 	}	
-	if (RFID_CARD_ID_2_3 == site)
+	else if (RFID_CARD_ID_2_3 == site)
 	{
 		//[implement][CAR_1]Ö´ÐÐÆ¯ÒÆ
 		g_f_enable_mag_steer_control=0;
@@ -150,9 +152,29 @@ void RFID_control_car_1_action(DWORD site)
 	else if (RFID_CARD_ID_4_1 == site)
 	{
 		//[implement][CAR_1]Í£³µ
-		set_speed_target(0);
+		if(flag_c_4_1==0)
+		{
+			g_f_enable_mag_steer_control=0;
+			set_steer_helm(0);
+			set_speed_target(5);
+		}
+		if(flag_c_4_1==1)
+		{
+			set_speed_target(10);
+			control_angle_steer_helm(45);
+			find_mag_back_car1=1;
+		}
 	}
 	else if (RFID_CARD_ID_4_2 == site)
+	{
+		//[implement][CAR_1]Í£³µ
+		if(flag_c_4_2==0)
+		{
+			flag_c_4_1=1;
+			set_speed_target(0);
+		}
+	}
+	else if (RFID_CARD_ID_4_3 == site)
 	{
 		//[implement][CAR_1]Ö´ÐÐÆ¯ÒÆ
 		g_f_enable_mag_steer_control=0;
@@ -199,7 +221,7 @@ void RFID_control_car_2_action(DWORD site)
 		//[implement][CAR_2]¼õËÙÏÂ¸ÖË¿ÇÅ£¬×¼±¸¶ãÏä×Ó
 		avoid_box();
 	}
-	else if (RFID_CARD_ID_7_4 == site)
+	else if (RFID_CARD_ID_7_1== site)
 	{
 		//[implement][CAR_2]Í£³µ
 		set_speed_target(0);
@@ -372,7 +394,7 @@ void RFID_control_car_4_action(DWORD site)
 	{
 		//[implement][CAR_4]-->[CAR_1]Æ¯ÒÆ¶Â½Ø
 		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_CAR_3,WIFI_CMD_NET_7_1);
+			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_7_1);
 	}
 	else if (RFID_CARD_ID_7_2 == site)
 	{
@@ -404,8 +426,8 @@ void WiFi_control_car_1_action(WORD cmd)
 	else if (WIFI_CMD_NET_7_1 == cmd)
 	{
 		//[implement][CAR_1]<--[CAR_4]Æô¶¯¡¢×¼±¸Æ¯ÒÆ ¶Â
-		g_f_enable_mag_steer_control=1;
-		set_speed_target(20);
+		g_f_enable_mag_steer_control=0;
+		set_speed_target(-5);
 	}
 }
 

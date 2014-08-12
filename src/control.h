@@ -41,6 +41,7 @@ extern int g_f_enable_steer_bridge;
 extern int read_rad_xyz;
 extern int find_mag_back_box;
 extern int find_mag_back_box_2;
+extern int find_mag_back_car1;
 extern int g_f_drifting;
 
 
