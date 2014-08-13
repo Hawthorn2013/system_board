@@ -25,8 +25,13 @@ int main(void)
 		delay_ms(500);
 	}
 	D0=1;
-	if((WIFI_ADDRESS_CAR_4 == g_device_NO||WIFI_ADDRESS_CAR_3 == g_device_NO))
+	if(WIFI_ADDRESS_CAR_3 == g_device_NO)
 		set_speed_target(10);
+	if(WIFI_ADDRESS_CAR_4 == g_device_NO)
+	{
+		delay_ms(1000);
+		set_speed_target(10);
+	}
 	else 	set_speed_target(0);
 	/* Loop forever */
 	for (;;)
