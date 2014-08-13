@@ -43,6 +43,7 @@ extern int find_mag_back_box;
 extern int find_mag_back_box_2;
 extern int find_mag_back_car1;
 extern int g_f_big_U;
+extern int g_f_big_U_2;
 
 
 /* 方向舵机上层数据 */
