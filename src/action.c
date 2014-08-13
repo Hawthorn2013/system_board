@@ -244,6 +244,7 @@ void RFID_control_car_2_action(DWORD site)
 	else if (RFID_CARD_ID_6_3 == site)
 	{
 		//[implement][CAR_2]×ß¸ÖË¿½áÊø
+		send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_NET_CMD_6_3_2);
 		set_speed_target(5);	
 	}
 	else if (RFID_CARD_ID_6_4 == site)
