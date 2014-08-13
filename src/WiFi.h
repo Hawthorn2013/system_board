@@ -19,6 +19,7 @@
 #define WIFI_CMD_SEND_STEER_HELM_DATA_FROM_TF (0x000F)	/* 发送方向舵机数据至上位机 */
 #define WIFI_CMD_GET_SEEED_NOW (0x0011)	/* 获取当前速度 */
 #define WIFI_CMD_UNGET_SPEED_NOW (0x0012)	/* 停止获取当前速度 */
+#define WIFI_CMD_START_ACTIVE (0x0013)/* 开始全场工作 */
 
 #define WIFI_CMD_NET (0x0100)	/* 封装网络数据 */
 #define WIFI_CMD_NET_0_1 (0x0101)
@@ -94,11 +95,8 @@ extern struct
 
 extern BYTE check_sum(const BYTE *data, WORD length);
 extern void execute_remote_cmd(const BYTE *data);
-extern int rev_remote_frame(BYTE rev);
 extern int rev_remote_frame_2(BYTE rev);
-extern void generate_remote_frame(WORD cmd, const BYTE data[], BYTE length);
 extern void generate_remote_frame_2(BYTE scr, BYTE des, WORD cmd, BYTE length, const BYTE data[]);
-extern void generate_remote_net_frame_to_send_site(WORD cmd, DWORD site, BYTE data[]);
 
 
 #endif
