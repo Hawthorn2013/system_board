@@ -97,6 +97,6 @@ extern BYTE check_sum(const BYTE *data, WORD length);
 extern void execute_remote_cmd(const BYTE *data);
 extern int rev_remote_frame_2(BYTE rev);
 extern void generate_remote_frame_2(BYTE scr, BYTE des, WORD cmd, BYTE length, const BYTE data[]);
-
+extern int g_start_all;
 
 #endif

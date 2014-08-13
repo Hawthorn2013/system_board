@@ -360,15 +360,16 @@ void RFID_control_car_4_action(DWORD site)
 	else if (RFID_CARD_ID_1_3 == site)
 	{
 		puncture_ballon();
-		//[implement][CAR_4]-->[CAR_1]出发
-		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_0_1);
-		//[implement][CAR_4]-->[CAR_2]出发
-		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);	
+		
 	}
 	else if (RFID_CARD_ID_2_1 == site)
 	{
+	//[implement][CAR_4]-->[CAR_1]出发
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_0_1);
+	//[implement][CAR_4]-->[CAR_2]出发
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);	
 	//[implement][CAR_4]脱离电磁线，找新线
 		turn_left_1();
 	}

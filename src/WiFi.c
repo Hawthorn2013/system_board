@@ -4,6 +4,7 @@
 
 int g_remote_frame_state = REMOTE_FRAME_STATE_NOK;
 int g_remote_frame_cnt = 0;
+int g_start_all=0;
 BYTE remote_frame_data[REMOTE_FRAME_LENGTH];
 BYTE remote_frame_data_send[REMOTE_FRAME_LENGTH];
 BYTE g_device_NO = WIFI_ADDRESS_CAR_1;	/* 设备号 即WiFi地址 */
@@ -89,6 +90,11 @@ void execute_remote_cmd(const BYTE *data)
 		case WIFI_CMD_NET :
 		g_net_control_data.is_new_cmd = 1;
 		g_net_control_data.cmd = *((WORD *)(&(data[2])));
+		break;
+		/*开始全场工作*/
+		case WIFI_CMD_START_ACTIVE:
+		
+		g_start_all=1;
 		break;
 	}
 }
