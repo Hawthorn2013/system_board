@@ -5,7 +5,7 @@ int flag_c_2_2=0;
 int flag_c_4_1=0;
 int flag_c_4_2=0;
 /*-----------------------------------------------------------------------*/
-/* 扎气球                                                                */
+/* 扎气球  2                                                              */
 /* 关循迹  car 3 & 4                                                     */                                                          
 /*-----------------------------------------------------------------------*/
 void puncture_ballon()
@@ -20,6 +20,25 @@ void puncture_ballon()
 	set_steer_helm(data_steer_helm.center);
 	set_speed_target(10);
 	g_f_enable_mag_steer_control = 1;
+}
+/*-----------------------------------------------------------------------*/
+/* 扎气球 1                                                               */
+/* 关循迹  car 3 & 4                                                     */                                                          
+/*-----------------------------------------------------------------------*/
+void puncture_ballon_2()
+{
+	g_f_enable_mag_steer_control = 0;
+	set_steer_helm(data_steer_helm.left_limit);
+	set_speed_target(20);
+	delay_ms(650);
+	set_steer_helm(data_steer_helm.right_limit);
+	set_speed_target(15);
+	delay_ms(500);
+	set_steer_helm(data_steer_helm.left_limit);
+	delay_ms(500);
+	set_steer_helm(data_steer_helm.center);
+	set_speed_target(20);
+	find_mag_back_box = 1;
 }
 /*-----------------------------------------------------------------------*/
 /* 脱离电磁线、左转、找新线                                              */
@@ -162,6 +181,7 @@ void RFID_control_car_1_action(DWORD site)
 			set_steer_helm(data_steer_helm.left_limit);
 			delay_ms(1000);
 			g_f_enable_mag_steer_control=1;
+			set_speed_target(20);
 			
 		}
 	}
@@ -253,7 +273,7 @@ void RFID_control_car_3_action(DWORD site)
 	}
 	else if (RFID_CARD_ID_1_4 == site)//扎气球
 	{
-		puncture_ballon();
+		puncture_ballon_2();
 	}
 	else if (RFID_CARD_ID_2_1 == site)
 	{
@@ -359,12 +379,18 @@ void RFID_control_car_4_action(DWORD site)
 	}
 	else if (RFID_CARD_ID_1_3 == site)
 	{
-		puncture_ballon();
-		
+		puncture_ballon_2();
+	//[implement][CAR_4]-->[CAR_1]出发
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_0_1);
+	//[implement][CAR_4]-->[CAR_2]出发
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);	
 	}
 	else if (RFID_CARD_ID_2_1 == site)
 	{
 	//[implement][CAR_4]-->[CAR_1]出发
+		D1=~D1;
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_0_1);
 	//[implement][CAR_4]-->[CAR_2]出发

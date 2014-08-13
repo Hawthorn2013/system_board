@@ -186,7 +186,6 @@ int rev_remote_frame_2(BYTE rev)
 void generate_remote_frame_2(BYTE scr, BYTE des, WORD cmd, BYTE length, const BYTE data[])
 {
 	WORD i = 0, j = 0;
-	
 	remote_frame_data_send[i++] = 0xAA;
 	remote_frame_data_send[i++] = 0xBB;
 	remote_frame_data_send[i++] = scr;
