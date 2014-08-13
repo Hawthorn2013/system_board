@@ -1004,7 +1004,21 @@ int control_steer_helm_2(int d_flag)
 	{
 		rev_count=0;
 	}
-	if(cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x000000C8)
+	if((cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x000000C8)&&d_flag!=2)
+	{
+		start_flag=0;
+		error_count=0;
+		i=0;
+		rev_count=0;
+		cnt=0;
+	}
+	if((cnt==9&&abs(rev_count)<=20||diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x000000C8)&&d_flag==2)
+	{
+		cl_flag=7;
+		set_steer_helm(0);
+		set_speed_target(-10); 
+	}
+	if(cl_flag==7&&diff_time_basis_PIT(g_time_basis_PIT,start_time)>=0x0000012C&&d_flag==2)
 	{
 		start_flag=0;
 		error_count=0;

@@ -158,9 +158,11 @@ void RFID_control_car_1_action(DWORD site)
 		}
 		if(flag_c_4_1==1)
 		{
-			set_speed_target(10);
-			control_angle_steer_helm(45);
-			find_mag_back_car1=1;
+			set_speed_target(15);
+			set_steer_helm(data_steer_helm.left_limit);
+			delay_ms(1000);
+			g_f_enable_mag_steer_control=1;
+			
 		}
 	}
 	else if (RFID_CARD_ID_4_2 == site)
@@ -168,6 +170,7 @@ void RFID_control_car_1_action(DWORD site)
 		//[implement][CAR_1]停车
 		if(flag_c_4_2==0)
 		{
+			flag_c_4_2=1;
 			flag_c_4_1=1;
 			set_speed_target(0);
 		}
@@ -326,10 +329,15 @@ void RFID_control_car_3_action(DWORD site)
 	{
 		//[implement][CAR_3]箱子终点
 		push_box2();
+		
+		reset_rev_data();
+		g_f_big_U=1;
+		delay_ms(4000);
+		g_f_big_U=0;
 	}
 
 
-	else if (RFID_CARD_ID_7_3 == site)
+	else if (RFID_CARD_ID_7_2 == site)
 	{
 		//[implement][CAR_3]隧道停车
 		set_speed_target(0);
@@ -352,25 +360,24 @@ void RFID_control_car_4_action(DWORD site)
 	else if (RFID_CARD_ID_1_3 == site)
 	{
 		puncture_ballon();
-	}
-	else if (RFID_CARD_ID_2_1 == site)
-	{
-		//[implement][CAR_4]-->[CAR_1]开始漂移
+		//[implement][CAR_4]-->[CAR_1]出发
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_0_1);
 		//[implement][CAR_4]-->[CAR_2]出发
 		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);
-		//[implement][CAR_4]脱离电磁线，找新线
+			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);	
+	}
+	else if (RFID_CARD_ID_2_1 == site)
+	{
+	//[implement][CAR_4]脱离电磁线，找新线
 		turn_left_1();
-		
 	}
 	else if (RFID_CARD_ID_2_2 == site)
 	{
 		if(flag_c_2_2) return;
 		//[implement][CAR_4]停下等待吊桥升起
 		set_speed_target(0);
-		flag_c_2_2                                  = 1;
+		flag_c_2_2= 1;
 
 	}
 	else if (RFID_CARD_ID_3_1 == site)
@@ -403,6 +410,7 @@ void RFID_control_car_4_action(DWORD site)
 	else if (RFID_CARD_ID_6_2 == site)
 	{
 		//[implement][CAR_4]已上钢丝桥，减速
+		g_f_enable_speed_control_2=0;
 		set_speed_target(25);
 	}
 	else if (RFID_CARD_ID_6_3 == site)
@@ -423,17 +431,19 @@ void RFID_control_car_4_action(DWORD site)
 		find_mag_back_box_2=1;
 		control_angle_steer_helm(-150);
 	}
-	else if (RFID_CARD_ID_6_5 == site)
+/*	else if (RFID_CARD_ID_6_5 == site)
 	{
 		//[implement][CAR_4]脱离电磁线，找新线(暂时定为循迹)
-	}
+	}*/
 	else if (RFID_CARD_ID_7_1 == site)
 	{
 		//[implement][CAR_4]-->[CAR_1]漂移堵截
+		D0=~D0;
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_7_1);
+		D0=~D0;
 	}
-	else if (RFID_CARD_ID_7_2 == site)
+	else if (RFID_CARD_ID_7_3 == site)
 	{
 		//[implement][CAR_4]停车
 		set_speed_target(0);
