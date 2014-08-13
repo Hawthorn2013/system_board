@@ -270,6 +270,10 @@ void RFID_control_car_3_action(DWORD site)
 		set_steer_helm((WORD)(data_steer_helm.right_limit));
 		delay_ms(500);
 		set_steer_helm((WORD)(data_steer_helm.left_limit));
+		delay_ms(500);		
+		set_steer_helm((WORD)(data_steer_helm.right_limit));
+		delay_ms(500);
+		set_steer_helm((WORD)(data_steer_helm.left_limit));
 		delay_ms(1000);
 		set_steer_helm((WORD)(data_steer_helm.center));
 		delay_ms(500);
