@@ -1054,6 +1054,10 @@ int control_steer_helm_3(int angle_1)
 	{
 		start_flag=0;
 	}
+	if(diff_time_basis_PIT(g_time_basis_PIT,start_time)>0x00000190 && find_mag_back_box_2 == 1)
+	{
+		start_flag=0;
+	}
 	return start_flag;
 	if (g_remote_control_flags.send_gyro_data)
 	{

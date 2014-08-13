@@ -20,6 +20,8 @@ int update_steer_helm_basement_to_steer_helm(void);
 int find_mag_back_box_2=0;
 int find_mag_back_car1=0;
 int g_f_big_U=0;
+int g_f_big_U_2=0;
+
 
 /*-----------------------------------------------------------------------*/
 /* 舵机初始化 	                                                                      */
@@ -126,6 +128,7 @@ void PitISR(void)
 				find_mag_back_box=0;
 				find_mag_back_box_2=1;
 				g_f_enable_mag_steer_control=1;
+				set_speed_target(20);
 			}
 		}
 	}
@@ -308,6 +311,7 @@ void control_angle_steer_helm(int angle_target)
 	read_rad_xyz = 1;
 	g_f_enable_rad_control_2=1;
 	angle1=angle_target;
+	if(find_mag_back_box_2) start_time = g_time_basis_PIT;
 }
 /*-----------------------------------------------------------------------*/
 /* 陀螺仪控制速度   //周斯航添加                                            */

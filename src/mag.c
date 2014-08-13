@@ -178,5 +178,10 @@ void control_steer_helm(void)
 		if(rad.z>20&&steer_pwm<0)
 		steer_pwm=data_steer_helm.left_limit;		
 	}
+	if(g_f_big_U_2)
+	{
+		if(rad.z<-20&&steer_pwm>0)
+		steer_pwm=data_steer_helm.right_limit;		
+	}
 	set_steer_helm((WORD)(steer_pwm));	/* ¶ã¾¯¸æ */
 }
