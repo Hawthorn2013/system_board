@@ -58,6 +58,8 @@ void turn_left_1()
 void speed_up_bridge1()
 {
     //g_f_enable_mag_steer_control = 0;
+    set_speed_target(10);
+    delay_ms(1000);
     control_speed_motor(30);
 //	g_f_enable_mag_steer_control = 1;
 
@@ -431,7 +433,7 @@ void RFID_control_car_4_action(DWORD site)
 	//[implement][CAR_4]-->[CAR_1]³ö·¢
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_0_1);
-
+		puncture_ballon_2();
 	
 	}
 	else if (RFID_CARD_ID_2_1 == site)
@@ -557,6 +559,10 @@ void WiFi_control_car_2_action(WORD cmd)
 	if (WIFI_CMD_NET_0_2 == cmd)
 	{
 		//[implement][CAR_2]Æô¶¯
+		set_steer_helm(0);
+		g_f_enable_mag_steer_control=0;
+		set_speed_target(20);
+		delay_ms(2000);
 		g_f_enable_mag_steer_control=1;
 		set_speed_target(20);
 	}

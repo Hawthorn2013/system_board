@@ -27,7 +27,7 @@ int main(void)
 	D0=1;
 	if(WIFI_ADDRESS_CAR_3 == g_device_NO)
 		set_speed_target(10);
-	if(WIFI_ADDRESS_CAR_4 == g_device_NO)
+	else if(WIFI_ADDRESS_CAR_4 == g_device_NO)
 	{
 		delay_ms(1000);
 		set_speed_target(10);
