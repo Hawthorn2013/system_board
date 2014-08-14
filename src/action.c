@@ -58,9 +58,7 @@ void turn_left_1()
 void speed_up_bridge1()
 {
     //g_f_enable_mag_steer_control = 0;
-    set_speed_target(10);
-    delay_ms(1000);
-    control_speed_motor(30);
+    control_speed_motor(20);
 //	g_f_enable_mag_steer_control = 1;
 
 }
@@ -531,8 +529,6 @@ void WiFi_control_car_1_action(WORD cmd)
 		D1=~D1;
 		g_f_enable_mag_steer_control=1;
 		set_speed_target(30);
-		delay_ms(2000);
-		set_speed_target(20);
 	}
 	else if (WIFI_CMD_NET_3_1 == cmd)
 	{

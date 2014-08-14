@@ -1094,12 +1094,19 @@ void control_speed_target_1(int speed)
 	{
 		if(normal_flag==0)
 		{
-				speed_1 =10 -speed;
+			speed_1=10-speed;
+			if(rad.y<-10)
+				normal_flag=1;
+		}
+		
+		else if(normal_flag==1)
+		{
+			speed_1 =10 -speed;
 			cnt++;
 			rad_cnt_z+=rev.z;
 			if(cnt==4&&rad_cnt_z<=5)
 			{
-				normal_flag = 1;
+				normal_flag = 2;
 			}
 			else if(cnt==5)
 			{
@@ -1107,12 +1114,11 @@ void control_speed_target_1(int speed)
 				cnt = 0;
 			}	
 		}
-		if(rad.y<-80&&normal_flag==1)
+		else if(rad.y<-80&&normal_flag==2)
 		{
 			speed_1 = 10;
-			fly_flag = 2;
 		}
-		else if(rad.y>-10&&normal_flag==1)
+		else if(rad.y>-10&&normal_flag==2)
 		{
 			speed_1=0;
 		}
@@ -1189,15 +1195,10 @@ void control_speed_target_1(int speed)
 		}
 		if(rad.y<-30&&fly_flag==2)
 		{
-			speed_1 = 100;
+			speed_1 = 150;
 			fly_flag = 3;
 		}
-		if(rad.y<-80&&fly_flag == 3)
-		{
-			speed_1 = 150;
-			fly_flag = 4;
-		}
-		if(rad.y>0&&fly_flag ==4)
+		if(rad.y>0&&fly_flag ==3)
 		{
 			speed_1 =15 -speed;
 			set_steer_helm(0);
