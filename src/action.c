@@ -91,7 +91,8 @@ void speed_up_bridge2()
 /* car 2                                                                 */                                                          
 /*-----------------------------------------------------------------------*/
 void speed_down_bridge2()
-{
+{	
+	g_f_enable_steer_bridge=1;
 	set_speed_target(0);
 	g_f_enable_speed_control_2=0;
 	delay_ms(2000);
@@ -116,7 +117,7 @@ void push_box2()
 	g_f_enable_mag_steer_control=0;
 	set_steer_helm(data_steer_helm.center);
 	set_speed_target(-10);
-	delay_ms(1500);
+	delay_ms(2500);
 	set_speed_target(20);
 	control_angle_steer_helm(30);
 	find_mag_back_box=1;
@@ -128,7 +129,7 @@ void push_box2()
 void avoid_box()
 {
 	g_f_enable_mag_steer_control=0;
-	set_speed_target(5);
+	set_speed_target(10);
 	control_angle_steer_helm(30);
 	delay_ms(2000);
 	g_f_enable_rad_control_2=0;
@@ -228,8 +229,22 @@ void RFID_control_car_1_action(DWORD site)
 /*-----------------------------------------------------------------------*/
 void RFID_control_car_2_action(DWORD site)
 {
-
-	if (RFID_CARD_ID_3_1 == site)
+	if (RFID_CARD_ID_2_2 == site)
+	{
+		//[implement][CAR_2]停下等待四号车飞过吊桥
+		if(flag_c_2_2==0)
+		{
+			set_speed_target(0);
+			flag_c_2_2= 2;
+		}
+		if(flag_c_2_2==1)
+		{
+			g_f_enable_mag_steer_control=1;
+			set_speed_target(15);
+			flag_c_2_2= 1;
+		}
+	}
+	    else if (RFID_CARD_ID_3_1 == site)
 	{
 		//[implement][CAR_2]开始加速飞跃
 		fly_bridge();
@@ -261,6 +276,7 @@ void RFID_control_car_2_action(DWORD site)
 	else if (RFID_CARD_ID_6_3 == site)
 	{
 		//[implement][CAR_2]走钢丝结束
+		g_f_enable_steer_bridge=0;
 		set_speed_target(5);	
 	}
 	else if (RFID_CARD_ID_6_4 == site)
@@ -303,7 +319,7 @@ void RFID_control_car_3_action(DWORD site)
 	{
 		g_f_enable_mag_steer_control = 0;
 		set_speed_target(0);
-		delay_ms(500);		
+		delay_ms(1000);		
 		set_steer_helm((WORD)(data_steer_helm.right_limit));
 		delay_ms(500);
 		set_steer_helm((WORD)(data_steer_helm.left_limit));
@@ -325,7 +341,11 @@ void RFID_control_car_3_action(DWORD site)
 	{
 		//发指令拉吊桥
 		for(i=0;i<5;i++)
-		send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_3_2);
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_3_2);
+		//[implement][CAR_3]-->[CAR_2]出发
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);	
+		puncture_ballon_2();
 		reset_rev_data();
 		set_speed_target(20);
 		g_f_enable_speed_control_2=0;
@@ -406,10 +426,7 @@ void RFID_control_car_4_action(DWORD site)
 	//[implement][CAR_4]-->[CAR_1]出发
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_0_1);
-	//[implement][CAR_4]-->[CAR_2]出发
-		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);	
-		puncture_ballon_2();
+
 	
 	}
 	else if (RFID_CARD_ID_2_1 == site)
@@ -433,7 +450,8 @@ void RFID_control_car_4_action(DWORD site)
 	else if (RFID_CARD_ID_3_3 == site)
 	{
 		//过大U
-		
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_3_3);
 		reset_rev_data();
 		g_f_big_U=1;
 		
@@ -530,12 +548,19 @@ void WiFi_control_car_1_action(WORD cmd)
 /*-----------------------------------------------------------------------*/
 void WiFi_control_car_2_action(WORD cmd)
 {
-	if (WIFI_CMD_NET_BRIDGE == cmd)
+	if (WIFI_CMD_NET_0_2 == cmd)
 	{
 		//[implement][CAR_2]启动
 		g_f_enable_mag_steer_control=1;
 		set_speed_target(20);
 	}
+	if (WIFI_CMD_NET_3_3 == cmd)
+	{
+		//[implement][CAR_2] 在c_2_2处不再停留
+		flag_c_2_2= 1;
+		set_speed_target(15);
+	}
+	
 
 }
 /*-----------------------------------------------------------------------*/

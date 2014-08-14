@@ -1087,17 +1087,32 @@ int check_stable(void)
 void control_speed_target_1(int speed)
 {
 	static int speed_1=0,speed_2=0;
-	static fly_flag = 0,single_bridge_flag = 0;
+	static fly_flag = 0,single_bridge_flag = 0,normal_flag = 0;
 	static int cnt = 0,rad_cnt_z = 0;
 	/* ¸ÖË¿ÇÅ */
-	if(g_f_enable_steer_bridge)
+	if(!g_f_enable_single_bridge_control&&!g_f_enable_fly_bridge)
 	{
-		if(rad.y<-80)
+		if(normal_flag==0)
+		{
+				speed_1 =10 -speed;
+			cnt++;
+			rad_cnt_z+=rev.z;
+			if(cnt==4&&rad_cnt_z<=5)
+			{
+				normal_flag = 1;
+			}
+			else if(cnt==5)
+			{
+				rad_cnt_z = 0;
+				cnt = 0;
+			}	
+		}
+		if(rad.y<-80&&normal_flag==1)
 		{
 			speed_1 = 10;
 			fly_flag = 2;
 		}
-		else if(rad.y>-10)
+		else if(rad.y>-10&&normal_flag==1)
 		{
 			speed_1=0;
 		}

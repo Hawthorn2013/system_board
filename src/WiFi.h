@@ -34,6 +34,7 @@
 #define WIFI_CMD_NET_7_1 (0x010A)
 #define WIFI_CMD_NET_BRIDGE (0x010B)
 #define WIFI_CMD_NET_3_1 (0x010C)
+#define WIFI_CMD_NET_3_3 (0x010D)
 
 #define WIFI_NET_CMD_CAR_REPORT_CURRENT_SITE (0x0001)	/* 车报告当前读到的位置 */
 #define WIFI_NET_CMD_CAR_REPORT_CACHE_SITE (0x0002)	/* 车报告缓存的位置 即最近一次读到的位置 */
