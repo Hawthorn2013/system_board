@@ -2,9 +2,6 @@
 #define __CONTROL_H__
 
 
-extern DWORD g_time_basis_PIT;
-
-
 /* 方向舵机PWM */
 #define STEER_HELM_CENTER (3301)
 #define STEER_HELM_TEST (1500)
@@ -29,7 +26,6 @@ extern DWORD g_time_basis_PIT;
 
 
 extern int g_f_pit;
-extern DWORD g_time_basis_PIT;
 extern int g_f_enable_mag_steer_control;
 extern int g_f_enable_speed_control;
 extern int g_f_enable_rad_control_1;
@@ -45,6 +41,12 @@ extern int find_mag_back_car1;
 extern int g_f_big_U;
 extern int g_f_big_U_2;
 
+/* 时间基准 */
+#ifdef __CONTROL_C_
+DWORD g_time_basis_PIT;
+#else
+extern const DWORD g_time_basis_PIT;
+#endif
 
 /* 方向舵机上层数据 */
 #ifdef __CONTROL_C_
@@ -147,7 +149,7 @@ extern void set_speed_KI(WORD ki);
 extern void set_speed_KD(WORD kd);
 extern void set_steer_helm(SWORD helmData);
 extern void contorl_speed_encoder_pid(void);
-extern DWORD diff_time_basis_PIT(DWORD new_time, DWORD old_time);
+extern DWORD diff_time_basis_PIT(const DWORD new_time, const DWORD old_time);
 extern void set_steer_helm_basement_center(WORD helmData);
 extern void set_steer_helm_basement_left_limit(WORD helmData);
 extern void set_steer_helm_basement_right_limit(WORD helmData);

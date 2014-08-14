@@ -209,8 +209,8 @@ void generate_remote_frame_2(BYTE scr, BYTE des, WORD cmd, BYTE length, const BY
 
 
 /*-----------------------------------------------------------------------*/
-/* 发送赛场网络控制命令                                                  */
-/* 依赖generate_remote_frame_2()                                         */
+/* 发送赛场网络控制命令                                                          */
+/* 依赖generate_remote_frame_2()                                          */
 /*-----------------------------------------------------------------------*/
 void send_net_cmd(BYTE des, WORD net_cmd)
 {
@@ -219,7 +219,7 @@ void send_net_cmd(BYTE des, WORD net_cmd)
 
 
 /*-----------------------------------------------------------------------*/
-/* 异或校验                                                              */
+/* 异或校验                                                                            */
 /*-----------------------------------------------------------------------*/
 BYTE check_sum(const BYTE *data, WORD length)
 {
@@ -232,4 +232,20 @@ BYTE check_sum(const BYTE *data, WORD length)
 	}
 	
 	return res;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 报告在线                                                                            */
+/*-----------------------------------------------------------------------*/
+void report_online(void)
+{
+	WORD online = WIFI_CMD_NET_ONLINE;
+	
+	if (200 < diff_time_basis_PIT(g_time_basis_PIT, g_net_control_data.last_report_online_time))	/* 2秒报告一次 */
+	{
+		generate_remote_frame_2(g_device_NO, WIFI_ADDRESS_BROADCAST, WIFI_CMD_NET, sizeof(online), (const BYTE *)(&online));
+		g_net_control_data.last_report_online_time = g_time_basis_PIT;
+	}
+	
 }

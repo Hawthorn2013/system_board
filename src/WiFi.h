@@ -40,6 +40,7 @@
 #define WIFI_CMD_NET_5_1_2 (0x0110)
 #define WIFI_CMD_NET_5_1_3 (0x0111)
 #define WIFI_CMD_NET_5_2 (0x0112)
+#define WIFI_CMD_NET_ONLINE (0x0113)	/* 用来表明自己已上电 */
 
 #define WIFI_NET_CMD_CAR_REPORT_CURRENT_SITE (0x0001)	/* 车报告当前读到的位置 */
 #define WIFI_NET_CMD_CAR_REPORT_CACHE_SITE (0x0002)	/* 车报告缓存的位置 即最近一次读到的位置 */
@@ -64,6 +65,7 @@
 #define WIFI_ADDRESS_ANDRIUD_YE (9)	/* Andriud上位机 of 叶川 */
 #define WIFI_ADDRESS_ANDRIUD_JIAO (10)	/* Andriud上位机 of 焦剑 */
 #define WIFI_ADDRESS_ANDRIUD_YU (11)	/* Andriud上位机 of 余婧 */
+#define WIFI_ADDRESS_BROADCAST (0xFF)	/* 广播地址 */
 
 extern BYTE remote_frame_data[];
 extern int g_remote_frame_state;
@@ -90,12 +92,14 @@ struct
 {
 	int is_new_cmd;
 	WORD cmd;
-} g_net_control_data = { 0, 0x00 };
+	DWORD last_report_online_time;
+} g_net_control_data = { 0, 0x00, 0x00000000 };
 #else
 extern struct
 {
 	int is_new_cmd;
 	WORD cmd;
+	DWORD last_report_online_time;
 } g_net_control_data;
 #endif
 

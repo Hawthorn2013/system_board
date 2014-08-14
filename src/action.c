@@ -58,9 +58,7 @@ void turn_left_1()
 void speed_up_bridge1()
 {
     //g_f_enable_mag_steer_control = 0;
-    set_speed_target(10);
-    delay_ms(1000);
-    control_speed_motor(30);
+    control_speed_motor(20);
 //	g_f_enable_mag_steer_control = 1;
 
 }
@@ -354,16 +352,15 @@ void RFID_control_car_3_action(DWORD site)
 		//[implement][CAR_3]-->[CAR_2]出发
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);	
-		puncture_ballon_2();
 		reset_rev_data();
-		set_speed_target(20);
+		set_speed_target(17);
 		g_f_enable_speed_control_2=0;
 		
 	}
 		else if (RFID_CARD_ID_3_3 == site)
 	{
 		//过大U
-		
+		set_speed_target(12);
 		reset_rev_data();
 		g_f_big_U=1;
 		
@@ -536,8 +533,6 @@ void WiFi_control_car_1_action(WORD cmd)
 		D1=~D1;
 		g_f_enable_mag_steer_control=1;
 		set_speed_target(30);
-		delay_ms(2000);
-		set_speed_target(20);
 	}
 	else if (WIFI_CMD_NET_3_1 == cmd)
 	{
@@ -567,7 +562,7 @@ void WiFi_control_car_2_action(WORD cmd)
 		set_steer_helm(0);
 		g_f_enable_mag_steer_control=0;
 		set_speed_target(20);
-		delay_ms(2000);
+//		delay_ms(1000);
 		g_f_enable_mag_steer_control=1;
 		set_speed_target(20);
 	}
