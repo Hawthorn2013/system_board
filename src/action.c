@@ -58,9 +58,7 @@ void turn_left_1()
 void speed_up_bridge1()
 {
     //g_f_enable_mag_steer_control = 0;
-    set_speed_target(10);
-    delay_ms(1000);
-    control_speed_motor(30);
+    control_speed_motor(20);
 //	g_f_enable_mag_steer_control = 1;
 
 }
@@ -265,6 +263,8 @@ void RFID_control_car_2_action(DWORD site)
 		//[implement][CAR_2]脱离电磁线，找新线
 		g_f_big_U=0;
 		turn_left_2();
+		for(i=0;i<5;i++)
+		send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_5_1_2);
 	}
 	else if (RFID_CARD_ID_6_1 == site)
 	{
@@ -281,7 +281,7 @@ void RFID_control_car_2_action(DWORD site)
 		//[implement][CAR_2]走钢丝结束
 		g_f_enable_steer_bridge=0;
 		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_6_3_2);
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_6_3_2);
 		set_speed_target(5);	
 	}
 	else if (RFID_CARD_ID_6_4 == site)
@@ -388,6 +388,8 @@ void RFID_control_car_3_action(DWORD site)
 		g_f_enable_single_bridge_control=0;
 		g_f_enable_speed_control_2=0;
 		set_speed_target(0);
+		for(i=0;i<5;i++)
+		send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_5_2);
 		
 	}
 	else if (RFID_CARD_ID_5_3 == site)
@@ -471,7 +473,7 @@ void RFID_control_car_4_action(DWORD site)
 		g_f_big_U=0;
 		turn_left_2();
 		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_5_1);	
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_5_1_3);	
 	}
 	else if (RFID_CARD_ID_6_1 == site)
 	{
@@ -487,9 +489,9 @@ void RFID_control_car_4_action(DWORD site)
 	else if (RFID_CARD_ID_6_3 == site)
 	{
 		//[implement][CAR_4]通知钢丝桥断开、减速
+		set_speed_target(10);
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_6_3);
-		set_speed_target(10);
 	}
 	else if (RFID_CARD_ID_6_4 == site)
 	{
@@ -531,8 +533,6 @@ void WiFi_control_car_1_action(WORD cmd)
 		D1=~D1;
 		g_f_enable_mag_steer_control=1;
 		set_speed_target(30);
-		delay_ms(2000);
-		set_speed_target(20);
 	}
 	else if (WIFI_CMD_NET_3_1 == cmd)
 	{
