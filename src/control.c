@@ -3,7 +3,6 @@
 
 
 int g_f_pit = 0;
-DWORD g_time_basis_PIT = 0x00000000;	/* 时间基准 */
 int g_f_enable_mag_steer_control = 0;	/* 启用电磁循迹标志位 */
 int g_f_enable_speed_control = 0;	/* 启用速度控制标志位 */
 int g_f_enable_rad_control_1 = 0;		/* 启用陀螺仪角度控制漂移标志位*/
@@ -434,7 +433,7 @@ int update_steer_helm_basement_to_steer_helm(void)
 /*-----------------------------------------------------------------------*/
 /* 获取两个周期计数的差值，常用故写成函数                               */
 /*-----------------------------------------------------------------------*/
-DWORD diff_time_basis_PIT(DWORD new_time, DWORD old_time)
+DWORD diff_time_basis_PIT(const DWORD new_time, const DWORD old_time)
 {
 	DWORD diff;
 	

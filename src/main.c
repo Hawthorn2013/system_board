@@ -66,6 +66,9 @@ int main(void)
 		/* 整车动作控制 */
 		control_car_action();
 #endif
+
+		/* 报告在线 */
+		report_online();
 	}
 }
 
