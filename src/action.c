@@ -229,6 +229,7 @@ void RFID_control_car_1_action(DWORD site)
 /*-----------------------------------------------------------------------*/
 void RFID_control_car_2_action(DWORD site)
 {
+	int i;
 	if (RFID_CARD_ID_2_2 == site)
 	{
 		//[implement][CAR_2]停下等待四号车飞过吊桥
@@ -277,6 +278,8 @@ void RFID_control_car_2_action(DWORD site)
 	{
 		//[implement][CAR_2]走钢丝结束
 		g_f_enable_steer_bridge=0;
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_6_3_2);
 		set_speed_target(5);	
 	}
 	else if (RFID_CARD_ID_6_4 == site)
@@ -330,6 +333,8 @@ void RFID_control_car_3_action(DWORD site)
 		delay_ms(1000);
 		set_steer_helm((WORD)(data_steer_helm.center));
 		delay_ms(500);
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_3_1);
 		g_f_enable_mag_steer_control = 1;
 		delay_ms(500);		
 		//[implement][CAR_3]开始加速过吊桥（平）通知【1】车启动
@@ -461,10 +466,11 @@ void RFID_control_car_4_action(DWORD site)
 		//[implement][CAR_4]脱离电磁线，找新线
 		g_f_big_U=0;
 		turn_left_2();
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_5_1);
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_5_1);	
 	}
-
-
-	
 	else if (RFID_CARD_ID_6_1 == site)
 	{
 		//[implement][CAR_4]加速上钢丝桥
