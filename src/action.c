@@ -370,6 +370,9 @@ void RFID_control_car_3_action(DWORD site)
 	{
 		//[implement][CAR_3]准备单边走
 		set_speed_target(10);
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_5_1);
+		
 	}
 	else if (RFID_CARD_ID_5_5 == site)
 	{
@@ -469,9 +472,7 @@ void RFID_control_car_4_action(DWORD site)
 		g_f_big_U=0;
 		turn_left_2();
 		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_5_1);
-		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_5_1);	
+			send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_5_1);	
 	}
 	else if (RFID_CARD_ID_6_1 == site)
 	{
