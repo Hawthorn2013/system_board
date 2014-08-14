@@ -41,6 +41,9 @@
 #define WIFI_CMD_NET_5_1_3 (0x0111)
 #define WIFI_CMD_NET_5_2 (0x0112)
 #define WIFI_CMD_NET_ONLINE (0x0113)	/* 用来表明自己已上电 */
+#define WIFI_CMD_NET_4_1 (0x0114)
+#define WIFI_CMD_NET_4_2 (0x0115)
+
 
 #define WIFI_NET_CMD_CAR_REPORT_CURRENT_SITE (0x0001)	/* 车报告当前读到的位置 */
 #define WIFI_NET_CMD_CAR_REPORT_CACHE_SITE (0x0002)	/* 车报告缓存的位置 即最近一次读到的位置 */
