@@ -88,7 +88,7 @@ void PitISR(void)
 	/* 读陀螺仪三轴数据 */
 	if(read_rad_xyz)
 	{
-		if (read_rev_data())	/* 不是每次都能读出来的 */
+		if (!read_rev_data())	/* 不是每次都能读出来的 */
 		{
 #if 0
 			LCD_PrintoutInt(64, 0, rad.x);
