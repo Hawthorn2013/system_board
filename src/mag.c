@@ -111,14 +111,12 @@ void control_steer_helm(void)
 	/* ¹ý·ÉÇÅ */
 	if(g_f_enable_fly_bridge)
 	{
-		D1 = 0;
 		kp=4;
 		kd=1;
 		if(rad.y<-5)
 		{
 			kp = 1;
 			kd = 2;
-			D1 = 1;
 		}
 	}
 	/* ¹ý¸ÖË¿ÇÅ */

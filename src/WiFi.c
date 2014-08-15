@@ -277,8 +277,10 @@ void send_remote_request_data(void)
 	}
 	
 	/* 发送陀螺仪积分值 */
+	/*
 	if (g_remote_control_flags.send_gyro_integral)
 	{
 		generate_remote_frame_2(g_device_NO, WIFI_ADDRESS_ANDRIUD_ZHOU, WIFI_CMD_GET_GYRO_INTEGRAL_DATA, sizeof(rad), (const BYTE *)&rad);
 	}
+	*/
 }

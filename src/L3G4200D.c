@@ -913,15 +913,18 @@ void read_rev_data(void)
 		if (status & 80)
 		{
 			GetAngRateRaw(&rev);	
+			
 			rev.x/=1000;
 			rev.y/=500;
 			rev.z/=500;
 			rad.x+=rev.x;
 			rad.y+=rev.y;	
 			rad.z+=rev.z;
-	//		LCD_PrintoutInt(32, 0, rev.x);
-	//		LCD_PrintoutInt(32, 2, rev.y);
-	//		LCD_PrintoutInt(32, 4, rev.z);
+			/*
+			LCD_PrintoutInt(32, 0, rad.x);
+			LCD_PrintoutInt(32, 2, rad.y);
+			LCD_PrintoutInt(32, 4, rad.z);
+			*/
 
 		}
 	}
@@ -1176,11 +1179,11 @@ void control_speed_target_1(int speed)
 			speed_1 =10 -speed;
 			cnt++;
 			rad_cnt_z+=rev.z;
-			if(cnt==9&&rad_cnt_z<=10)
+			if(cnt==14&&rad_cnt_z<=14)
 			{
 				fly_flag = 1;
 			}
-			else if(cnt==10)
+			else if(cnt==15)
 			{
 				rad_cnt_z = 0;
 				cnt = 0;
@@ -1200,8 +1203,7 @@ void control_speed_target_1(int speed)
 		}
 		if(rad.y>0&&fly_flag ==3)
 		{
-			D0 = ~D0;
-			speed_1 =15 -speed;
+			speed_1 =10 -speed;
 			set_steer_helm(0);
 			fly_flag=5;
 		}
