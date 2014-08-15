@@ -513,7 +513,7 @@ void RFID_control_car_4_action(DWORD site)
 	}*/
 	else if (RFID_CARD_ID_7_1 == site)
 	{
-	
+		send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_7_1);
 	}
 	else if (RFID_CARD_ID_7_3 == site)
 	{
