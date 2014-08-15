@@ -417,7 +417,7 @@ extern int control_steer_helm_2(int d_flag);
 extern int control_steer_helm_3(int angle);
 extern void set_pos_target(void);
 extern void control_speed_target_1(int speed);
-extern void read_rev_data(void);
+extern SWORD read_rev_data(void);
 extern void reset_rev_data(void);
 #endif /* __L3G4200D_H */
 
