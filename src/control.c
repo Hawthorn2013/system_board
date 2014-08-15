@@ -88,12 +88,14 @@ void PitISR(void)
 	/* 读陀螺仪三轴数据 */
 	if(read_rad_xyz)
 	{
-		read_rev_data();	
-		
-		LCD_PrintoutInt(64, 0, rad.x);
-		LCD_PrintoutInt(64, 2, rad.y);
-		LCD_PrintoutInt(64, 4, rad.z);
-		
+		if (read_rev_data())	/* 不是每次都能读出来的 */
+		{
+#if 0
+			LCD_PrintoutInt(64, 0, rad.x);
+			LCD_PrintoutInt(64, 2, rad.y);
+			LCD_PrintoutInt(64, 4, rad.z);
+#endif
+		}
 	}
 	
 	/* 陀螺仪角度控制漂移*/

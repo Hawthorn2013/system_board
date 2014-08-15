@@ -869,6 +869,7 @@ BYTE TestWhoAmI(void)
 	return tmp_rx;
 }
 
+
 void set_pos_target(void)
 {	
 	switch(g_device_NO)
@@ -895,8 +896,10 @@ void set_pos_target(void)
 			break;	
 	}
 }
+
+
 /*-----------------------------------------------------------------------*/
-/* Õ”¬›“«÷√¡„   //“∂¥®ÃÌº”                                            */
+/* Õ”¬›“«÷√¡„   //“∂¥®ÃÌº”                                                       */
 /*-----------------------------------------------------------------------*/
 void reset_rev_data(void)
 {
@@ -905,7 +908,12 @@ void reset_rev_data(void)
 	rad.z=0;	
 }
 
-void read_rev_data(void)
+
+/*-----------------------------------------------------------------------*/
+/* ∂¡»°Õ”¬›“« ˝æ›                                                                   */
+/* ∂¡≥ˆ∑µªÿ0                                                                          */
+/*-----------------------------------------------------------------------*/
+SWORD read_rev_data(void)
 {
 	u8_t status;
 	if (MEMS_SUCCESS == GetSatusReg(&status))
@@ -919,12 +927,17 @@ void read_rev_data(void)
 			rad.x+=rev.x;
 			rad.y+=rev.y;	
 			rad.z+=rev.z;
-	//		LCD_PrintoutInt(32, 0, rev.x);
-	//		LCD_PrintoutInt(32, 2, rev.y);
-	//		LCD_PrintoutInt(32, 4, rev.z);
-
+#if 0
+			LCD_PrintoutInt(32, 0, rev.x);
+			LCD_PrintoutInt(32, 2, rev.y);
+			LCD_PrintoutInt(32, 4, rev.z);
+#endif
+			return 0;
 		}
+		return 1;
 	}
+	
+	return 2;
 }
 
 /* ”…Õ”¬›“«øÿ÷∆∆Ø“∆ */
