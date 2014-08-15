@@ -164,12 +164,10 @@ int rev_remote_frame_2(BYTE rev)
 		sum = check_sum((const BYTE *)(remote_frame_data+2), (WORD)(remote_frame_data[4]+3));
 		if (sum != remote_frame_data[remote_frame_data[4]+5])
 		{
-			D2=~D2;
 			g_remote_frame_cnt = 0;	//CheckSum Fail
 		}
 		else
 		{
-			D3=~D3;
 			g_remote_frame_cnt = 0;
 			g_remote_frame_state = REMOTE_FRAME_STATE_OK;	//CheckSum Success
 		}
