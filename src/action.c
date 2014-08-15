@@ -175,6 +175,7 @@ void RFID_control_car_1_action(DWORD site)
 			g_f_enable_mag_steer_control=0;
 			set_steer_helm(0);
 			set_speed_target(5);
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_4_1);
 		}
 		if(flag_c_4_1==1)
 		{
@@ -188,7 +189,7 @@ void RFID_control_car_1_action(DWORD site)
 			delay_ms(1000);
 			set_steer_helm(0);
 			set_speed_target(-10);
-			flag_c_4_1=1;
+			flag_c_4_1=2;
 			
 		}
 		
@@ -208,6 +209,7 @@ void RFID_control_car_1_action(DWORD site)
 		{
 			set_speed_target(0);
 			flag_c_4_2=2;
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_4_2);
 		}
 	}
 	else if (RFID_CARD_ID_4_3 == site)
@@ -263,6 +265,8 @@ void RFID_control_car_2_action(DWORD site)
 		//[implement][CAR_2]脱离电磁线，找新线
 		g_f_big_U=0;
 		turn_left_2();
+		for(i=0;i<5;i++)
+		send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_5_1_2);
 	}
 	else if (RFID_CARD_ID_6_1 == site)
 	{
@@ -278,14 +282,15 @@ void RFID_control_car_2_action(DWORD site)
 	{
 		//[implement][CAR_2]走钢丝结束
 		g_f_enable_steer_bridge=0;
-		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_6_3_2);
+		
 		set_speed_target(5);	
 	}
 	else if (RFID_CARD_ID_6_4 == site)
 	{
 		//[implement][CAR_2]减速下钢丝桥，准备躲箱子
 		avoid_box();
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_6_3_2);
 	}
 	else if (RFID_CARD_ID_7_1== site)
 	{
@@ -386,6 +391,8 @@ void RFID_control_car_3_action(DWORD site)
 		g_f_enable_single_bridge_control=0;
 		g_f_enable_speed_control_2=0;
 		set_speed_target(0);
+		for(i=0;i<5;i++)
+		send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_5_2);
 		
 	}
 	else if (RFID_CARD_ID_5_3 == site)
@@ -469,7 +476,7 @@ void RFID_control_car_4_action(DWORD site)
 		g_f_big_U=0;
 		turn_left_2();
 		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_5_1);	
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_5_1_3);	
 	}
 	else if (RFID_CARD_ID_6_1 == site)
 	{
@@ -485,9 +492,9 @@ void RFID_control_car_4_action(DWORD site)
 	else if (RFID_CARD_ID_6_3 == site)
 	{
 		//[implement][CAR_4]通知钢丝桥断开、减速
+		set_speed_target(10);
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_DRAHTBRIDGE,WIFI_CMD_NET_6_3);
-		set_speed_target(10);
 	}
 	else if (RFID_CARD_ID_6_4 == site)
 	{

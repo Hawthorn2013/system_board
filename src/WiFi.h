@@ -20,6 +20,8 @@
 #define WIFI_CMD_GET_SEEED_NOW (0x0011)	/* 获取当前速度 */
 #define WIFI_CMD_UNGET_SPEED_NOW (0x0012)	/* 停止获取当前速度 */
 #define WIFI_CMD_START_ACTIVE (0x0013)/* 开始全场工作 */
+#define WIFI_CMD_GET_GYRO_INTEGRAL_DATA (0x0014)	/* 获取陀螺仪积分值 */
+#define WIFI_CMD_UNGET_GYRO_INTEGRAL_DATA (0x0015)	/* 停止获取陀螺仪积分值 */
 
 #define WIFI_CMD_NET (0x0100)	/* 封装网络数据 */
 #define WIFI_CMD_NET_0_1 (0x0101)
@@ -37,7 +39,13 @@
 #define WIFI_CMD_NET_3_3 (0x010F)
 #define WIFI_CMD_NET_5_1 (0x010D)
 #define WIFI_CMD_NET_6_3_2 (0x010E)
-#define WIFI_CMD_NET_ONLINE (0x010F)	/* 用来表明自己已上电 */
+#define WIFI_CMD_NET_5_1_2 (0x0110)
+#define WIFI_CMD_NET_5_1_3 (0x0111)
+#define WIFI_CMD_NET_5_2 (0x0112)
+#define WIFI_CMD_NET_ONLINE (0x0113)	/* 用来表明自己已上电 */
+#define WIFI_CMD_NET_4_1 (0x0114)
+#define WIFI_CMD_NET_4_2 (0x0115)
+
 
 #define WIFI_NET_CMD_CAR_REPORT_CURRENT_SITE (0x0001)	/* 车报告当前读到的位置 */
 #define WIFI_NET_CMD_CAR_REPORT_CACHE_SITE (0x0002)	/* 车报告缓存的位置 即最近一次读到的位置 */
@@ -67,6 +75,7 @@
 extern BYTE remote_frame_data[];
 extern int g_remote_frame_state;
 extern BYTE g_device_NO;
+extern int g_start_all;
 
 /* 远程控制标志位 */
 #ifdef __WIFI_C_
@@ -74,12 +83,14 @@ struct
 {
 	int send_gyro_data;	/* 发送陀螺仪数据 */
 	int send_seppd_now;	/* 发送当前速度 */
-} g_remote_control_flags = { 0, 0 };
+	int send_gyro_integral;
+} g_remote_control_flags = { 0, 0, 0 };
 #else
 extern struct
 {
 	int send_gyro_data;
 	int send_seppd_now;
+	int send_gyro_integral;
 } g_remote_control_flags;
 #endif
 
@@ -104,6 +115,7 @@ extern BYTE check_sum(const BYTE *data, WORD length);
 extern void execute_remote_cmd(const BYTE *data);
 extern int rev_remote_frame_2(BYTE rev);
 extern void generate_remote_frame_2(BYTE scr, BYTE des, WORD cmd, BYTE length, const BYTE data[]);
-extern int g_start_all;
+extern void send_remote_request_data(void);
+
 
 #endif

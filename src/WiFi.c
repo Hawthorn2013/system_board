@@ -79,6 +79,12 @@ void execute_remote_cmd(const BYTE *data)
 		case WIFI_CMD_UNGET_GYRO_DATA :
 		g_remote_control_flags.send_gyro_data = 0;
 		break;
+		case WIFI_CMD_GET_GYRO_INTEGRAL_DATA :
+		g_remote_control_flags.send_gyro_integral = 1;
+		break;
+		case WIFI_CMD_UNGET_GYRO_INTEGRAL_DATA :
+		g_remote_control_flags.send_gyro_integral = 0;
+		break;
 		
 		case WIFI_CMD_GET_SEEED_NOW :
 		g_remote_control_flags.send_seppd_now = 1;
@@ -246,4 +252,33 @@ void report_online(void)
 		g_net_control_data.last_report_online_time = g_time_basis_PIT;
 	}
 	
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* 发送远程请求的数据                                                             */
+/*-----------------------------------------------------------------------*/
+void send_remote_request_data(void)
+{
+	/* 发送当前速度 */
+	if (g_remote_control_flags.send_seppd_now)
+	{
+		SWORD speed_now_tmp;
+		
+		if (data_encoder.is_forward)
+		{
+			speed_now_tmp = (SWORD)(data_encoder.speed_now);
+		}
+		else
+		{
+			speed_now_tmp = (SWORD)0 - (SWORD)(data_encoder.speed_now);
+		}
+		generate_remote_frame_2(g_device_NO, WIFI_ADDRESS_ANDRIUD_ZHOU, WIFI_CMD_GET_SEEED_NOW, sizeof(speed_now_tmp), (const BYTE *)&speed_now_tmp);
+	}
+	
+	/* 发送陀螺仪积分值 */
+	if (g_remote_control_flags.send_gyro_integral)
+	{
+		generate_remote_frame_2(g_device_NO, WIFI_ADDRESS_ANDRIUD_ZHOU, WIFI_CMD_GET_GYRO_INTEGRAL_DATA, sizeof(rad), (const BYTE *)&rad);
+	}
 }

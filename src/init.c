@@ -313,7 +313,9 @@ void init_all_and_POST(void)
 	switch (g_device_NO)
 	{
 		case WIFI_ADDRESS_CAR_1 :
+		case WIFI_ADDRESS_CAR_2 :
 		case WIFI_ADDRESS_CAR_3 :
+		case WIFI_ADDRESS_CAR_4 :
 		while (1)
 		{
 			BYTE rev = 0x00;
@@ -330,6 +332,7 @@ void init_all_and_POST(void)
 			}
 		}
 		break;
+#if 0
 		case WIFI_ADDRESS_CAR_2 :
 		case WIFI_ADDRESS_CAR_4 :
 		for (i=0; i<5; i++)
@@ -347,6 +350,7 @@ void init_all_and_POST(void)
 			}
 		}
 		break;
+#endif
 	}
 	if (g_devices_init_status.L3G4200D_is_OK)
 	{
