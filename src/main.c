@@ -13,6 +13,7 @@ int main(void)
 
 	
 	/*µÈ´ý¿ªÊ¼*/
+	/*
 	while(!g_start_all&&(WIFI_ADDRESS_CAR_4 == g_device_NO||WIFI_ADDRESS_CAR_3 == g_device_NO))
 	{
 		if (REMOTE_FRAME_STATE_OK == g_remote_frame_state)
@@ -25,6 +26,7 @@ int main(void)
 		delay_ms(500);
 	}
 	D0=1;
+	*/
 	if(WIFI_ADDRESS_CAR_3 == g_device_NO)
 		set_speed_target(10);
 	else if(WIFI_ADDRESS_CAR_4 == g_device_NO)

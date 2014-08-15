@@ -1089,8 +1089,9 @@ void control_speed_target_1(int speed)
 	static int speed_1=0,speed_2=0;
 	static fly_flag = 0,single_bridge_flag = 0,normal_flag = 0;
 	static int cnt = 0,rad_cnt_z = 0;
+	static int max = -100;
 	/* ¸ÖË¿ÇÅ */
-	if(!g_f_enable_single_bridge_control&&!g_f_enable_fly_bridge)
+	if(g_f_enable_single_bridge_control==0&&g_f_enable_fly_bridge==0)
 	{
 		if(normal_flag==0)
 		{
@@ -1098,7 +1099,7 @@ void control_speed_target_1(int speed)
 			if(rad.y<-10)
 				normal_flag=1;
 		}
-		
+		 
 		else if(normal_flag==1)
 		{
 			speed_1 =10 -speed;
@@ -1148,7 +1149,6 @@ void control_speed_target_1(int speed)
 		}
 		if(rad.y>100&&single_bridge_flag==2)
 		{
-			D0 = ~D0;
 			rad_cnt_z = 0;
 			cnt = 0;
 			speed_1 = -15;
@@ -1176,11 +1176,11 @@ void control_speed_target_1(int speed)
 			speed_1 =10 -speed;
 			cnt++;
 			rad_cnt_z+=rev.z;
-			if(cnt==4&&rad_cnt_z<=5)
+			if(cnt==9&&rad_cnt_z<=10)
 			{
 				fly_flag = 1;
 			}
-			else if(cnt==5)
+			else if(cnt==10)
 			{
 				rad_cnt_z = 0;
 				cnt = 0;
@@ -1200,10 +1200,18 @@ void control_speed_target_1(int speed)
 		}
 		if(rad.y>0&&fly_flag ==3)
 		{
+			D0 = ~D0;
 			speed_1 =15 -speed;
 			set_steer_helm(0);
 			fly_flag=5;
 		}
+		/*
+		if(rad.y>max&&(fly_flag==3))
+		{
+			max = rad.y;
+			LCD_PrintoutInt(0, 0,(SWORD)max);	
+		}
+		*/
 	}
 //	LCD_PrintoutInt(0, 0, (SWORD)(speed+speed_1+speed_2));
 	set_speed_target((SWORD)(speed+speed_1+speed_2));

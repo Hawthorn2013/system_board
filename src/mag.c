@@ -111,8 +111,15 @@ void control_steer_helm(void)
 	/* ¹ý·ÉÇÅ */
 	if(g_f_enable_fly_bridge)
 	{
-		kp=1;
-		kd=2;
+		D1 = 0;
+		kp=4;
+		kd=1;
+		if(rad.y<-5)
+		{
+			kp = 1;
+			kd = 2;
+			D1 = 1;
+		}
 	}
 	/* ¹ý¸ÖË¿ÇÅ */
 	if(g_f_enable_steer_bridge)
@@ -167,7 +174,7 @@ void control_steer_helm(void)
 		/* ¹ý·ÉÇÅ */
 	if(g_f_enable_fly_bridge)
 	{
-		if(rad.y<-80)
+		if(rad.y<-30)
 		{
 			if(steer_pwm>50)steer_pwm = 50;
 			else if(steer_pwm<-50)steer_pwm = -50;

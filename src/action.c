@@ -526,7 +526,6 @@ void WiFi_control_car_1_action(WORD cmd)
 	if (WIFI_CMD_NET_0_1 == cmd)
 	{
 		//[implement][CAR_1]Æô¶¯¡¢×¼±¸Æ¯ÒÆ
-		D1=~D1;
 		g_f_enable_mag_steer_control=1;
 		set_speed_target(30);
 	}
