@@ -403,7 +403,11 @@ void RFID_control_car_3_action(DWORD site)
 	else if (RFID_CARD_ID_5_4 == site)
 	{	//[implement][CAR_4]-->[CAR_1]Æ¯ÒÆ¶Â½Ø
 		for(i=0;i<5;i++)
-			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_7_1);
+			{
+				send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_7_1);
+				send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_7_1);
+			}
+
 		//[implement][CAR_3]Ïä×ÓÖÕµã
 		
 		push_box2();
