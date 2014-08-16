@@ -1131,7 +1131,7 @@ void control_speed_target_1(int speed)
 		}
 		else if(rad.y<-80&&normal_flag==2)
 		{
-			speed_1 = 10;
+			speed_1 = 5;
 		}
 		else if(rad.y>-10&&normal_flag==2)
 		{
@@ -1202,10 +1202,13 @@ void control_speed_target_1(int speed)
 		}
 		if(fly_flag==1)
 		{
+			g_f_enable_fly_bridge=2;
 			rad_cnt_z = 0;
 			cnt = 0;
 			speed_1 = 0;
 			fly_flag = 2;
+			set_steer_helm(0);
+			
 		}
 		if(rad.y<-30&&fly_flag==2)
 		{

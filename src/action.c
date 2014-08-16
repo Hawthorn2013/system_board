@@ -255,7 +255,7 @@ void RFID_control_car_2_action(DWORD site)
 	else if (RFID_CARD_ID_3_3 == site)
 	{
 		//过大U
-		
+		set_speed_target(15);
 		reset_rev_data();
 		g_f_big_U=1;
 		
@@ -450,6 +450,7 @@ void RFID_control_car_4_action(DWORD site)
 	}
 	else if (RFID_CARD_ID_2_2 == site)
 	{
+		g_f_enable_fly_bridge=1;
 		if(flag_c_2_2) return;
 		//[implement][CAR_4]停下等待吊桥升起
 		set_speed_target(0);
@@ -466,6 +467,7 @@ void RFID_control_car_4_action(DWORD site)
 		//过大U
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_3_3);
+		set_speed_target(15);
 		reset_rev_data();
 		g_f_big_U=1;
 		

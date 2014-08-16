@@ -22,7 +22,7 @@ int main(void)
 			
 			execute_remote_cmd(remote_frame_data+5);
 		}
-		delay_ms(500);
+		delay_ms(10);
 	}
  	
 	if(WIFI_ADDRESS_CAR_3 == g_device_NO)

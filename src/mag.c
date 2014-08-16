@@ -111,18 +111,18 @@ void control_steer_helm(void)
 	/* ¹ý·ÉÇÅ */
 	if(g_f_enable_fly_bridge)
 	{
-		kp=4;
+		kp=5;
 		kd=1;
-		if(rad.y<-5)
+		if(rad.y<-15)
 		{
-			kp = 1;
-			kd = 2;
+			kp = 2;
+			kd = 4;
 		}
 	}
 	/* ¹ý¸ÖË¿ÇÅ */
 	if(g_f_enable_steer_bridge)
 	{
-		kp=1;
+		kp=2;
 		kd=2;
 	}
 	/* ¹ýµ¥±ßÇÅ */
@@ -172,10 +172,11 @@ void control_steer_helm(void)
 		/* ¹ý·ÉÇÅ */
 	if(g_f_enable_fly_bridge)
 	{
-		if(rad.y<-30)
+		
+		if(g_f_enable_fly_bridge==2)
 		{
-			if(steer_pwm>50)steer_pwm = 50;
-			else if(steer_pwm<-50)steer_pwm = -50;
+			if(steer_pwm>100)steer_pwm = 100;
+			else if(steer_pwm<-100)steer_pwm = -100;
 		}
 	}
 	if(g_f_big_U)
