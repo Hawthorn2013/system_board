@@ -875,9 +875,9 @@ void set_pos_target(void)
 	switch(g_device_NO)
 	{
 		case(1):
-			pos_target.x = 455;
-			pos_target.y = -904;
-			pos_target.z = 1200;
+			pos_target.x = 482;
+			pos_target.y = -830;
+			pos_target.z = 1094;
 			break;
 		case(2):
 			pos_target.x = 468;
