@@ -107,7 +107,8 @@ void control_steer_helm(void)
        static	int steer_rate = 0;
 	static int last_error=0;
 	static int steer_pwm =0;	/* 由全局变量改为局部静态变量 */
-	
+	kp=2;
+	kd=1;
 	/* 过飞桥 */
 	if(g_f_enable_fly_bridge)
 	{
@@ -122,8 +123,8 @@ void control_steer_helm(void)
 	/* 过钢丝桥 */
 	if(g_f_enable_steer_bridge)
 	{
-		kp=2;
-		kd=2;
+		kp=1;
+		kd=1;
 	}
 	/* 过单边桥 */
 	if(g_f_enable_single_bridge_control)
