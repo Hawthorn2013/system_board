@@ -38,6 +38,8 @@ void mag_read(void)
 	mag_right=(WORD)ADC.CDR[33].B.CDATA;//PB9
 	mag_left_old=mag_left;
 	mag_left=(WORD)ADC.CDR[32].B.CDATA;//PB8
+//	mag_left = (WORD)((double)mag_left/767.0*795);
+//	mag_right = mag_right;
 }
 
 
