@@ -45,6 +45,9 @@
 #define WIFI_CMD_NET_ONLINE (0x0113)	/* 用来表明自己已上电 */
 #define WIFI_CMD_NET_4_1 (0x0114)
 #define WIFI_CMD_NET_4_2 (0x0115)
+#define WIFI_ERCMD_NET_CAR2_5_1 (0x0201)	//PC紧急处理：防止进入三号车线路
+#define WIFI_ERCMD_NET_CAR4_5_1 (0x0202)	//PC紧急处理：防止进入三号车线路
+#define WIFI_ERCMD_NET_CAR3_3_2 (0x0203)	//PC紧急处理：防止吊桥没有拉起
 
 
 #define WIFI_NET_CMD_CAR_REPORT_CURRENT_SITE (0x0001)	/* 车报告当前读到的位置 */

@@ -1104,17 +1104,17 @@ void control_speed_target_1(int speed)
 	static fly_flag = 0,single_bridge_flag = 0,normal_flag = 0;
 	static int cnt = 0,rad_cnt_z = 0;
 	static int max = -100;
-	/* ∏÷Àø«≈ */
+	/* ∏÷Àø«≈ ∆Ω…œµı«≈*/
 	if(g_f_enable_single_bridge_control==0&&g_f_enable_fly_bridge==0)
 	{
-		if(normal_flag==0)
+	/*	if(normal_flag==0)
 		{
 			speed_1=10-speed;
 			if(rad.y<-10)
 				normal_flag=1;
 		}
 		 
-		else if(normal_flag==1)
+		else */if(normal_flag==0)
 		{
 			speed_1 =10 -speed;
 			cnt++;

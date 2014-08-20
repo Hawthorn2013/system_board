@@ -22,6 +22,7 @@ int main(void)
 			
 			execute_remote_cmd(remote_frame_data+5);
 		}
+		report_online();//添加3、4号车等待时候报告已上电
 		delay_ms(10);
 	}
  	

@@ -563,6 +563,7 @@ void WiFi_control_car_1_action(WORD cmd)
 /*-----------------------------------------------------------------------*/
 void WiFi_control_car_2_action(WORD cmd)
 {
+	int i;
 	if (WIFI_CMD_NET_0_2 == cmd)
 	{
 		//[implement][CAR_2]启动
@@ -573,11 +574,19 @@ void WiFi_control_car_2_action(WORD cmd)
 		g_f_enable_mag_steer_control=1;
 		set_speed_target(20);
 	}
-	if (WIFI_CMD_NET_3_3 == cmd)
+	else if (WIFI_CMD_NET_3_3 == cmd)
 	{
 		//[implement][CAR_2] 在c_2_2处不再停留
 		flag_c_2_2= 1;
 		set_speed_target(15);
+	}
+	else if (WIFI_ERCMD_NET_CAR2_5_1 == cmd)	//PC紧急处理：防止进入三号车线路
+	{
+		//[implement][CAR_2]脱离电磁线，找新线
+		g_f_big_U=0;
+		turn_left_2();
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_5_1_2);
 	}
 	
 
@@ -589,6 +598,7 @@ void WiFi_control_car_2_action(WORD cmd)
 /*-----------------------------------------------------------------------*/
 void WiFi_control_car_3_action(WORD cmd)
 {
+	int i;
 	if (WIFI_CMD_NET_0_3 == cmd)
 	{
 		//[implement][CAR_3]启动
@@ -604,6 +614,20 @@ void WiFi_control_car_3_action(WORD cmd)
 		delay_ms(2000);
 		set_speed_target(15);
 	}
+	
+	else if (WIFI_ERCMD_NET_CAR3_3_2 == cmd)  //PC紧急处理  ：防止吊桥没有拉起
+	{
+		//发指令拉吊桥
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_3_2);
+		//[implement][CAR_3]-->[CAR_2]出发
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_CAR_2,WIFI_CMD_NET_0_2);	
+		reset_rev_data();
+		set_speed_target(17);
+		g_f_enable_speed_control_2=0;
+		
+	}
 }
 
 
@@ -614,6 +638,7 @@ void WiFi_control_car_3_action(WORD cmd)
 /*-----------------------------------------------------------------------*/
 void WiFi_control_car_4_action(WORD cmd)
 {
+	int i;
 	if (WIFI_CMD_NET_0_4 == cmd)
 	{
 		//[implement][CAR_4]启动
@@ -626,6 +651,14 @@ void WiFi_control_car_4_action(WORD cmd)
 		//开始准备飞桥
 		g_f_enable_mag_steer_control=1;
 		set_speed_target(15);
+	}
+	else if (WIFI_ERCMD_NET_CAR4_5_1 == cmd)  //PC紧急处理：防止进入三号车线路
+	{
+		//[implement][CAR_4]脱离电磁线，找新线
+		g_f_big_U=0;
+		turn_left_2();
+		for(i=0;i<5;i++)
+			send_net_cmd(WIFI_ADDRESS_DRAWBRIDGE,WIFI_CMD_NET_5_1_3);	
 	}
 }
 
