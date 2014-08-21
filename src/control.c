@@ -71,6 +71,7 @@ void PitISR(void)
 			g_f_enable_mag_steer_control=1;
 			find_mag_back_box=0;
 			g_f_enable_rad_control_2=0;
+			
 		}
 	}
 	/*’“ªÿ¥≈œﬂ  ∆Ø“∆≥µ*/
@@ -127,7 +128,7 @@ void PitISR(void)
 			if(find_mag_back_box_2==1)
 			{
 				find_mag_back_box=0;
-				find_mag_back_box_2=1;
+				find_mag_back_box_2=0;
 				g_f_enable_mag_steer_control=1;
 				set_speed_target(20);
 			}
