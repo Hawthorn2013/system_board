@@ -102,6 +102,16 @@ void execute_remote_cmd(const BYTE *data)
 		
 		g_start_all=1;
 		break;
+		
+		/* ÓÃWiFi´úÌæRFID */
+		case WIFI_CMD_SEND_RFID :
+		if (RFID_site_data.site != *((DWORD *)(&(data[2]))))
+		{
+			RFID_site_data.site = *((DWORD *)(&(data[2])));
+			RFID_site_data.time = g_time_basis_PIT;
+			RFID_site_data.is_new_site = 1;
+		}
+		break;
 	}
 }
 
