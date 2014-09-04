@@ -96,7 +96,7 @@ void speed_down_bridge2()
 	set_speed_target(0);
 	g_f_enable_speed_control_2=0;
 	delay_ms(2000);
-	set_speed_target(15);	
+	set_speed_target(10);	
 }
 /*-----------------------------------------------------------------------*/
 /* 推箱子1_开始推                                                        */
@@ -133,8 +133,8 @@ void avoid_box()
 	control_angle_steer_helm(30);
 	delay_ms(2000);
 	g_f_enable_rad_control_2=0;
-	set_speed_target(15);
-	set_steer_helm(data_steer_helm.right_limit*0.85);
+	set_speed_target(20);
+	set_steer_helm(data_steer_helm.right_limit);
 	find_mag_back_box=1;
 }
 /*-----------------------------------------------------------------------*/
