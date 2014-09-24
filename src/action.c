@@ -134,7 +134,7 @@ void avoid_box()
 	delay_ms(2000);
 	g_f_enable_rad_control_2=0;
 	set_speed_target(15);
-	set_steer_helm(data_steer_helm.right_limit*0.85);
+	set_steer_helm(data_steer_helm.right_limit);
 	find_mag_back_box=1;
 }
 /*-----------------------------------------------------------------------*/
