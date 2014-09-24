@@ -49,6 +49,7 @@
 #define WIFI_ERCMD_NET_CAR4_5_1 (0x0202)	//PC紧急处理：防止进入三号车线路
 #define WIFI_ERCMD_NET_CAR3_3_2 (0x0203)	//PC紧急处理：防止吊桥没有拉起
 
+#define WIFI_CMD_SEND_RFID (0x0200)	/* 发送卡号 */
 
 #define WIFI_NET_CMD_CAR_REPORT_CURRENT_SITE (0x0001)	/* 车报告当前读到的位置 */
 #define WIFI_NET_CMD_CAR_REPORT_CACHE_SITE (0x0002)	/* 车报告缓存的位置 即最近一次读到的位置 */

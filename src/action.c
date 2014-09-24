@@ -96,7 +96,7 @@ void speed_down_bridge2()
 	set_speed_target(0);
 	g_f_enable_speed_control_2=0;
 	delay_ms(2000);
-	set_speed_target(15);	
+	set_speed_target(10);	
 }
 /*-----------------------------------------------------------------------*/
 /* 推箱子1_开始推                                                        */
@@ -133,7 +133,7 @@ void avoid_box()
 	control_angle_steer_helm(30);
 	delay_ms(2000);
 	g_f_enable_rad_control_2=0;
-	set_speed_target(15);
+	set_speed_target(20);
 	set_steer_helm(data_steer_helm.right_limit);
 	find_mag_back_box=1;
 }
@@ -440,7 +440,11 @@ void RFID_control_car_4_action(DWORD site)
 		for(i=0;i<5;i++)
 			send_net_cmd(WIFI_ADDRESS_CAR_1,WIFI_CMD_NET_0_1);
 		puncture_ballon_2();
-	
+		//防止四号车没能循迹回去
+		delay_ms(500);
+		g_f_enable_mag_steer_control=1;
+		find_mag_back_box=0;
+		
 	}
 	else if (RFID_CARD_ID_2_1 == site)
 	{
@@ -469,7 +473,6 @@ void RFID_control_car_4_action(DWORD site)
 		set_speed_target(15);
 		reset_rev_data();
 		g_f_big_U=1;
-		
 	}
 	else if (RFID_CARD_ID_5_1 == site)
 	{
